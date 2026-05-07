@@ -6,3 +6,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Bibliotecas offline, Acessibilidade de Modais e Melhoria do Modo Zen.**
   *Link: [./tracks/melhorias_20260507/](./tracks/melhorias_20260507/)*
+---
+
+- [ ] **Track: Sistema de Votação Visual (Polls)**
+*Link: [./tracks/polls_20260507/](./tracks/polls_20260507/)*
