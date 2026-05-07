@@ -1,8 +1,8 @@
 # Implementation Plan: melhorias_20260507
 
 ## Phase 1: Offline Infrastructure
-- [ ] Task: Obter código fonte minificado de QRious e Canvas-Confetti.
-- [ ] Task: Substituir links CDN por blocos <script> inline no index.html.
+- [x] Task: Obter código fonte minificado de QRious e Canvas-Confetti.
+- [x] Task: Substituir links CDN por blocos <script> inline no index.html.
 
 ## Phase 2: Accessibility (A11y)
 - [ ] Task: Implementar Focus Trap no `ModalSystem`.
