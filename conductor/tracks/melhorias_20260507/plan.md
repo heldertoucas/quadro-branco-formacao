@@ -14,5 +14,5 @@
 - [x] Task: Implementar scroll ou ajuste de altura no menu mobile para acesso a todas as opções.
 
 ## Phase 4: Final Validation
-- [ ] Task: Testar funcionamento offline (simulado).
-- [ ] Task: Conductor - User Manual Verification 'Validation' (Protocol in workflow.md)
+- [x] Task: Testar funcionamento offline (simulado).
+- [x] Task: Conductor - User Manual Verification 'Validation' (Protocol in workflow.md)
