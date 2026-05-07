@@ -8,8 +8,9 @@ Esta track visa implementar melhorias críticas na infraestrutura de assets, ace
 - **Acessibilidade de Modais:**
     - Garantir que o foco fica preso dentro do modal aberto (Focus Trap).
     - Fechar modais ao premir a tecla 'Escape'.
-- **UX Modo Zen:**
+- **UX Modo Zen e Menu:**
     - Ajustar CSS para evitar que o painel de controlo se sobreponha a outros elementos (como o placar) em ecrãs pequenos.
+    - Melhorar o funcionamento do menu em ecrãs pequenos, garantindo que as opções ocultas (overflow) possam ser selecionadas (ex: scroll no menu ou ajuste de altura).
 
 ## Acceptance Criteria
 - QR Code e Confetti funcionam sem ligação à internet.
