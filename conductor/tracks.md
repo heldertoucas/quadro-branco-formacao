@@ -11,10 +11,3 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Sistema de Votação Visual (Polls)**
 *Link: [./tracks/polls_20260507/](./tracks/polls_20260507/)*
 
----
-
----
-
-- [~] **Track: Identidade Visual v3.0 (Glassmorphism, Grain, Transitions)**
-*Link: [./tracks/v3_visual_20260508/](./tracks/v3_visual_20260508/)*
-
