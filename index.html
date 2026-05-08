@@ -1745,6 +1745,96 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             .poll-label { font-size: 0.75rem; }
             .poll-btn { width: 32px; height: 32px; }
         }
+
+        /* Projector Mode Overrides */
+        body.projector-mode #control-panel,
+        body.projector-mode #logo-area,
+        body.projector-mode .nav-arrow {
+            display: none !important;
+        }
+
+        body.projector-mode #display-area {
+            padding-bottom: 0;
+        }
+
+        /* Ink Overlay */
+        #ink-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 140;
+            pointer-events: none;
+            cursor: crosshair;
+        }
+
+        #ink-canvas.active {
+            pointer-events: auto;
+        }
+
+        #ink-toolbar {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 10px 20px;
+            display: none;
+            gap: 12px;
+            align-items: center;
+            z-index: 210;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            animation: fadeInMenu 0.3s ease;
+        }
+
+        #ink-toolbar.visible {
+            display: flex;
+        }
+
+        .ink-tool-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .ink-tool-btn:hover,
+        .ink-tool-btn.active {
+            background: var(--glass-hover);
+            transform: scale(1.1);
+        }
+
+        .ink-tool-btn.active {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .ink-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .ink-color.active {
+            border-color: white;
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 
@@ -1868,6 +1958,27 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none">${ICONS.X}</svg>
             </button>
         </div>
+        <canvas id="ink-canvas"></canvas>
+        <div id="ink-toolbar">
+            <div class="ink-color active" id="ink-col-ff0000" style="background:#ff0000;" onclick="features.ink.setColor('#ff0000')"></div>
+            <div class="ink-color" id="ink-col-00ff00" style="background:#00ff00;" onclick="features.ink.setColor('#00ff00')"></div>
+            <div class="ink-color" id="ink-col-ffff00" style="background:#ffff00;" onclick="features.ink.setColor('#ffff00')"></div>
+            <div class="ink-color" id="ink-col-ffffff" style="background:#ffffff;" onclick="features.ink.setColor('#ffffff')"></div>
+            <div class="separator" style="height:20px;"></div>
+            <button class="ink-tool-btn" id="ink-eraser" onclick="features.ink.setEraser()" title="Borracha">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+                    <path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 12L20 20Z"></path>
+                    <line x1="17" y1="17" x2="7" y2="7"></line>
+                </svg>
+            </button>
+            <button class="ink-tool-btn" onclick="features.ink.clear()" title="Limpar Tudo">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+                    <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+            </button>
+            <div class="separator" style="height:20px;"></div>
+            <button class="ink-tool-btn" onclick="features.ink.toggle()" title="Sair do Desenho" style="color:var(--danger-color); border-color:var(--danger-color);">×</button>
+        </div>
     </main>
 
     <!-- FOOTER: Control Panel -->
@@ -1933,6 +2044,18 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
             <div class="separator"></div>
 
+            <button id="btn-ink" class="tool-btn" onclick="features.ink.setup()" title="Ferramenta de Desenho">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                    <path d="M2 2l7.5 1.5"></path>
+                    <path d="M2 2l1.5 7.5"></path>
+                </svg>
+                <span>Caneta</span>
+            </button>
+
+            <div class="separator"></div>
+
             <button id="btn-sound-drawer" class="tool-btn" onclick="ui.toggleSoundDrawer()" title="Sons">
                 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -1983,6 +2106,17 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
                     <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
                 </svg>
+            </button>
+
+            <div class="separator"></div>
+
+            <button class="tool-btn" onclick="window.open('index.html?mode=projector', '_blank')" title="Janela de Projeção">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <span>Projetor</span>
             </button>
         </div>
 
@@ -2190,7 +2324,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             isExpanded: false,
             scores: {},
             audioCtx: null, activeSounds: {},
-            view: 'text' // 'text', 'qr', 'dice', 'picker', 'none'
+            view: 'text', // 'text', 'qr', 'dice', 'picker', 'none'
+            channel: null
         };
 
         /*******************************************************
@@ -2367,6 +2502,19 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     app.showContent(params.get('text'));
                 } else {
                     this.updateDisplay("Olá! Vamos começar?");
+                }
+
+                // Initialize BroadcastChannel
+                state.channel = new BroadcastChannel('quadro_branco_sync');
+                state.channel.onmessage = (e) => app.handleBroadcast(e.data);
+
+                // Projector Mode logic
+                if (params.get('mode') === 'projector') {
+                    document.body.classList.add('projector-mode');
+                    // Request initial state
+                    setTimeout(() => {
+                        if (state.channel) state.channel.postMessage({ type: 'request_sync' });
+                    }, 500);
                 }
 
                 // Idle Detection for Zen Mode
@@ -2707,6 +2855,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         ui.els.mainText.classList.add('visible');
                         break;
                 }
+                app.broadcastState();
             },
 
             timer: {
@@ -2830,9 +2979,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     if (options.length < 2) return;
                     this.build(options);
                 },
-                build(options) {
+                build(options, isSync = false) {
                     this.labels = options;
-                    this.votes = new Array(options.length).fill(0);
+                    if (!isSync) this.votes = new Array(options.length).fill(0);
                     this.active = true;
 
                     let html = '';
@@ -2840,7 +2989,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         html += `
                             <div class="poll-item" id="poll-item-${i}">
                                 <div class="poll-info">
-                                    <div class="poll-count" id="poll-count-${i}">0</div>
+                                    <div class="poll-count" id="poll-count-${i}">${this.votes[i] || 0}</div>
                                     <div class="poll-label" title="${label}">${label}</div>
                                     <div class="poll-btn-group">
                                         <button class="poll-btn" onclick="features.poll.update(${i}, 1)">+</button>
@@ -2858,17 +3007,20 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     display.innerHTML = html;
                     display.style.display = 'flex';
                     document.getElementById('poll-actions').style.display = 'flex';
-                    app.clear(); // Clear main text
+                    if (!isSync) app.clear(); // Clear main text only on fresh build
 
-                    // Keyboard shortcuts listener
-                    this._keyHandler = (e) => {
-                        if (document.activeElement.tagName === 'INPUT' || document.activeElement.contentEditable === "true") return;
-                        const num = parseInt(e.key);
-                        if (!isNaN(num) && num >= 1 && num <= this.labels.length) {
-                            this.update(num - 1, e.shiftKey ? -1 : 1);
-                        }
-                    };
-                    document.addEventListener('keydown', this._keyHandler);
+                    // Keyboard shortcuts listener (only if not already attached)
+                    if (!this._keyHandler) {
+                        this._keyHandler = (e) => {
+                            if (document.activeElement.tagName === 'INPUT' || document.activeElement.contentEditable === "true") return;
+                            const num = parseInt(e.key);
+                            if (!isNaN(num) && num >= 1 && num <= this.labels.length) {
+                                this.update(num - 1, e.shiftKey ? -1 : 1);
+                            }
+                        };
+                        document.addEventListener('keydown', this._keyHandler);
+                    }
+                    this.refreshBars();
                 },
                 update(index, delta) {
                     if (!this.active) return;
@@ -2898,6 +3050,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
                     AudioService.toggle('trophy');
                     ui.confetti();
+                    app.broadcastState();
                 },
                 close() {
                     this.active = false;
@@ -2934,14 +3087,15 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     });
                     if (num) this.build(parseInt(num));
                 },
-                build(n) {
-                    state.scores = {};
+                build(n, isSync = false) {
+                    if (!isSync) state.scores = {};
                     let html = '';
                     for (let i = 0; i < n; i++) {
                         const char = String.fromCharCode(65 + i);
-                        state.scores[char] = 0;
+                        if (!isSync) state.scores[char] = 0;
+                        const scoreVal = state.scores[char] || 0;
                         html += `<div class="score-team" id="team-${char}" onmousedown="features.score.update('${char}', event)">
-                                    <div class="score-val" id="score-${char}">0</div>
+                                    <div class="score-val" id="score-${char}">${scoreVal}</div>
                                     <div class="score-label">Equipa ${char}</div>
                                  </div>`;
                     }
@@ -2957,6 +3111,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     state.scores[team] = Math.max(0, state.scores[team] + delta);
                     document.getElementById(`score-${team}`).innerText = state.scores[team];
                     AudioService.toggle(delta > 0 ? 'pointUp' : 'pointDown');
+                    app.broadcastState();
                 },
                 checkWinner() {
                     let max = -1, winners = [];
@@ -2969,6 +3124,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         winners.forEach(t => document.getElementById(`team-${t}`).classList.add('winner-highlight'));
                         AudioService.toggle('trophy');
                     }
+                    app.broadcastState();
                 }
             },
 
@@ -3056,6 +3212,100 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     localStorage.setItem('slideData', JSON.stringify(data));
                     window.location.href = 'futuro-digital.html';
                 }
+            },
+
+            ink: {
+                active: false,
+                color: '#ff0000',
+                isDrawing: false,
+                ctx: null,
+                lastX: 0,
+                lastY: 0,
+                setup() {
+                    const canvas = document.getElementById('ink-canvas');
+                    if (!this.ctx) {
+                        this.ctx = canvas.getContext('2d');
+                        this.resize();
+                        window.addEventListener('resize', () => this.resize());
+
+                        canvas.onmousedown = (e) => this.start(e);
+                        canvas.onmousemove = (e) => this.draw(e);
+                        canvas.onmouseup = () => this.stop();
+                        canvas.onmouseout = () => this.stop();
+
+                        // Touch support
+                        canvas.ontouchstart = (e) => { e.preventDefault(); this.start(e.touches[0]); };
+                        canvas.ontouchmove = (e) => { e.preventDefault(); this.draw(e.touches[0]); };
+                        canvas.ontouchend = () => this.stop();
+                    }
+                    this.toggle();
+                },
+                resize() {
+                    const canvas = document.getElementById('ink-canvas');
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                },
+                toggle() {
+                    this.active = !this.active;
+                    const canvas = document.getElementById('ink-canvas');
+                    const toolbar = document.getElementById('ink-toolbar');
+                    canvas.classList.toggle('active', this.active);
+                    toolbar.classList.toggle('visible', this.active);
+                    document.getElementById('btn-ink').classList.toggle('active', this.active);
+
+                    if (this.active) {
+                        this.setColor(this.color);
+                    }
+                },
+                start(e) {
+                    this.isDrawing = true;
+                    [this.lastX, this.lastY] = [e.clientX, e.clientY];
+                },
+                draw(e) {
+                    if (!this.isDrawing) return;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.lastX, this.lastY);
+                    this.ctx.lineTo(e.clientX, e.clientY);
+                    this.ctx.stroke();
+
+                    // Broadcast stroke
+                    if (state.channel) {
+                        state.channel.postMessage({
+                            type: 'ink_stroke',
+                            from: { x: this.lastX, y: this.lastY },
+                            to: { x: e.clientX, y: e.clientY },
+                            color: this.ctx.strokeStyle,
+                            width: this.ctx.lineWidth,
+                            op: this.ctx.globalCompositeOperation
+                        });
+                    }
+
+                    [this.lastX, this.lastY] = [e.clientX, e.clientY];
+                },
+                stop() { this.isDrawing = false; },
+                setColor(c) {
+                    this.color = c;
+                    this.ctx.strokeStyle = c;
+                    this.ctx.lineWidth = 4;
+                    this.ctx.globalCompositeOperation = 'source-over';
+                    this.ctx.lineCap = 'round';
+                    this.ctx.lineJoin = 'round';
+
+                    document.querySelectorAll('.ink-color').forEach(el => el.classList.remove('active'));
+                    const btn = document.getElementById(`ink-col-${c.replace('#', '')}`);
+                    if (btn) btn.classList.add('active');
+                    document.getElementById('ink-eraser').classList.remove('active');
+                },
+                setEraser() {
+                    this.ctx.globalCompositeOperation = 'destination-out';
+                    this.ctx.lineWidth = 30;
+                    document.querySelectorAll('.ink-color').forEach(el => el.classList.remove('active'));
+                    document.getElementById('ink-eraser').classList.add('active');
+                },
+                clear() {
+                    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+                    if (state.channel) state.channel.postMessage({ type: 'ink_clear' });
+                }
             }
         };
 
@@ -3063,9 +3313,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
          * 6. MAIN CONTROLLER
          *******************************************************/
         const app = {
-            setTheme(t) { state.theme = t; localStorage.setItem('qv_theme', t); ui.applyState(); },
-            setMode(m) { state.mode = m; localStorage.setItem('qv_mode', m); ui.applyState(); },
-            setBrand(b) { state.brand = b; localStorage.setItem('qv_brand', b); ui.applyState(); },
+            setTheme(t) { state.theme = t; localStorage.setItem('qv_theme', t); ui.applyState(); this.broadcastState(); },
+            setMode(m) { state.mode = m; localStorage.setItem('qv_mode', m); ui.applyState(); this.broadcastState(); },
+            setBrand(b) { state.brand = b; localStorage.setItem('qv_brand', b); ui.applyState(); this.broadcastState(); },
 
             processInput() {
                 const val = ui.els.input.innerText.trim() ? ui.els.input.innerHTML : "";
@@ -3129,6 +3379,76 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             clear() {
                 features.setView('text', '');
                 ui.els.mainText.classList.remove('visible');
+                this.broadcastState();
+            },
+
+            broadcastState() {
+                if (!state.channel) return;
+                state.channel.postMessage({
+                    type: 'sync',
+                    state: {
+                        view: state.view,
+                        theme: state.theme,
+                        brand: state.brand,
+                        history: state.history,
+                        historyIndex: state.historyIndex,
+                        scores: state.scores,
+                        timerActive: !!state.timerInterval,
+                        pollLabels: features.poll.labels,
+                        pollVotes: features.poll.votes,
+                        pollActive: features.poll.active
+                    },
+                    data: state.view === 'text' ? ui.els.mainText.innerHTML : (state.view === 'qr' ? state.history[state.historyIndex] : null)
+                });
+            },
+
+            handleBroadcast(data) {
+                const params = new URLSearchParams(window.location.search);
+                const isProjector = params.get('mode') === 'projector';
+
+                if (data.type === 'request_sync' && !isProjector) {
+                    this.broadcastState();
+                }
+
+                if (data.type === 'sync' && isProjector) {
+                    const s = data.state;
+                    state.theme = s.theme;
+                    state.brand = s.brand;
+                    state.history = s.history;
+                    state.historyIndex = s.historyIndex;
+                    state.scores = s.scores;
+                    ui.applyState();
+
+                    if (s.view === 'poll' && s.pollActive) {
+                        features.poll.votes = s.pollVotes;
+                        features.poll.build(s.pollLabels, true);
+                    } else if (s.view === 'score') {
+                        features.score.build(Object.keys(s.scores).length, true);
+                    } else {
+                        features.setView(s.view, data.data);
+                    }
+                }
+
+                if (data.type === 'ink_stroke' && isProjector) {
+                    if (!features.ink.ctx) {
+                        const canvas = document.getElementById('ink-canvas');
+                        features.ink.ctx = canvas.getContext('2d');
+                        features.ink.resize();
+                    }
+                    features.ink.ctx.strokeStyle = data.color;
+                    features.ink.ctx.lineWidth = data.width;
+                    features.ink.ctx.globalCompositeOperation = data.op;
+                    features.ink.ctx.lineCap = 'round';
+                    features.ink.ctx.lineJoin = 'round';
+                    features.ink.ctx.beginPath();
+                    features.ink.ctx.moveTo(data.from.x, data.from.y);
+                    features.ink.ctx.lineTo(data.to.x, data.to.y);
+                    features.ink.ctx.stroke();
+                }
+
+                if (data.type === 'ink_clear' && isProjector) {
+                    if (features.ink.ctx) features.ink.ctx.clearRect(0, 0, features.ink.ctx.canvas.width, features.ink.ctx.canvas.height);
+                }
             }
         };
 
