@@ -207,12 +207,6 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         /* --- 2. RESET & BASE --- */
         * {
             box-sizing: border-box;
-            /* Global smooth color transitions for v3.0 morphing */
-            transition: background-color 1s ease-in-out, 
-                        border-color 1s ease-in-out, 
-                        color 1s ease-in-out, 
-                        box-shadow 1s ease-in-out,
-                        backdrop-filter 1s ease-in-out;
         }
 
         body,
@@ -223,8 +217,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             overflow: hidden;
             font-family: var(--font-main);
             color: var(--text-color);
+            transition: color 0.5s ease;
             user-select: none;
-            background-color: var(--bg-grad-1);
         }
 
         /* Animated Background */
@@ -694,10 +688,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             transform: translateY(-50%);
             width: 70px;
             height: 70px;
-            background: var(--glass-noise),
-                        linear-gradient(var(--glass-bg), var(--glass-bg)) padding-box,
-                        linear-gradient(to bottom, var(--glass-border-specular), transparent) border-box;
-            border: 1px solid transparent;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1046,11 +1038,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             max-height: 200px;
             min-height: 100px;
             overflow-y: auto;
-            background: var(--glass-noise),
-                        var(--input-bg) padding-box,
-                        linear-gradient(to bottom, var(--glass-border-specular), transparent) border-box;
-            border: 1px solid transparent;
+            border: 1px solid var(--glass-border);
             border-radius: 8px;
+            background: var(--input-bg);
         }
 
         .input-editor[placeholder]:empty:before {
@@ -2531,7 +2521,6 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 this.renderSoundDrawer();
                 this.showStartupMessage();
                 this.applyState();
-                this.updateDynamicContrast(); // Initial contrast check
                 // --- URL Params Handling ---
                 const params = new URLSearchParams(window.location.search);
 
@@ -2833,30 +2822,6 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
             confetti() {
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#4facfe', '#00f2fe', '#ffffff'] });
-            },
-
-            updateDynamicContrast() {
-                // Wait for CSS transitions to settle or read immediate computed style
-                const bg = getComputedStyle(document.body).backgroundColor;
-                const rgb = bg.match(/\d+/g);
-                if (!rgb) return;
-
-                // Perceived Brightness Formula (YIQ)
-                const yiq = ((rgb[0] * 299) + (rgb[1] * 587) + (rgb[2] * 114)) / 1000;
-
-                // Threshold: if > 180, it's a very light background
-                if (yiq > 180) {
-                    this.els.root.style.setProperty('--glass-bg', 'rgba(0, 0, 0, 0.05)');
-                    this.els.root.style.setProperty('--glass-border', 'rgba(0, 0, 0, 0.1)');
-                    this.els.root.style.setProperty('--glass-border-specular', 'rgba(255, 255, 255, 0.8)');
-                    this.els.root.style.setProperty('--text-color', '#111111');
-                } else {
-                    // Reset to theme defaults (removes inline overrides)
-                    this.els.root.style.removeProperty('--glass-bg');
-                    this.els.root.style.removeProperty('--glass-border');
-                    this.els.root.style.removeProperty('--glass-border-specular');
-                    this.els.root.style.removeProperty('--text-color');
-                }
             },
 
             showStartupMessage() {
@@ -3397,21 +3362,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
          * 6. MAIN CONTROLLER
          *******************************************************/
         const app = {
-            setTheme(t) { 
-                state.theme = t; 
-                localStorage.setItem('qv_theme', t); 
-                ui.applyState(); 
-                ui.updateDynamicContrast();
-                this.broadcastState(); 
-            },
+            setTheme(t) { state.theme = t; localStorage.setItem('qv_theme', t); ui.applyState(); this.broadcastState(); },
             setMode(m) { state.mode = m; localStorage.setItem('qv_mode', m); ui.applyState(); this.broadcastState(); },
-            setBrand(b) { 
-                state.brand = b; 
-                localStorage.setItem('qv_brand', b); 
-                ui.applyState(); 
-                ui.updateDynamicContrast();
-                this.broadcastState(); 
-            },
+            setBrand(b) { state.brand = b; localStorage.setItem('qv_brand', b); ui.applyState(); this.broadcastState(); },
 
             processInput() {
                 const val = ui.els.input.innerText.trim() ? ui.els.input.innerHTML : "";
