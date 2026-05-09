@@ -66,3 +66,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Dual Screen e Sincronização v2**
 *Link: [./tracks/v3_dualscreen_v2_20260508/](./tracks/v3_dualscreen_v2_20260508/)*
 
+
+---
+
+- [ ] **Track: Cinematografia e Morphing**
+*Link: [./tracks/cinematografia_morphing_20260509/](./tracks/cinematografia_morphing_20260509/)*
