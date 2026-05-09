@@ -204,6 +204,12 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         /* --- 2. RESET & BASE --- */
         * {
             box-sizing: border-box;
+            /* Global smooth color transitions for v3.0 morphing */
+            transition: background-color 1s ease-in-out, 
+                        border-color 1s ease-in-out, 
+                        color 1s ease-in-out, 
+                        box-shadow 1s ease-in-out,
+                        backdrop-filter 1s ease-in-out;
         }
 
         body,
