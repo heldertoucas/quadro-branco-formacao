@@ -8,15 +8,15 @@ const BRANDS = {
 };
 
 const SOUNDS = {
-    success: "https://heldertoucas.github.io/quadrobrancoformacao/certo.mp3",
-    error: "https://heldertoucas.github.io/quadrobrancoformacao/errado.mp3",
-    pointUp: "https://heldertoucas.github.io/quadrobrancoformacao/mais_um_ponto.mp3",
-    pointDown: "https://heldertoucas.github.io/quadrobrancoformacao/menos_um_ponto.mp3",
-    drum: "https://heldertoucas.github.io/quadrobrancoformacao/rufar.mp3",
-    clap: "https://heldertoucas.github.io/quadrobrancoformacao/aplausos.mp3",
-    palmas: "https://heldertoucas.github.io/quadrobrancoformacao/palmas.mp3",
-    fanfare: "https://heldertoucas.github.io/quadrobrancoformacao/trompetas.mp3",
-    trophy: "https://heldertoucas.github.io/quadrobrancoformacao/sucesso_guitarra.mp3"
+    success: "sounds/certo.mp3",
+    error: "sounds/errado.mp3",
+    pointUp: "sounds/mais_um_ponto.mp3",
+    pointDown: "sounds/menos_um_ponto.mp3",
+    drum: "sounds/rufar.mp3",
+    clap: "sounds/aplausos.mp3",
+    palmas: "sounds/palmas.mp3",
+    fanfare: "sounds/trompetas.mp3",
+    trophy: "sounds/sucesso_guitarra.mp3"
 };
 
 const SOUND_METADATA = [
