@@ -679,7 +679,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
         h1.rich-content ul,
         h1.rich-content ol {
-            text-align: left;
+            text-align: inherit;
             margin: 0 auto;
             display: inline-block;
             padding-left: 2rem;
@@ -2232,11 +2232,13 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     <line x1="21" y1="18" x2="3" y2="18"></line>
                 </svg>
             </button>
+            <button id="fmt-right" class="fmt-btn"
+                onclick="ui.setTextAlignment('right')" title="Direita">
                 <svg viewBox="0 0 24 24">
-                    <line x1="21" y1="10" x2="3" y2="10"></line>
+                    <line x1="21" y1="10" x2="7" y2="10"></line>
                     <line x1="21" y1="6" x2="3" y2="6"></line>
                     <line x1="21" y1="14" x2="3" y2="14"></line>
-                    <line x1="21" y1="18" x2="3" y2="18"></line>
+                    <line x1="21" y1="18" x2="7" y2="18"></line>
                 </svg>
             </button>
             <div class="separator" style="height: 16px;"></div>
@@ -2253,6 +2255,11 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     <path d="M19 17v4"></path>
                     <path d="M3 5h4"></path>
                     <path d="M17 19h4"></path>
+                </svg>
+            </button>
+            <button id="btn-animate" class="fmt-btn" onclick="ui.toggleAnimations()" title="Animar Texto">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
                 </svg>
             </button>
             <div class="separator" style="height: 16px;"></div>
@@ -2682,6 +2689,19 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 `).join('');
             },
 
+            animateTextIn(text, element) {
+                element.innerHTML = '';
+                // Split by word but preserve whitespace
+                const words = text.split(/(\s+)/);
+                words.forEach((word, index) => {
+                    const span = document.createElement('span');
+                    span.className = 'word-span';
+                    span.style.animationDelay = `${index * 0.05}s`;
+                    span.innerText = word;
+                    element.appendChild(span);
+                });
+            },
+
             updateDisplay(text, isQR = false) {
                 const isHtml = /<[a-z][\s\S]*>/i.test(text) || text.includes('style=') || text.includes('<b>') || text.includes('<i>');
 
@@ -2780,14 +2800,34 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     { id: 'fmt-italic', cmd: 'italic' },
                     { id: 'fmt-underline', cmd: 'underline' },
                     { id: 'fmt-list', cmd: 'insertUnorderedList' },
-                    { id: 'fmt-num', cmd: 'insertOrderedList' },
-                    { id: 'fmt-left', cmd: 'justifyLeft' },
-                    { id: 'fmt-center', cmd: 'justifyCenter' }
+                    { id: 'fmt-num', cmd: 'insertOrderedList' }
                 ];
                 commands.forEach(c => {
                     const btn = document.getElementById(c.id);
                     if (btn) btn.classList.toggle('active', document.queryCommandState(c.cmd));
                 });
+
+                // Alignment
+                ['left', 'center', 'right'].forEach(align => {
+                    const btn = document.getElementById(`fmt-${align}`);
+                    if (btn) btn.classList.toggle('active', state.textAlignment === align);
+                });
+
+                // Custom Toggles
+                const btnSerif = document.getElementById('btn-serif');
+                if (btnSerif) btnSerif.classList.toggle('active', state.isSerif);
+
+                const btnHighlight = document.getElementById('btn-highlight');
+                if (btnHighlight) btnHighlight.classList.toggle('active', state.isHighlight);
+
+                const btnAnimate = document.getElementById('btn-animate');
+                if (btnAnimate) btnAnimate.classList.toggle('active', state.isAnimated);
+            },
+
+            toggleAnimations() {
+                state.isAnimated = !state.isAnimated;
+                this.applyState();
+                app.broadcastState();
             },
 
             toggleSerif() {
@@ -2881,20 +2921,18 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
                 const btnSerif = document.getElementById('btn-serif');
                 const btnHighlight = document.getElementById('btn-highlight');
+                const btnAnimate = document.getElementById('btn-animate');
                 if (btnSerif) btnSerif.classList.toggle('active', state.isSerif);
                 if (btnHighlight) btnHighlight.classList.toggle('active', state.isHighlight);
+                if (btnAnimate) btnAnimate.classList.toggle('active', state.isAnimated);
 
                 this.els.mainText.classList.toggle('serif-mode', state.isSerif);
                 this.els.mainText.classList.toggle('highlight-mode', state.isHighlight);
 
                 // Alignment
                 this.els.mainText.style.textAlign = state.textAlignment;
-                ['left', 'center'].forEach(a => {
-                    const btn = document.getElementById(`fmt-${a}`);
-                    if (btn) btn.classList.toggle('active', state.textAlignment === a);
-                });
 
-                if (state.isExpanded) this.updateFormatButtons();
+                this.updateFormatButtons();
 
                 const slideBtn = document.getElementById('btn-create-slide');
                 const linkBtn = document.getElementById('btn-links');
@@ -3556,6 +3594,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         brand: state.brand,
                         isSerif: state.isSerif,
                         isHighlight: state.isHighlight,
+                        isAnimated: state.isAnimated,
                         textAlignment: state.textAlignment,
                         history: state.history,
                         historyIndex: state.historyIndex,
@@ -3583,6 +3622,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     state.brand = s.brand;
                     state.isSerif = s.isSerif;
                     state.isHighlight = s.isHighlight;
+                    state.isAnimated = s.isAnimated;
                     state.textAlignment = s.textAlignment;
                     state.history = s.history;
                     state.historyIndex = s.historyIndex;
