@@ -1,0 +1,8 @@
+{
+  "track_id": "text_submenu_refinement_20260509",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-05-09T00:00:00Z",
+  "updated_at": "2026-05-09T00:00:00Z",
+  "description": "let's create a track that focuses on the text submenu. let's make sure all buttons work as intended. let's make sure the toggle signaling work. let's make sure the text alignment is applied to the projected screen, as well as lists and numbered lists"
+}

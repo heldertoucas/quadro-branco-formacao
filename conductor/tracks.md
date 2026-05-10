@@ -61,7 +61,3 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Dual Screen e Sincronização v2**
 *Link: [./tracks/v3_dualscreen_v2_20260508/](./tracks/v3_dualscreen_v2_20260508/)*
 
----
-
-- [x] **Track: Text Submenu Refinement**
-*Link: [./tracks/text_submenu_refinement_20260509/](./tracks/text_submenu_refinement_20260509/)*
