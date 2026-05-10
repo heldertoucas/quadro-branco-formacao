@@ -14,7 +14,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Ink Overlay (Desenho) v2**
+- [x] **Track: Ink Overlay (Desenho) v2**
 *Link: [./tracks/v3_ink_v2_20260508/](./tracks/v3_ink_v2_20260508/)*
 
 ---
