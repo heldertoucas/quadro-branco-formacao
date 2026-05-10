@@ -13,7 +13,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Tipografia e Escala Dinâmica v3.0**
+- [x] **Track: Tipografia e Escala Dinâmica v3.0**
 *Link: [./tracks/v3_typography_20260508/](./tracks/v3_typography_20260508/)*
 
 ---
