@@ -457,8 +457,9 @@ const ui = {
         document.getElementById('nav-right').classList.toggle('visible', canFwd);
     },
 
-    confetti() {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#4facfe', '#00f2fe', '#ffffff'] });
+    confetti(customColors) {
+        const colors = customColors || ['#4facfe', '#00f2fe', '#ffffff'];
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: colors });
     },
 
     showStartupMessage() {

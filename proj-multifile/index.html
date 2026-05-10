@@ -135,11 +135,16 @@
         <div id="poll-display"></div>
         <div id="poll-actions">
             <button class="poll-btn" onclick="features.poll.checkWinner()" title="Apurar Vencedor" style="background:var(--success-color); color:white; width:auto; padding:0 20px;">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" style="margin-right:8px;">${ICONS.Target}</svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" style="margin-right:8px;">
+                    <circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle>
+                </svg>
                 Apurar
             </button>
             <button class="poll-btn" onclick="features.poll.close()" title="Fechar Votação" style="background:var(--danger-color); color:white;">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none">${ICONS.X}</svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" style="margin-right:8px;">
+                    <circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                Fechar
             </button>
         </div>
         <canvas id="ink-canvas"></canvas>

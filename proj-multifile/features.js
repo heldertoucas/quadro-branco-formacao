@@ -222,7 +222,15 @@ const features = {
             this.votes[index] = Math.max(0, this.votes[index] + delta);
             document.getElementById(`poll-count-${index}`).innerText = this.votes[index];
             this.refreshBars();
+            
+            // v2: Impact Micro-interaction
+            const item = document.getElementById(`poll-item-${index}`);
+            item.classList.remove('poll-impact');
+            void item.offsetWidth; // Trigger reflow
+            item.classList.add('poll-impact');
+
             AudioService.toggle(delta > 0 ? 'pointUp' : 'pointDown');
+            app.broadcastState();
         },
         refreshBars() {
             const maxVotes = Math.max(...this.votes, 1);
@@ -236,10 +244,31 @@ const features = {
             if (max === 0) return;
             const winners = [];
             this.votes.forEach((v, i) => { if (v === max) winners.push(i); });
-            document.querySelectorAll('.poll-item').forEach(el => el.classList.remove('poll-winner-highlight'));
+            
+            // v2: Winner Ceremony
+            document.querySelectorAll('.poll-item').forEach((el, idx) => {
+                el.classList.remove('poll-winner-highlight', 'losing-option');
+                if (!winners.includes(idx)) {
+                    el.classList.add('losing-option');
+                }
+            });
+            
             winners.forEach(i => { document.getElementById(`poll-item-${i}`).classList.add('poll-winner-highlight'); });
+            
             AudioService.toggle('trophy');
-            ui.confetti();
+            
+            // v2: Color-coordinated Confetti
+            const palette = [
+                ['#FF5252', '#B71C1C', '#ffffff'], // col-1
+                ['#448AFF', '#1565C0', '#ffffff'], // col-2
+                ['#69F0AE', '#2E7D32', '#ffffff'], // col-3
+                ['#FFD740', '#F9A825', '#ffffff'], // col-4
+                ['#E040FB', '#6A1B9A', '#ffffff'], // col-5
+                ['#00E5FF', '#006064', '#ffffff']  // col-6
+            ];
+            const winnerColors = winners.length === 1 ? palette[winners[0]] : null;
+            ui.confetti(winnerColors);
+            
             app.broadcastState();
         },
         close() {
@@ -247,6 +276,10 @@ const features = {
             document.getElementById('poll-display').style.display = 'none';
             document.getElementById('poll-actions').style.display = 'none';
             document.removeEventListener('keydown', this._keyHandler);
+            
+            // Stop any active sounds (especially trophy)
+            Object.keys(state.activeSounds).forEach(key => AudioService.toggle(key));
+            
             app.clear();
         }
     },
