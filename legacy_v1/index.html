@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadro Vivo - Master Edition v5.9</title>
+
+    <!-- Bibliotecas Externas (CDNs) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Fonte Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIÁVEIS DE TEMA --- */
+        :root {
+            --bg-grad-1: #0f2027;
+            --bg-grad-2: #203a43;
+            --bg-grad-3: #2c5364;
+            --text-color: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-hover: rgba(255, 255, 255, 0.2);
+            --accent-color: #4facfe;
+            --danger-color: #ff6b6b;
+            --success-color: #51cf66;
+            --warn-color: #fcc419;
+            --clap-color: #d63384;
+            --gold-color: #ffd700;
+            --font-main: 'Montserrat', sans-serif;
+            --font-size-base: 5rem;
+        }
+
+        [data-theme="light"] {
+            --bg-grad-1: #dfe9f3;
+            --bg-grad-2: #ffffff;
+            --bg-grad-3: #fdfbfb;
+            --text-color: #1a1a1a;
+            --glass-bg: rgba(0, 0, 0, 0.04);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-hover: rgba(0, 0, 0, 0.08);
+            --accent-color: #005bea;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: var(--font-main);
+            color: var(--text-color);
+            transition: color 0.5s ease;
+            user-select: none;
+        }
+
+        /* Fundo Animado */
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3));
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* LOGÓTIPO E MENU DE ESTILOS */
+        #logo-area {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            z-index: 200;
+            cursor: pointer;
+        }
+
+        #logo-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        #logo-trigger:hover {
+            opacity: 1;
+        }
+
+        #app-logo {
+            height: 45px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        #logo-arrow {
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+            color: var(--text-color);
+            opacity: 0.5;
+        }
+
+        /* Menu Dropdown Genérico */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 15px;
+            width: 260px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeInMenu 0.2s ease-out;
+            z-index: 201;
+        }
+
+        #logo-area.active .dropdown-menu {
+            display: flex;
+        }
+
+        #logo-area.active #logo-arrow {
+            transform: rotate(180deg);
+        }
+
+        @keyframes fadeInMenu {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-category {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-color);
+            opacity: 0.5;
+            padding: 8px 10px 4px 10px;
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        .menu-item {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        .menu-item:hover {
+            background: var(--glass-hover);
+            opacity: 1;
+        }
+
+        .menu-item.active {
+            background: var(--glass-hover);
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .menu-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid var(--text-color);
+            opacity: 0.5;
+        }
+
+        .menu-item.active .menu-dot {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            opacity: 1;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: var(--glass-border);
+            margin: 6px 0;
+            opacity: 0.5;
+            width: 100%;
+        }
+
+        /* Área Principal */
+        #display-area {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: var(--font-size-base);
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0;
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            transition: font-size 0.3s ease, opacity 0.5s, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        /* Navegação */
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 70px;
+            height: 70px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 90;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+            color: var(--text-color);
+        }
+
+        .nav-arrow.visible {
+            opacity: 0.6;
+            pointer-events: all;
+        }
+
+        .nav-arrow:hover {
+            opacity: 1;
+            transform: translateY(-50%) scale(1.15);
+            background: var(--glass-hover);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-arrow.left {
+            left: 30px;
+        }
+
+        .nav-arrow.right {
+            right: 30px;
+        }
+
+        .nav-arrow svg {
+            width: 32px;
+            height: 32px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+        }
+
+        .nav-queue-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent-color);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilos Auxiliares */
+        .list-mode {
+            text-align: left;
+            font-size: 0.6em;
+            display: inline-block;
+        }
+
+        .list-bullet {
+            color: var(--accent-color);
+            margin-right: 15px;
+        }
+
+        .dice-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dice-result-label {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .dice-result-label.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dice-visuals {
+            display: flex;
+            gap: 30px;
+            font-size: 10rem;
+            line-height: 1;
+            color: var(--text-color);
+            text-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .dice-shake {
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
+
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg);
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
+        }
+
+        .visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .exiting {
+            opacity: 0;
+            transform: scale(1.1) translateY(-40px);
+            transition: all 0.4s ease-in;
+        }
+
+        #qr-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* PLACAR DINÂMICO */
+        #scoreboard {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 50;
+            display: none;
+            align-items: center;
+        }
+
+        .score-team {
+            text-align: center;
+            background: var(--glass-bg);
+            padding: 10px 20px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border 0.3s;
+            min-width: 100px;
+        }
+
+        .score-team:hover {
+            transform: scale(1.05);
+            background: var(--glass-hover);
+        }
+
+        /* Estilo de Vencedor */
+        .score-team.winner-highlight {
+            transform: scale(1.2);
+            border: 3px solid var(--gold-color);
+            background: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            z-index: 60;
+        }
+
+        .score-val {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+
+        /* Botão Alvo (Vencedor) */
+        .score-action-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-color);
+            margin-left: 10px;
+        }
+
+        .score-action-btn:hover {
+            background: var(--glass-hover);
+            transform: scale(1.1);
+            color: var(--gold-color);
+        }
+
+        #timer-overlay {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            font-weight: 300;
+            background: var(--glass-bg);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(5px);
+            display: none;
+            z-index: 100;
+        }
+
+        /* Painel de Controlo */
+        #control-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 75%;
+            max-width: 900px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.7;
+            z-index: 100;
+        }
+
+        #control-panel.expanded {
+            border-radius: 20px;
+            padding: 20px;
+            background: rgba(15, 32, 39, 0.85);
+        }
+
+        #control-panel:hover,
+        #control-panel:focus-within,
+        #control-panel.drawer-open {
+            opacity: 1;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* TOOLBAR */
+        #toolbar {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #control-panel:focus-within #toolbar,
+        #control-panel.expanded #toolbar,
+        #control-panel.drawer-open #toolbar {
+            max-height: 120px;
+            opacity: 1;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        /* GAVETA DE SOM */
+        #sound-drawer {
+            width: 100%;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #sound-drawer.open {
+            max-height: 180px;
+            opacity: 1;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        /* Botões */
+        .tool-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.8;
+        }
+
+        .tool-btn:hover,
+        .tool-btn.active {
+            background: var(--glass-hover);
+            border-color: var(--glass-border);
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+
+        .tool-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* Legendas */
+        .tool-btn span {
+            display: inline-block;
+        }
+
+        .separator {
+            width: 1px;
+            background: var(--glass-border);
+            height: 24px;
+            margin: 0 5px;
+        }
+
+        /* Estilo Ativo Genérico */
+        .tool-btn.sound-playing {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--text-color);
+            opacity: 1;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            animation: pulseEffect 0.5s infinite alternate;
+        }
+
+        /* Estilos de Loop Específicos */
+        .tool-btn.drum-active {
+            background: rgba(252, 196, 25, 0.2);
+            border-color: var(--warn-color);
+        }
+
+        .tool-btn.drum-active svg {
+            stroke: var(--warn-color);
+        }
+
+        .tool-btn.clap-active {
+            background: rgba(214, 51, 132, 0.2);
+            border-color: var(--clap-color);
+        }
+
+        .tool-btn.clap-active svg {
+            stroke: var(--clap-color);
+        }
+
+        /* Botões da Gaveta de Som (Grid) */
+        .sound-drawer-btn {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+        }
+
+        @keyframes pulseEffect {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.05);
+            }
+        }
+
+        /* --- MODO SIMPLES --- */
+        body[data-mode="simple"] .tool-btn:not(.simple-safe) {
+            display: none;
+        }
+
+        body[data-mode="simple"] .separator {
+            display: none;
+        }
+
+        .input-wrapper {
+            width: 100%;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        textarea {
+            flex-grow: 1;
+            padding: 8px 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            outline: none;
+            font-family: var(--font-main);
+            text-align: left;
+            resize: none;
+            height: 40px;
+            transition: height 0.3s ease;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        #control-panel.expanded textarea {
+            height: 150px;
+            overflow-y: auto;
+        }
+
+        textarea::placeholder {
+            color: rgba(150, 150, 150, 0.7);
+        }
+
+        #btn-send {
+            display: none;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #control-panel.expanded #btn-send {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #btn-send:hover {
+            transform: scale(1.1);
+        }
+
+        #btn-send:active {
+            transform: scale(0.95);
+        }
+
+        #queue-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--accent-color);
+        }
+
+        .bg-highlight {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0 10px;
+            border-radius: 5px;
+        }
+
+        /* Ajuste Mobile */
+        @media (max-width: 768px) {
+            .tool-btn span {
+                display: none;
+            }
+
+            .tool-btn {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body data-mode="pro">
+
+    <div class="background"></div>
+
+    <!-- MENU DE SELEÇÃO DE ESTILO -->
+    <div id="logo-area">
+        <div id="logo-trigger" onclick="toggleMenu(event)">
+            <img id="app-logo" src="" alt="Logo">
+            <span id="logo-arrow">▼</span>
+        </div>
+
+        <div id="style-menu" class="dropdown-menu">
+            <div class="menu-category">Projeto / Identidade</div>
+            <div class="menu-item" id="brand-futuro" onclick="setBrand('futuro')">
+                <div class="menu-dot"></div> Futuro Digital
+            </div>
+            <div class="menu-item" id="brand-passaporte" onclick="setBrand('passaporte')">
+                <div class="menu-dot"></div> Passaporte Competências
+            </div>
+            <div class="menu-item" id="brand-ia" onclick="setBrand('ia')">
+                <div class="menu-dot"></div> IA para Todos
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-category">Modo</div>
+            <div class="menu-item" id="mode-pro" onclick="setMode('pro')">
+                <div class="menu-dot"></div> Pro
+            </div>
+            <div class="menu-item" id="mode-simple" onclick="setMode('simple')">
+                <div class="menu-dot"></div> Simples (Zen)
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-category">Ambiente</div>
+            <div class="menu-item" id="theme-dark" onclick="setTheme('dark')">
+                <div class="menu-dot"></div> Escuro
+            </div>
+            <div class="menu-item" id="theme-light" onclick="setTheme('light')">
+                <div class="menu-dot"></div> Claro
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegação Lateral -->
+    <div id="nav-left" class="nav-arrow left" onclick="navPrev()" title="Recuar (Histórico)">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 18-6-6 6-6" />
+        </svg>
+    </div>
+    <div id="nav-right" class="nav-arrow right" onclick="navNext()" title="Avançar (Fila ou Histórico)">
+        <div id="nav-queue-count" class="nav-queue-badge">0</div>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6" />
+        </svg>
+    </div>
+
+    <!-- Placar -->
+    <div id="scoreboard">
+        <!-- Gerado Dinamicamente -->
+    </div>
+
+    <!-- Temporizador -->
+    <div id="timer-overlay">00:00</div>
+
+    <!-- Área de Conteúdo -->
+    <div id="display-area">
+        <h1 id="main-text"></h1>
+        <div id="qr-container"></div>
+    </div>
+
+    <!-- Controlo -->
+    <div id="control-panel">
+
+        <div id="toolbar">
+            <button class="tool-btn simple-safe" id="btn-expand" onclick="toggleExpand()"
+                title="Modo Lista/Texto Longo">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="21" y1="10" x2="3" y2="10"></line>
+                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                    <line x1="21" y1="18" x2="3" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="separator"></div>
+
+            <button class="tool-btn simple-safe" onclick="btnTimer()" title="Definir tempo">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Timer</span>
+            </button>
+            <button class="tool-btn" onclick="toggleScoreboard()" title="Mostrar Placar">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+                <span>Placar</span>
+            </button>
+
+            <div class="separator"></div>
+
+            <button class="tool-btn" onclick="btnDice()" title="Gerar Dados">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                    <path d="M16 8h.01"></path>
+                    <path d="M8 8h.01"></path>
+                    <path d="M8 16h.01"></path>
+                    <path d="M16 16h.01"></path>
+                    <path d="M12 12h.01"></path>
+                </svg>
+                <span>Dados</span>
+            </button>
+            <button class="tool-btn" onclick="btnRandomPicker()" title="Sortear Nome">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z">
+                    </path>
+                </svg>
+                <span>Sorteio</span>
+            </button>
+
+            <div class="separator"></div>
+
+            <button id="btn-sound-drawer" class="tool-btn" onclick="toggleSoundDrawer()" title="Sons">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <span>Sons</span>
+            </button>
+
+            <button class="tool-btn simple-safe" onclick="btnGenerateQR()" title="Criar QR Code">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="5" height="5" x="3" y="3" rx="1"></rect>
+                    <rect width="5" height="5" x="16" y="3" rx="1"></rect>
+                    <rect width="5" height="5" x="3" y="16" rx="1"></rect>
+                    <path d="M21 16h-3a2 2 0 0 0-2 2v3"></path>
+                    <path d="M21 21v.01"></path>
+                    <path d="M12 7v3a2 2 0 0 1-2 2H7"></path>
+                    <path d="M3 12h.01"></path>
+                    <path d="M12 3h.01"></path>
+                    <path d="M12 16v.01"></path>
+                    <path d="M16 12h1"></path>
+                    <path d="M21 12v.01"></path>
+                    <path d="M12 21v-1"></path>
+                </svg>
+                <!-- Sem legenda -->
+            </button>
+
+            <div class="separator"></div>
+
+            <button class="tool-btn simple-safe" onclick="btnClear()" title="Limpar Ecrã">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+                <!-- Sem legenda -->
+            </button>
+        </div>
+
+        <!-- GAVETA DE SONS -->
+        <div id="sound-drawer">
+            <button id="btn-success" class="tool-btn sound-drawer-btn" onclick="toggleSound('success')" title="Sucesso">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--success-color);">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <!-- Sem legenda -->
+            </button>
+            <button id="btn-error" class="tool-btn sound-drawer-btn" onclick="toggleSound('error')" title="Erro">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--danger-color);">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <!-- Sem legenda -->
+            </button>
+            <button id="btn-drum" class="tool-btn sound-drawer-btn" onclick="toggleSound('drum')" title="Tambores">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--warn-color);">
+                    <path d="M12 2c5.5 0 10 1.8 10 4s-4.5 4-10 4S2 8.2 2 6s4.5-4 10-4z"></path>
+                    <path d="M22 6v8c0 2.2-4.5 4-10 4S2 16.2 2 14V6"></path>
+                    <line x1="7" y1="15" x2="7.5" y2="21"></line>
+                    <line x1="17" y1="15" x2="16.5" y2="21"></line>
+                </svg>
+                <!-- Sem legenda -->
+            </button>
+            <button id="btn-clap" class="tool-btn sound-drawer-btn" onclick="toggleSound('clap')"
+                title="Aplauso (Ovação)">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--clap-color);">
+                    <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"></path>
+                    <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path>
+                </svg>
+                <span>Aplauso</span>
+            </button>
+            <button id="btn-palmas" class="tool-btn sound-drawer-btn" onclick="toggleSound('palmas')"
+                title="Palmas Rítmicas">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--clap-color);">
+                    <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"></path>
+                    <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path>
+                </svg>
+                <span>Palmas</span>
+            </button>
+
+            <button id="btn-pointUp" class="tool-btn sound-drawer-btn" onclick="toggleSound('pointUp')" title="+1">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--success-color);">
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                </svg>
+                <span>+1</span>
+            </button>
+            <button id="btn-pointDown" class="tool-btn sound-drawer-btn" onclick="toggleSound('pointDown')" title="-1">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--danger-color);">
+                    <path d="M5 12h14"></path>
+                </svg>
+                <span>-1</span>
+            </button>
+
+            <button id="btn-fanfare" class="tool-btn sound-drawer-btn" onclick="toggleSound('fanfare')"
+                title="Fanfarra">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--warn-color);">
+                    <path d="M8 21h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z"></path>
+                    <line x1="16" y1="4" x2="16" y2="20"></line>
+                    <path d="M4 14h2"></path>
+                    <path d="M4 10h2"></path>
+                    <path d="M20 10h2"></path>
+                    <path d="M20 14h2"></path>
+                </svg>
+                <!-- Sem legenda -->
+            </button>
+
+            <button id="btn-trophy" class="tool-btn sound-drawer-btn" onclick="toggleSound('trophy')" title="Vitória">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                    style="stroke: var(--gold-color);">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+                <!-- Sem legenda -->
+            </button>
+        </div>
+
+        <div class="input-wrapper">
+            <textarea id="input-text" rows="1" placeholder="Escreva... (Shift+Enter para Fila)"
+                autocomplete="off"></textarea>
+            <button id="btn-send" onclick="manualSubmit()" title="Projetar (Ctrl+Enter)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+            <div id="queue-badge">0 na Fila</div>
+        </div>
+    </div>
+
+    <script>
+        const AUDIO_URLS = {
+            success: "https://heldertoucas.github.io/quadrobrancoformacao/certo.mp3",
+            error: "https://heldertoucas.github.io/quadrobrancoformacao/errado.mp3",
+            pointUp: "https://heldertoucas.github.io/quadrobrancoformacao/mais_um_ponto.mp3",
+            pointDown: "https://heldertoucas.github.io/quadrobrancoformacao/menos_um_ponto.mp3",
+            drum: "https://heldertoucas.github.io/quadrobrancoformacao/rufar.mp3",
+            clap: "https://heldertoucas.github.io/quadrobrancoformacao/aplausos.mp3",
+            palmas: "https://heldertoucas.github.io/quadrobrancoformacao/palmas.mp3",
+            fanfare: "https://heldertoucas.github.io/quadrobrancoformacao/trompetas.mp3",
+            trophy: "https://heldertoucas.github.io/quadrobrancoformacao/sucesso_guitarra.mp3"
+        };
+
+        const BRANDS = {
+            'futuro': { light: 'https://i.imgur.com/L7wNgqt.png', dark: 'https://i.imgur.com/9IkzQXi.png', name: 'Futuro Digital' },
+            'passaporte': { light: 'https://i.imgur.com/Rzf5kQ3.png', dark: 'https://i.imgur.com/Mzwq7n0.png', name: 'Passaporte Competências' },
+            'ia': { light: 'https://i.imgur.com/9qGRGAt.png', dark: 'https://i.imgur.com/QPifhum.png', name: 'IA para Todos' }
+        };
+
+        const state = {
+            queue: [], history: [], historyIndex: -1, currentFontSize: 5, timerInterval: null,
+            theme: 'dark', mode: 'pro', brand: 'futuro', scores: {},
+            audioCtx: null, isExpanded: false, noiseBuffer: null,
+            activeSounds: {}
+        };
+
+        const els = {
+            input: document.getElementById('input-text'),
+            mainText: document.getElementById('main-text'),
+            qrContainer: document.getElementById('qr-container'),
+            queueBadge: document.getElementById('queue-badge'),
+            timer: document.getElementById('timer-overlay'),
+            scoreboard: document.getElementById('scoreboard'),
+            controlPanel: document.getElementById('control-panel'),
+            btnExpand: document.getElementById('btn-expand'),
+            navLeft: document.getElementById('nav-left'),
+            navRight: document.getElementById('nav-right'),
+            navCount: document.getElementById('nav-queue-count'),
+            logoArea: document.getElementById('logo-area'),
+            appLogo: document.getElementById('app-logo'),
+            btnDrum: document.getElementById('btn-drum'),
+            btnSoundDrawer: document.getElementById('btn-sound-drawer'),
+            soundDrawer: document.getElementById('sound-drawer'),
+            root: document.documentElement
+        };
+
+        function init() {
+            state.mode = localStorage.getItem('qv_mode') || 'pro';
+            state.theme = localStorage.getItem('qv_theme') || 'dark';
+            state.brand = localStorage.getItem('qv_brand') || 'futuro';
+            updateAppState();
+            updateDisplay("Olá! Vamos começar?", "text");
+            els.input.focus();
+            document.addEventListener('click', (e) => {
+                if (!els.logoArea.contains(e.target)) els.logoArea.classList.remove('active');
+            });
+        }
+
+        // --- SISTEMA DE ÁUDIO UNIFICADO ---
+        function initAudio() {
+            if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (!state.noiseBuffer && state.audioCtx) {
+                const bufferSize = state.audioCtx.sampleRate;
+                const buffer = state.audioCtx.createBuffer(1, bufferSize, state.audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+                state.noiseBuffer = buffer;
+            }
+        }
+
+        function toggleSound(key) {
+            initAudio();
+            if (state.activeSounds[key]) {
+                const sound = state.activeSounds[key];
+                if (sound.type === 'url' && sound.audio) {
+                    sound.audio.pause();
+                    sound.audio.currentTime = 0;
+                }
+                delete state.activeSounds[key];
+                updateSoundButtonState(key, false);
+                return;
+            }
+            const url = AUDIO_URLS[key];
+            const isLoop = (key === 'drum' || key === 'clap' || key === 'palmas');
+            if (url) {
+                const audio = new Audio(url);
+                audio.loop = isLoop;
+                state.activeSounds[key] = { audio: audio, type: 'url' };
+                updateSoundButtonState(key, true);
+                if (!isLoop) {
+                    audio.onended = () => {
+                        delete state.activeSounds[key];
+                        updateSoundButtonState(key, false);
+                    };
+                }
+                audio.play().catch(e => {
+                    console.log("Erro URL, fallback synth", e);
+                    playSynthesis(key);
+                    delete state.activeSounds[key];
+                    updateSoundButtonState(key, false);
+                });
+            } else {
+                playSynthesis(key);
+            }
+            if (key === 'fanfare' || key === 'trophy') triggerConfetti(0.5);
+        }
+
+        function updateSoundButtonState(key, isActive) {
+            const btn = document.getElementById(`btn-${key}`);
+            if (!btn) return;
+            if (key === 'drum') isActive ? btn.classList.add('drum-active') : btn.classList.remove('drum-active');
+            else if (key === 'clap' || key === 'palmas') isActive ? btn.classList.add('clap-active') : btn.classList.remove('clap-active');
+            else isActive ? btn.classList.add('sound-playing') : btn.classList.remove('sound-playing');
+        }
+
+        function playSynthesis(key) {
+            const ctx = state.audioCtx;
+            const now = ctx.currentTime;
+            if (key === 'success') { playTone(523.25, 'sine', 0.1, now); playTone(659.25, 'sine', 0.1, now + 0.1); playTone(783.99, 'triangle', 0.3, now + 0.2); }
+            else if (key === 'error') { playTone(150, 'sawtooth', 0.3, now); playTone(100, 'sawtooth', 0.3, now + 0.2); }
+            else if (key === 'pointUp') { playTone(880, 'sine', 0.1, now); }
+            else if (key === 'pointDown') { playTone(200, 'square', 0.2, now); }
+            else if (key === 'fanfare') { playTone(523.25, 'triangle', 0.15, now); playTone(659.25, 'triangle', 0.15, now + 0.15); playTone(783.99, 'triangle', 0.15, now + 0.3); playTone(1046.50, 'triangle', 0.6, now + 0.45); }
+            else if (key === 'trophy') { playTone(392.00, 'square', 0.1, now); playTone(523.25, 'square', 0.1, now + 0.1); playTone(659.25, 'square', 0.1, now + 0.2); playTone(783.99, 'square', 0.4, now + 0.3); playTone(523.25, 'square', 0.1, now + 0.7); playTone(1046.50, 'square', 0.8, now + 0.8); }
+        }
+
+        function playTone(freq, type, dur, time) {
+            const osc = state.audioCtx.createOscillator();
+            const gain = state.audioCtx.createGain();
+            osc.type = type; osc.frequency.value = freq;
+            osc.connect(gain); gain.connect(state.audioCtx.destination);
+            gain.gain.setValueAtTime(0.1, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+            osc.start(time); osc.stop(time + dur);
+        }
+
+        function triggerConfetti(scalar = 1) {
+            confetti({ particleCount: 150 * scalar, spread: 70, origin: { y: 0.6 }, colors: ['#4facfe', '#00f2fe', '#ffffff'] });
+        }
+
+        // --- UI GERAL ---
+        function toggleSoundDrawer() {
+            els.soundDrawer.classList.toggle('open');
+            els.controlPanel.classList.toggle('drawer-open');
+            els.btnSoundDrawer.classList.toggle('active');
+            els.input.focus();
+        }
+
+        function setMode(mode) { state.mode = mode; localStorage.setItem('qv_mode', mode); updateAppState(); }
+        function setTheme(theme) { state.theme = theme; localStorage.setItem('qv_theme', theme); updateAppState(); }
+        function setBrand(brand) { state.brand = brand; localStorage.setItem('qv_brand', brand); updateAppState(); }
+        function toggleMenu(e) { e.stopPropagation(); els.logoArea.classList.toggle('active'); }
+
+        function updateAppState() {
+            document.body.setAttribute('data-mode', state.mode);
+            els.root.setAttribute('data-theme', state.theme);
+            const brandData = BRANDS[state.brand];
+            if (brandData) { els.appLogo.src = state.theme === 'light' ? brandData.light : brandData.dark; els.appLogo.alt = brandData.name; }
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            if (document.getElementById(`mode-${state.mode}`)) document.getElementById(`mode-${state.mode}`).classList.add('active');
+            if (document.getElementById(`theme-${state.theme}`)) document.getElementById(`theme-${state.theme}`).classList.add('active');
+            if (document.getElementById(`brand-${state.brand}`)) document.getElementById(`brand-${state.brand}`).classList.add('active');
+            if (state.mode === 'simple') {
+                els.scoreboard.style.display = 'none';
+                clearInterval(state.timerInterval);
+                els.timer.style.display = 'none';
+                Object.keys(state.activeSounds).forEach(key => toggleSound(key));
+            }
+        }
+
+        function toggleExpand() {
+            state.isExpanded = !state.isExpanded;
+            els.controlPanel.classList.toggle('expanded', state.isExpanded);
+            els.btnExpand.classList.toggle('active', state.isExpanded);
+            els.input.placeholder = state.isExpanded ? "Modo Lista: Enter nova linha, Ctrl+Enter projetar." : "Escreva... (Shift+Enter para Fila)";
+            els.input.focus();
+        }
+        function manualSubmit() { const c = els.input.value.trim(); if (c) { processInput(c); els.input.value = ""; } els.input.focus(); }
+
+        function btnGenerateQR() {
+            if (els.qrContainer.style.display === 'block') {
+                els.qrContainer.style.display = 'none';
+                return;
+            }
+            const c = els.input.value.trim() || els.mainText.innerText;
+            if (c) { updateDisplay(c, 'qr_force'); els.input.focus(); }
+        }
+
+        function btnDice() {
+            els.mainText.classList.remove('exiting');
+            els.mainText.style.display = 'block';
+            els.qrContainer.style.display = 'none';
+            els.scoreboard.style.display = 'none';
+
+            setTimeout(() => {
+                const diceChars = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+                els.mainText.innerHTML = `
+                    <div class="dice-wrapper">
+                        <div id="dice-result" class="dice-result-label">A lançar...</div>
+                        <div id="dice-visuals" class="dice-visuals dice-shake">
+                            <span id="d1"></span>
+                            <span id="d2"></span>
+                        </div>
+                    </div>
+                `;
+
+                void els.mainText.offsetWidth;
+                els.mainText.classList.add('visible');
+
+                let rolls = 0;
+                const max = 20;
+
+                const d1El = document.getElementById('d1');
+                const d2El = document.getElementById('d2');
+                const resEl = document.getElementById('dice-result');
+                const visEl = document.querySelector('.dice-visuals');
+
+                const interval = setInterval(() => {
+                    const v1 = Math.floor(Math.random() * 6);
+                    const v2 = Math.floor(Math.random() * 6);
+                    if (d1El) d1El.innerText = diceChars[v1];
+                    if (d2El) d2El.innerText = diceChars[v2];
+                    rolls++;
+                    if (rolls >= max) {
+                        clearInterval(interval);
+                        if (visEl) visEl.classList.remove('dice-shake');
+                        const sum = v1 + v2 + 2;
+                        if (resEl) {
+                            resEl.innerText = `${sum}`;
+                            resEl.classList.add('show');
+                            toggleSound('success');
+                            triggerConfetti();
+                        }
+                    }
+                }, 80);
+            }, 100);
+            els.input.focus();
+        }
+
+        function btnRandomPicker() {
+            const input = prompt("Nomes (separados por vírgula):");
+            if (!input) return;
+            const names = input.split(',').map(n => n.trim()).filter(n => n);
+            if (names.length < 2) { alert("Mínimo 2 nomes"); return; }
+
+            els.mainText.classList.remove('exiting');
+            els.mainText.style.display = 'block';
+            els.qrContainer.style.display = 'none';
+
+            setTimeout(() => {
+                els.mainText.innerText = "Sorteando...";
+                void els.mainText.offsetWidth;
+                els.mainText.classList.add('visible');
+
+                let spins = 0;
+                const max = 30;
+                const interval = setInterval(() => {
+                    els.mainText.innerText = names[Math.floor(Math.random() * names.length)];
+                    spins++;
+                    if (spins >= max) {
+                        clearInterval(interval);
+                        toggleSound('fanfare');
+                        triggerConfetti();
+                    }
+                }, 100);
+            }, 100);
+        }
+
+        function toggleScoreboard() {
+            if (els.scoreboard.style.display === 'flex') {
+                els.scoreboard.style.display = 'none';
+            } else {
+                const numTeams = prompt("Quantas equipas? (2-6)", "2");
+                const n = parseInt(numTeams);
+                if (isNaN(n) || n < 2 || n > 6) return;
+
+                state.scores = {};
+                let html = '';
+                for (let i = 0; i < n; i++) {
+                    const char = String.fromCharCode(65 + i);
+                    state.scores[char] = 0;
+                    html += `<div class="score-team" id="team-${char}" onmousedown="updateScore('${char}', event)">
+                                <div class="score-val" id="score-${char}">0</div>
+                                <div class="score-label">Equipa ${char}</div>
+                             </div>`;
+                }
+                html += `<div class="score-action-btn" onclick="announceWinner()" title="Apurar Vencedor">🎯</div>`;
+
+                els.scoreboard.innerHTML = html;
+                els.scoreboard.style.display = 'flex';
+            }
+        }
+
+        function updateScore(team, e) {
+            const d = (e.shiftKey || e.button === 2) ? -1 : 1;
+            state.scores[team] = Math.max(0, state.scores[team] + d);
+            document.getElementById(`score-${team}`).innerText = state.scores[team];
+            toggleSound(d > 0 ? 'pointUp' : 'pointDown');
+        }
+
+        function announceWinner() {
+            let max = -1;
+            let winners = [];
+            for (const [team, score] of Object.entries(state.scores)) {
+                if (score > max) {
+                    max = score;
+                    winners = [team];
+                } else if (score === max) {
+                    winners.push(team);
+                }
+            }
+
+            if (winners.length > 0) {
+                // Reset highlights
+                document.querySelectorAll('.score-team').forEach(el => el.classList.remove('winner-highlight'));
+
+                // Highlight winners
+                winners.forEach(team => {
+                    const el = document.getElementById(`team-${team}`);
+                    if (el) el.classList.add('winner-highlight');
+                });
+
+                toggleSound('trophy');
+                triggerConfetti();
+            }
+        }
+
+        function btnTimer() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+                els.timer.style.display = 'none';
+                els.timer.style.color = '';
+            } else {
+                const m = prompt("Minutos:", "5");
+                if (m && !isNaN(m)) startTimer(m);
+            }
+        }
+
+        function btnClear() {
+            els.mainText.classList.remove('visible');
+            els.mainText.innerText = "";
+            els.qrContainer.style.display = 'none';
+            els.scoreboard.style.display = 'none';
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+            els.timer.style.display = 'none';
+            Object.keys(state.activeSounds).forEach(key => toggleSound(key));
+        }
+
+        els.input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && !state.isExpanded) { e.preventDefault(); processInput(els.input.value); els.input.value = ""; }
+        });
+        function processInput(t) { updateDisplay(t, 'text'); }
+        function updateDisplay(c, type) {
+            els.mainText.innerText = c;
+            els.mainText.classList.add('visible');
+            els.qrContainer.style.display = type === 'qr_force' ? 'block' : 'none';
+            if (type === 'qr_force') {
+                els.qrContainer.innerHTML = "";
+                const canvas = document.createElement('canvas');
+                els.qrContainer.appendChild(canvas);
+                new QRious({ element: canvas, value: c, size: 256 });
+            }
+        }
+        function startTimer(m) {
+            clearInterval(state.timerInterval);
+            let time = m * 60;
+            els.timer.style.display = 'block';
+            updateTimerDisplay(time);
+            state.timerInterval = setInterval(() => {
+                time--;
+                updateTimerDisplay(time);
+                if (time <= 0) {
+                    clearInterval(state.timerInterval);
+                    els.timer.style.color = '#ff4b4b';
+                    toggleSound('success');
+                    triggerConfetti();
+                    setTimeout(() => { els.timer.style.display = 'none'; els.timer.style.color = ''; }, 5000);
+                }
+            }, 1000);
+        }
+        function updateTimerDisplay(s) { els.timer.innerText = `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`; }
+        function changeFontSize(delta) { state.currentFontSize = Math.max(2, state.currentFontSize + delta); els.root.style.setProperty('--font-size-base', `${state.currentFontSize}rem`); }
+        function navigateHistory(dir) {
+            if (!state.history.length) return;
+            let tempIndex = state.historyIndex;
+            if (dir === 'up') tempIndex = Math.max(0, tempIndex - 1);
+            else tempIndex = Math.min(state.history.length - 1, tempIndex + 1);
+            els.input.value = state.history[tempIndex] || "";
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
