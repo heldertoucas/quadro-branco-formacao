@@ -28,7 +28,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;900&family=Orbitron:wght@400;700&family=Patrick+Hand&family=Quicksand:wght@400;700&family=Raleway:wght@400;700&family=Poppins:wght@400;700&family=VT323&family=Press+Start+2P&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;900&family=Orbitron:wght@400;700&family=Patrick+Hand&family=Quicksand:wght@400;700&family=Raleway:wght@400;700&family=Poppins:wght@400;700&family=VT323&family=Press+Start+2P&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
         rel="stylesheet">
 
     <style>
@@ -48,6 +48,12 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             --clap-color: #d63384;
             --gold-color: #ffd700;
             --font-main: 'Montserrat', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+
+            /* Optical Scaling Defaults */
+            --optical-weight: 800;
+            --optical-spacing: normal;
+            --optical-lh: 1.2;
             --font-size-base: 5rem;
             --modal-overlay: rgba(0, 0, 0, 0.6);
             --expanded-bg: rgba(15, 32, 39, 0.95);
@@ -633,8 +639,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                We implement this neatly with a JS driven custom property multiplier.
             */
             font-size: calc(clamp(1.5rem, calc(6vw * var(--scale-factor, 1)), 6rem) * var(--manual-zoom, 1));
-            font-weight: 800;
-            line-height: 1.2;
+            font-weight: var(--optical-weight, 800);
+            letter-spacing: var(--optical-spacing, normal);
+            line-height: var(--optical-lh, 1.2);
             margin: 0;
             opacity: 0;
             transform: scale(0.9) translateY(20px);
@@ -680,6 +687,33 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
         h1.rich-content li {
             margin-bottom: 5px;
+        }
+
+        h1.serif-mode {
+            font-family: var(--font-serif);
+            font-style: italic;
+            --optical-weight: 400; /* Force elegant weight for citations */
+            text-shadow: none;
+        }
+
+        @keyframes wordFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+                filter: blur(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        .word-span {
+            display: inline-block;
+            white-space: pre;
+            opacity: 0;
+            animation: wordFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         /* Navigation Arrows */
@@ -833,15 +867,15 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         #rich-toolbar {
             display: none;
             gap: 5px;
-            width: 100%;
+            width: fit-content;
+            margin: 0 auto 10px auto;
             justify-content: center;
-            margin-bottom: 10px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--glass-border);
             animation: fadeInMenu 0.3s ease;
             overflow-x: auto;
-            /* Prevent overflow on small screens */
             white-space: nowrap;
+            z-index: 1000;
         }
 
         #rich-toolbar::-webkit-scrollbar {
@@ -897,9 +931,27 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             color: var(--danger-color);
         }
 
+        .fmt-btn.active,
+        .tool-btn.active {
+            background: var(--accent-color) !important;
+            color: white !important;
+            border-color: white !important;
+            opacity: 1 !important;
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
         .fmt-btn:hover {
             background: var(--glass-hover);
             opacity: 1;
+        }
+
+        /* Highlight Mode (Animated Glow) */
+        @keyframes dynamicGlow {
+            from { text-shadow: 0 0 10px var(--accent-color); }
+            to { text-shadow: 0 0 30px var(--accent-color), 0 0 10px rgba(255,255,255,0.5); }
+        }
+        h1.highlight-mode {
+            animation: dynamicGlow 2s infinite alternate ease-in-out !important;
         }
 
         #control-panel:focus-within #toolbar,
@@ -2130,15 +2182,15 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
         <div id="rich-toolbar">
             <button class="submenu-close" onclick="ui.toggleExpand()" title="Fechar">×</button>
-            <button class="fmt-btn" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)"
+            <button id="fmt-bold" class="fmt-btn" onmousedown="event.preventDefault(); document.execCommand('bold', false, null); ui.updateFormatButtons()"
                 title="Negrito"><b>B</b></button>
-            <button class="fmt-btn" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)"
+            <button id="fmt-italic" class="fmt-btn" onmousedown="event.preventDefault(); document.execCommand('italic', false, null); ui.updateFormatButtons()"
                 title="Itálico"><i>I</i></button>
-            <button class="fmt-btn" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)"
+            <button id="fmt-underline" class="fmt-btn" onmousedown="event.preventDefault(); document.execCommand('underline', false, null); ui.updateFormatButtons()"
                 title="Sublinhado"><u>U</u></button>
             <div class="separator" style="height: 16px;"></div>
-            <button class="fmt-btn"
-                onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)"
+            <button id="fmt-list" class="fmt-btn"
+                onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null); ui.updateFormatButtons()"
                 title="Lista">
                 <svg viewBox="0 0 24 24">
                     <line x1="8" y1="6" x2="21" y2="6"></line>
@@ -2149,8 +2201,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     <line x1="3" y1="18" x2="3.01" y2="18"></line>
                 </svg>
             </button>
-            <button class="fmt-btn"
-                onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)"
+            <button id="fmt-num" class="fmt-btn"
+                onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null); ui.updateFormatButtons()"
                 title="Numeração">
                 <svg viewBox="0 0 24 24">
                     <line x1="10" y1="6" x2="21" y2="6"></line>
@@ -2162,8 +2214,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 </svg>
             </button>
             <div class="separator" style="height: 16px;"></div>
-            <button class="fmt-btn"
-                onmousedown="event.preventDefault(); document.execCommand('justifyLeft', false, null)" title="Esquerda">
+            <button id="fmt-left" class="fmt-btn"
+                onclick="ui.setTextAlignment('left')" title="Esquerda">
                 <svg viewBox="0 0 24 24">
                     <line x1="17" y1="10" x2="3" y2="10"></line>
                     <line x1="21" y1="6" x2="3" y2="6"></line>
@@ -2171,14 +2223,36 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     <line x1="17" y1="18" x2="3" y2="18"></line>
                 </svg>
             </button>
-            </button>
-            <button class="fmt-btn"
-                onmousedown="event.preventDefault(); document.execCommand('justifyCenter', false, null)" title="Centro">
+            <button id="fmt-center" class="fmt-btn"
+                onclick="ui.setTextAlignment('center')" title="Centro">
                 <svg viewBox="0 0 24 24">
                     <line x1="21" y1="10" x2="3" y2="10"></line>
                     <line x1="21" y1="6" x2="3" y2="6"></line>
                     <line x1="21" y1="14" x2="3" y2="14"></line>
                     <line x1="21" y1="18" x2="3" y2="18"></line>
+                </svg>
+            </button>
+                <svg viewBox="0 0 24 24">
+                    <line x1="21" y1="10" x2="3" y2="10"></line>
+                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                    <line x1="21" y1="18" x2="3" y2="18"></line>
+                </svg>
+            </button>
+            <div class="separator" style="height: 16px;"></div>
+            <button id="btn-serif" class="fmt-btn" onclick="ui.toggleSerif()" title="Modo Serifa (Citação)">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 20h4L12 4h4l4 16h-4"></path>
+                    <line x1="8" y1="14" x2="16" y2="14"></line>
+                </svg>
+            </button>
+            <button id="btn-highlight" class="fmt-btn" onclick="ui.toggleHighlight()" title="Destaque (Glow)">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+                    <path d="M5 3v4"></path>
+                    <path d="M19 17v4"></path>
+                    <path d="M3 5h4"></path>
+                    <path d="M17 19h4"></path>
                 </svg>
             </button>
             <div class="separator" style="height: 16px;"></div>
@@ -2332,9 +2406,12 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             isExpanded: false,
             scores: {},
             audioCtx: null, activeSounds: {},
+            isSerif: false,
+            isHighlight: false,
+            textAlignment: 'center', // 'left', 'center'
             view: 'text', // 'text', 'qr', 'dice', 'picker', 'none'
             channel: null
-        };
+            };
 
         /*******************************************************
          * 3. SERVICES (Audio, Modal)
@@ -2480,6 +2557,12 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 this.renderSoundDrawer();
                 this.showStartupMessage();
                 this.applyState();
+                
+                // Keep rich text buttons synced with selection
+                document.addEventListener('selectionchange', () => {
+                    if (state.isExpanded) this.updateFormatButtons();
+                });
+                
                 // --- URL Params Handling ---
                 const params = new URLSearchParams(window.location.search);
 
@@ -2619,16 +2702,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 }
 
                 // Dynamic Smooth Scaling Logic via clamp modifier
-                const len = processedText.length;
                 if (!isQR) {
-                    // Decay curve: Scale factor decreases as length increases
-                    // Max scale is 1.0 (for short texts), Min scale is ~0.35
-                    // Example mapping: 10 chars -> 1.0, 50 chars -> 0.7, 100 chars -> 0.45, 200+ chars -> 0.35
-                    let factor = 1.0;
-                    if (len > 15) {
-                        factor = Math.max(0.35, 1.0 - ((len - 15) * 0.005));
-                    }
-                    this.els.mainText.style.setProperty('--scale-factor', factor);
+                    this.updateOpticalScaling(processedText.length);
                 }
 
                 if (isHtml && !isQR) {
@@ -2636,8 +2711,14 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     this.els.mainText.innerHTML = processedText;
                 } else {
                     this.els.mainText.classList.remove('rich-content');
-                    this.els.mainText.innerText = processedText;
+                    if (state.isAnimated && !isQR && processedText) {
+                        this.animateTextIn(processedText, this.els.mainText);
+                    } else {
+                        this.els.mainText.innerText = processedText;
+                    }
                 }
+
+                this.els.mainText.classList.toggle('serif-mode', state.isSerif);
 
                 this.els.mainText.classList.remove('hidden');
                 this.els.mainText.classList.add('visible');
@@ -2651,6 +2732,29 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 } else {
                     this.els.qrContainer.style.display = 'none';
                 }
+            },
+
+            updateOpticalScaling(charCount) {
+                // Decay curve: Scale factor decreases as length increases
+                // Max scale is 1.0 (for short texts), Min scale is ~0.35
+                let factor = 1.0;
+                if (charCount > 15) {
+                    factor = Math.max(0.35, 1.0 - ((charCount - 15) * 0.005));
+                }
+
+                // Weight Scaling: 1.0 factor -> 900 weight, 0.35 factor -> 500 weight
+                const weight = Math.round(500 + (factor - 0.35) * (400 / 0.65));
+
+                // Spacing Scaling: 1.0 factor -> 0 spacing, 0.35 factor -> 0.05em spacing
+                const spacing = (0.05 * (1.0 - factor) / 0.65).toFixed(3) + 'em';
+
+                // Line-Height Scaling: 1.0 factor -> 1.1, 0.35 factor -> 1.5
+                const lh = (1.5 - (factor - 0.35) * (0.4 / 0.65)).toFixed(2);
+
+                this.els.mainText.style.setProperty('--scale-factor', factor);
+                this.els.mainText.style.setProperty('--optical-weight', weight);
+                this.els.mainText.style.setProperty('--optical-spacing', spacing);
+                this.els.mainText.style.setProperty('--optical-lh', lh);
             },
 
             toggleQR() {
@@ -2667,6 +2771,41 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 document.getElementById('control-panel').classList.toggle('expanded', state.isExpanded);
                 this.els.input.setAttribute('placeholder', state.isExpanded ? "Modo Texto Rico..." : "Escreva... (Shift+Enter para Fila)");
                 this.els.input.focus();
+                if (state.isExpanded) this.updateFormatButtons();
+            },
+
+            updateFormatButtons() {
+                const commands = [
+                    { id: 'fmt-bold', cmd: 'bold' },
+                    { id: 'fmt-italic', cmd: 'italic' },
+                    { id: 'fmt-underline', cmd: 'underline' },
+                    { id: 'fmt-list', cmd: 'insertUnorderedList' },
+                    { id: 'fmt-num', cmd: 'insertOrderedList' },
+                    { id: 'fmt-left', cmd: 'justifyLeft' },
+                    { id: 'fmt-center', cmd: 'justifyCenter' }
+                ];
+                commands.forEach(c => {
+                    const btn = document.getElementById(c.id);
+                    if (btn) btn.classList.toggle('active', document.queryCommandState(c.cmd));
+                });
+            },
+
+            toggleSerif() {
+                state.isSerif = !state.isSerif;
+                this.applyState();
+                app.broadcastState();
+            },
+
+            setTextAlignment(align) {
+                state.textAlignment = align;
+                this.applyState();
+                app.broadcastState();
+            },
+
+            toggleHighlight() {
+                state.isHighlight = !state.isHighlight;
+                this.applyState();
+                app.broadcastState();
             },
 
             toggleSoundDrawer() {
@@ -2739,6 +2878,23 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     const el = document.getElementById(id);
                     if (el) el.classList.add('active');
                 });
+
+                const btnSerif = document.getElementById('btn-serif');
+                const btnHighlight = document.getElementById('btn-highlight');
+                if (btnSerif) btnSerif.classList.toggle('active', state.isSerif);
+                if (btnHighlight) btnHighlight.classList.toggle('active', state.isHighlight);
+
+                this.els.mainText.classList.toggle('serif-mode', state.isSerif);
+                this.els.mainText.classList.toggle('highlight-mode', state.isHighlight);
+
+                // Alignment
+                this.els.mainText.style.textAlign = state.textAlignment;
+                ['left', 'center'].forEach(a => {
+                    const btn = document.getElementById(`fmt-${a}`);
+                    if (btn) btn.classList.toggle('active', state.textAlignment === a);
+                });
+
+                if (state.isExpanded) this.updateFormatButtons();
 
                 const slideBtn = document.getElementById('btn-create-slide');
                 const linkBtn = document.getElementById('btn-links');
@@ -3398,6 +3554,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         view: state.view,
                         theme: state.theme,
                         brand: state.brand,
+                        isSerif: state.isSerif,
+                        isHighlight: state.isHighlight,
+                        textAlignment: state.textAlignment,
                         history: state.history,
                         historyIndex: state.historyIndex,
                         scores: state.scores,
@@ -3422,6 +3581,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     const s = data.state;
                     state.theme = s.theme;
                     state.brand = s.brand;
+                    state.isSerif = s.isSerif;
+                    state.isHighlight = s.isHighlight;
+                    state.textAlignment = s.textAlignment;
                     state.history = s.history;
                     state.historyIndex = s.historyIndex;
                     state.scores = s.scores;
@@ -3461,6 +3623,37 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         };
 
         function handleLogoAreaClick(e) {
+            if (e.target.id === 'logo-area') {
+                const logoArea = document.getElementById('logo-area');
+                logoArea.classList.remove('active');
+                if (window.innerWidth <= 900) {
+                    document.body.style.overflow = '';
+                }
+            }
+        }
+
+        function toggleMenu(e) {
+            if (e) e.stopPropagation();
+            const logoArea = document.getElementById('logo-area');
+            logoArea.classList.toggle('active');
+
+            // On mobile, if menu is active, prevent body scrolling to keep focus on menu
+            if (window.innerWidth <= 900) {
+                if (logoArea.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = ''; // Restore body scroll
+                }
+            }
+        }
+
+        // INIT
+        window.addEventListener('load', () => ui.init());
+
+    </script>
+</body>
+
+</html>andleLogoAreaClick(e) {
             if (e.target.id === 'logo-area') {
                 const logoArea = document.getElementById('logo-area');
                 logoArea.classList.remove('active');
