@@ -1,0 +1,8 @@
+{
+  "track_id": "v3_ink_v2_20260508",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-05-08T02:00:00Z",
+  "updated_at": "2026-05-08T02:00:00Z",
+  "description": "Evolução do Ink Overlay: Suavização de traços (Bézier), efeito Neon Glow e modo Iluminador."
+}
