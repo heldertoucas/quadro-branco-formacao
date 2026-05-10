@@ -63,42 +63,117 @@ const features = {
     },
 
     timer: {
+        duration: 0,
+        remaining: 0,
+        isDragging: false,
+        dragOffset: { x: 0, y: 0 },
+
         async setup() {
             if (state.timerInterval) {
-                clearInterval(state.timerInterval);
-                state.timerInterval = null;
-                document.getElementById('timer-overlay').style.display = 'none';
+                this.stop();
                 return;
             }
             const min = await modal.show({
                 title: 'Definir Timer',
                 html: '<input type="number" class="modal-input" placeholder="Minutos (ex: 5)" value="5" min="1">'
             });
-            if (min) this.start(parseInt(min));
+            if (min) this.start(parseInt(min) * 60);
         },
-        start(min) {
-            let time = min * 60;
-            const el = document.getElementById('timer-overlay');
-            el.style.display = 'block';
-            el.style.color = '';
 
-            const update = () => {
-                el.innerText = `${Math.floor(time / 60).toString().padStart(2, '0')}:${(time % 60).toString().padStart(2, '0')}`;
+        start(seconds, isSync = false) {
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            
+            this.duration = seconds;
+            this.remaining = seconds;
+            
+            const el = document.getElementById('timer-overlay');
+            const display = document.getElementById('timer-display');
+            const progress = document.getElementById('timer-progress');
+            
+            el.style.display = 'flex';
+            el.classList.remove('hectic');
+            
+            const updateUI = () => {
+                const m = Math.floor(this.remaining / 60).toString().padStart(2, '0');
+                const s = (this.remaining % 60).toString().padStart(2, '0');
+                display.innerText = `${m}:${s}`;
+                
+                // Update Progress Ring (C = 2 * PI * 80 ≈ 502.65)
+                const offset = 502.65 - (this.remaining / this.duration * 502.65);
+                progress.style.strokeDashoffset = offset;
+                
+                if (this.remaining <= 10 && this.remaining > 0) {
+                    el.classList.add('hectic');
+                }
             };
-            update();
+
+            updateUI();
+            
+            if (!isSync) app.broadcastState();
 
             state.timerInterval = setInterval(() => {
-                time--;
-                update();
-                if (time <= 0) {
-                    clearInterval(state.timerInterval);
-                    state.timerInterval = null;
-                    el.style.color = '#ff4b4b';
-                    AudioService.toggle('success');
-                    ui.confetti();
-                    setTimeout(() => { el.style.display = 'none'; }, 5000);
+                this.remaining--;
+                updateUI();
+                
+                if (this.remaining <= 0) {
+                    this.finish();
                 }
             }, 1000);
+        },
+
+        stop() {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+            document.getElementById('timer-overlay').style.display = 'none';
+            app.broadcastState();
+        },
+
+        finish() {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+            
+            AudioService.toggle('success');
+            
+            // Cinematic Flash
+            const flash = document.createElement('div');
+            flash.className = 'timer-finished-overlay active';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 1000);
+
+            setTimeout(() => {
+                document.getElementById('timer-overlay').style.display = 'none';
+            }, 5000);
+            
+            app.broadcastState();
+        },
+
+        // Drag & Drop
+        startDrag(e) {
+            if (e.target.closest('button')) return;
+            this.isDragging = true;
+            const el = document.getElementById('timer-overlay');
+            const rect = el.getBoundingClientRect();
+            this.dragOffset = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            
+            const onMove = (me) => {
+                if (!this.isDragging) return;
+                el.style.left = (me.clientX - this.dragOffset.x) + 'px';
+                el.style.top = (me.clientY - this.dragOffset.y) + 'px';
+                el.style.right = 'auto';
+                el.style.bottom = 'auto';
+            };
+            
+            const onUp = () => {
+                this.isDragging = false;
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            };
+            
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
         }
     },
 

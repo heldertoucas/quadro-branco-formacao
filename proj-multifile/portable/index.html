@@ -1103,20 +1103,92 @@ h1.highlight-mode {
 
 #qr-close:hover { transform: scale(1.1); }
 
-/* Timer Overlay */
+/* Timer Overlay (Refined v2.1) */
 #timer-overlay {
     position: fixed;
-    top: 20px; right: 20px;
-    font-size: 4rem;
-    font-weight: 300;
-    background: var(--glass-bg);
-    padding: 15px 35px;
-    border-radius: 50px;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(5px);
+    top: 30px;
+    right: 40px;
+    width: 180px; /* Slightly larger */
+    height: 180px;
     display: none;
-    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    cursor: grab;
+    transition: transform 0.2s, opacity 0.3s;
+}
+
+#timer-overlay:active {
+    cursor: grabbing;
+}
+
+.timer-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 15px rgba(0,0,0,0.4));
+}
+
+.timer-ring-bg {
+    stroke: var(--glass-border);
+}
+
+.timer-ring-fill {
+    stroke: var(--accent-color);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+}
+
+#timer-display {
+    font-size: 2.8rem;
+    font-weight: 800;
+    font-family: var(--font-main); /* Montserrat */
+    color: var(--text-color);
+    z-index: 2;
     font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    backdrop-filter: none;
+    margin: 0;
+}
+
+#timer-overlay.hectic .timer-ring-fill {
+    stroke: var(--danger-color);
+    animation: none; /* No pulse on ring */
+}
+
+#timer-overlay.hectic #timer-display {
+    color: var(--danger-color);
+    animation: pulse 0.5s infinite alternate; /* Pulse the time numbers instead */
+}
+
+/* Full-screen Expiration Effect */
+.timer-finished-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(135deg, #ffffff, #4facfe);
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.timer-finished-overlay.active {
+    animation: flashOut 1s forwards;
+}
+
+@keyframes flashOut {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.5); }
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
 
 /* Scoreboard */
@@ -1558,7 +1630,14 @@ h1.highlight-mode {
 
     <!-- OVERLAYS -->
     <div id="scoreboard"></div>
-    <div id="timer-overlay">00:00</div>
+    <div id="timer-overlay" onmousedown="features.timer.startDrag(event)">
+        <svg class="timer-ring" width="180" height="180" viewBox="0 0 180 180">
+            <circle class="timer-ring-bg" cx="90" cy="90" r="80" fill="none" stroke-width="10"></circle>
+            <circle id="timer-progress" class="timer-ring-fill" cx="90" cy="90" r="80" fill="none" stroke-width="10" 
+                    stroke-dasharray="502.65" stroke-dashoffset="0" transform="rotate(-90 90 90)"></circle>
+        </svg>
+        <div id="timer-display">00:00</div>
+    </div>
 
     <!-- MAIN CONTENT -->
     <main id="display-area" aria-live="polite">
@@ -2562,42 +2641,117 @@ const features = {
     },
 
     timer: {
+        duration: 0,
+        remaining: 0,
+        isDragging: false,
+        dragOffset: { x: 0, y: 0 },
+
         async setup() {
             if (state.timerInterval) {
-                clearInterval(state.timerInterval);
-                state.timerInterval = null;
-                document.getElementById('timer-overlay').style.display = 'none';
+                this.stop();
                 return;
             }
             const min = await modal.show({
                 title: 'Definir Timer',
                 html: '<input type="number" class="modal-input" placeholder="Minutos (ex: 5)" value="5" min="1">'
             });
-            if (min) this.start(parseInt(min));
+            if (min) this.start(parseInt(min) * 60);
         },
-        start(min) {
-            let time = min * 60;
-            const el = document.getElementById('timer-overlay');
-            el.style.display = 'block';
-            el.style.color = '';
 
-            const update = () => {
-                el.innerText = `${Math.floor(time / 60).toString().padStart(2, '0')}:${(time % 60).toString().padStart(2, '0')}`;
+        start(seconds, isSync = false) {
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            
+            this.duration = seconds;
+            this.remaining = seconds;
+            
+            const el = document.getElementById('timer-overlay');
+            const display = document.getElementById('timer-display');
+            const progress = document.getElementById('timer-progress');
+            
+            el.style.display = 'flex';
+            el.classList.remove('hectic');
+            
+            const updateUI = () => {
+                const m = Math.floor(this.remaining / 60).toString().padStart(2, '0');
+                const s = (this.remaining % 60).toString().padStart(2, '0');
+                display.innerText = `${m}:${s}`;
+                
+                // Update Progress Ring (C = 2 * PI * 80 ≈ 502.65)
+                const offset = 502.65 - (this.remaining / this.duration * 502.65);
+                progress.style.strokeDashoffset = offset;
+                
+                if (this.remaining <= 10 && this.remaining > 0) {
+                    el.classList.add('hectic');
+                }
             };
-            update();
+
+            updateUI();
+            
+            if (!isSync) app.broadcastState();
 
             state.timerInterval = setInterval(() => {
-                time--;
-                update();
-                if (time <= 0) {
-                    clearInterval(state.timerInterval);
-                    state.timerInterval = null;
-                    el.style.color = '#ff4b4b';
-                    AudioService.toggle('success');
-                    ui.confetti();
-                    setTimeout(() => { el.style.display = 'none'; }, 5000);
+                this.remaining--;
+                updateUI();
+                
+                if (this.remaining <= 0) {
+                    this.finish();
                 }
             }, 1000);
+        },
+
+        stop() {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+            document.getElementById('timer-overlay').style.display = 'none';
+            app.broadcastState();
+        },
+
+        finish() {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+            
+            AudioService.toggle('success');
+            
+            // Cinematic Flash
+            const flash = document.createElement('div');
+            flash.className = 'timer-finished-overlay active';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 1000);
+
+            setTimeout(() => {
+                document.getElementById('timer-overlay').style.display = 'none';
+            }, 5000);
+            
+            app.broadcastState();
+        },
+
+        // Drag & Drop
+        startDrag(e) {
+            if (e.target.closest('button')) return;
+            this.isDragging = true;
+            const el = document.getElementById('timer-overlay');
+            const rect = el.getBoundingClientRect();
+            this.dragOffset = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            
+            const onMove = (me) => {
+                if (!this.isDragging) return;
+                el.style.left = (me.clientX - this.dragOffset.x) + 'px';
+                el.style.top = (me.clientY - this.dragOffset.y) + 'px';
+                el.style.right = 'auto';
+                el.style.bottom = 'auto';
+            };
+            
+            const onUp = () => {
+                this.isDragging = false;
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            };
+            
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
         }
     },
 
@@ -3097,6 +3251,8 @@ const sync = {
                 historyIndex: state.historyIndex,
                 scores: state.scores,
                 timerActive: !!state.timerInterval,
+                timerRemaining: features.timer.remaining,
+                timerDuration: features.timer.duration,
                 pollLabels: features.poll.labels,
                 pollVotes: features.poll.votes,
                 pollActive: features.poll.active
@@ -3127,6 +3283,16 @@ const sync = {
             state.historyIndex = s.historyIndex !== undefined ? s.historyIndex : state.historyIndex;
             state.scores = s.scores || state.scores;
             ui.applyState();
+
+            if (s.timerActive) {
+                if (!state.timerInterval) {
+                    features.timer.remaining = s.timerRemaining;
+                    features.timer.duration = s.timerDuration;
+                    features.timer.start(s.timerRemaining, true);
+                }
+            } else {
+                if (state.timerInterval) features.timer.stop();
+            }
 
             if (s.view === 'poll' && s.pollActive) {
                 features.poll.votes = s.pollVotes;

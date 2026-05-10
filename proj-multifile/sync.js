@@ -17,6 +17,8 @@ const sync = {
                 historyIndex: state.historyIndex,
                 scores: state.scores,
                 timerActive: !!state.timerInterval,
+                timerRemaining: features.timer.remaining,
+                timerDuration: features.timer.duration,
                 pollLabels: features.poll.labels,
                 pollVotes: features.poll.votes,
                 pollActive: features.poll.active
@@ -47,6 +49,16 @@ const sync = {
             state.historyIndex = s.historyIndex !== undefined ? s.historyIndex : state.historyIndex;
             state.scores = s.scores || state.scores;
             ui.applyState();
+
+            if (s.timerActive) {
+                if (!state.timerInterval) {
+                    features.timer.remaining = s.timerRemaining;
+                    features.timer.duration = s.timerDuration;
+                    features.timer.start(s.timerRemaining, true);
+                }
+            } else {
+                if (state.timerInterval) features.timer.stop();
+            }
 
             if (s.view === 'poll' && s.pollActive) {
                 features.poll.votes = s.pollVotes;
