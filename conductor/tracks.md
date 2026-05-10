@@ -13,7 +13,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Sistema de Votação (Polls) v2**
+- [x] **Track: Sistema de Votação (Polls) v2**
 *Link: [./tracks/v3_polls_v2_20260508/](./tracks/v3_polls_v2_20260508/)*
 
 ---
