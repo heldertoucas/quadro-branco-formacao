@@ -1,9 +1,9 @@
-# Project Instructions: quadrobrancoformacao
+# Project Instructions: quad-branco-formacao
 
 ## Memory Protocol
-- **Start Session**: ALWAYS run /obsidian:start quadrobrancoformacao
-- **End Session**: ALWAYS run /obsidian:close quadrobrancoformacao
+- **Start Session**: ALWAYS run /ht:start quad-branco-formacao
+- **End Session**: ALWAYS run /ht:close quad-branco-formacao
 
 ## Vault Context
-- **Project Folder**: 03-projetos/quadrobrancoformacao
-- **Hot Cache**: 03-projetos/quadrobrancoformacao/hot.md
+- **Project Folder**: 03-projetos/quad-branco-formacao
+- **Hot Cache**: 03-projetos/quad-branco-formacao/hot.md
