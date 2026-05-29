@@ -31,4 +31,4 @@ Interactive whiteboard for training sessions — featuring
 - **Audio**: Confirm sound effects play correctly on user interactions
 
 
-> Note: Memory Protocol and Global Rules are inherited from Universal Agent Protocol (Rulesync).
+> Note: Memory Protocol and Global Rules are inherited from the global AGENTS.md.
