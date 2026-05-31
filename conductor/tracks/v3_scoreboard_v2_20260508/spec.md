@@ -11,6 +11,6 @@ Move from a static score line to a dynamic ranking system that gamifies the clas
 - **Mini-Mode:** Ability to collapse the scoreboard into small icons on the side to focus on text content.
 
 ## Acceptance Criteria
-- [ ] Team order updates smoothly as scores change.
-- [ ] Scoring a point feels like a "win" through visual feedback.
-- [ ] Leadership is visually obvious at a glance.
+- [x] Team order updates smoothly as scores change.
+- [x] Scoring a point feels like a "win" through visual feedback.
+- [x] Leadership is visually obvious at a glance.

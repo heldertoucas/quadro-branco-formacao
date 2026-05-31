@@ -119,18 +119,21 @@ const features = {
                     this.finish();
                 }
             }, 1000);
+            ui.syncRunningIndicators();
         },
 
         stop() {
             clearInterval(state.timerInterval);
             state.timerInterval = null;
             document.getElementById('timer-overlay').style.display = 'none';
+            ui.syncRunningIndicators();
             app.broadcastState();
         },
 
         finish() {
             clearInterval(state.timerInterval);
             state.timerInterval = null;
+            ui.syncRunningIndicators();
             
             AudioService.toggle('success');
             
@@ -387,37 +390,90 @@ const features = {
         build(n, isSync = false) {
             if (!isSync) state.scores = {};
             let html = '';
+            const teamIcons = ['Zap', 'Moon', 'Heart', 'Star', 'Ghost', 'Sun'];
             for (let i = 0; i < n; i++) {
                 const char = String.fromCharCode(65 + i);
+                const icon = teamIcons[i];
                 if (!isSync) state.scores[char] = 0;
                 const scoreVal = state.scores[char] || 0;
                 html += `<div class="score-team" id="team-${char}" onmousedown="features.score.update('${char}', event)">
+                            <div class="score-icon" style="opacity:0.6;"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">${ICONS[icon]}</svg></div>
                             <div class="score-val" id="score-${char}">${scoreVal}</div>
                             <div class="score-label">Equipa ${char}</div>
                          </div>`;
             }
-            html += `<button id="score-win-btn" onclick="features.score.checkWinner()" title="Apurar Vencedor" style="margin-left:15px; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:50%; width:75px; height:75px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-color); transition:all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2" fill="none">${ICONS.Target}</svg>
-                     </button>`;
+            html += `<div class="score-controls" style="display:flex; gap:10px; order:99; align-items:center;">
+                        <button id="score-toggle-btn" onclick="features.score.toggleMini()" title="Alternar Tamanho" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:50%; width:45px; height:45px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-color); transition:all 0.2s;">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" id="score-toggle-icon">${ICONS.Minimize}</svg>
+                        </button>
+                        <button id="score-win-btn" onclick="features.score.checkWinner()" title="Apurar Vencedor" style="background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:50%; width:45px; height:45px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-color); transition:all 0.2s;">
+                            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none">${ICONS.Target}</svg>
+                        </button>
+                     </div>`;
             const sb = document.getElementById('scoreboard');
             sb.innerHTML = html;
             sb.style.display = 'flex';
+            sb.onclick = (e) => {
+                if (sb.classList.contains('winner-mode') && e.target === sb) {
+                    this.clearWinner();
+                }
+            };
+            this.refreshRankings();
+        },
+        toggleMini() {
+            const sb = document.getElementById('scoreboard');
+            sb.classList.toggle('mini');
+            const isMini = sb.classList.contains('mini');
+            document.getElementById('score-toggle-icon').innerHTML = isMini ? ICONS.Maximize : ICONS.Minimize;
         },
         update(team, e) {
             const delta = (e.shiftKey || e.button === 2) ? -1 : 1;
             state.scores[team] = Math.max(0, state.scores[team] + delta);
-            document.getElementById(`score-${team}`).innerText = state.scores[team];
+            
+            const scoreEl = document.getElementById(`score-${team}`);
+            scoreEl.innerText = state.scores[team];
+            
+            // Animation "Pop"
+            scoreEl.classList.remove('pop');
+            void scoreEl.offsetWidth; // Trigger reflow
+            scoreEl.classList.add('pop');
+
+            this.clearWinner();
+            this.refreshRankings();
             AudioService.toggle(delta > 0 ? 'pointUp' : 'pointDown');
             app.broadcastState();
         },
+        clearWinner() {
+            const sb = document.getElementById('scoreboard');
+            sb.classList.remove('winner-mode');
+            document.querySelectorAll('.score-team').forEach(el => el.classList.remove('winner-highlight'));
+        },
+        refreshRankings() {
+            const entries = Object.entries(state.scores);
+            const maxScore = Math.max(...entries.map(e => e[1]));
+            
+            entries.forEach(([t, s]) => {
+                const el = document.getElementById(`team-${t}`);
+                if (el) {
+                    el.classList.toggle('leading', s === maxScore && s > 0);
+                }
+            });
+        },
         checkWinner() {
+            const sb = document.getElementById('scoreboard');
+            if (sb.classList.contains('winner-mode')) {
+                this.clearWinner();
+                return;
+            }
+
             let max = -1, winners = [];
             Object.entries(state.scores).forEach(([t, s]) => {
                 if (s > max) { max = s; winners = [t]; }
                 else if (s === max) winners.push(t);
             });
-            document.querySelectorAll('.score-team').forEach(el => el.classList.remove('winner-highlight'));
+
             if (max > 0) {
+                sb.classList.add('winner-mode');
                 winners.forEach(t => document.getElementById(`team-${t}`).classList.add('winner-highlight'));
                 AudioService.toggle('trophy');
             }
@@ -521,7 +577,7 @@ const features = {
             const toolbar = document.getElementById('ink-toolbar');
             canvas.classList.toggle('active', this.active);
             toolbar.classList.toggle('visible', this.active);
-            document.getElementById('btn-ink').classList.toggle('active', this.active);
+            ui.syncRunningIndicators();
             if (this.active) {
                 this.resize();
                 this.renderPalette();

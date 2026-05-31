@@ -15,7 +15,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Painel de Controlo (Floating Island)**
+- [x] **Track: Painel de Controlo (Floating Island)**
 *Link: [./tracks/v3_control_panel_20260508/](./tracks/v3_control_panel_20260508/)*
 
 ---
@@ -26,7 +26,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Placar (Scoreboard) v2**
+- [x] **Track: Placar (Scoreboard) v2**
 *Link: [./tracks/v3_scoreboard_v2_20260508/](./tracks/v3_scoreboard_v2_20260508/)*
 
 ---
@@ -48,4 +48,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Dual Screen e Sincronização v2**
 *Link: [./tracks/v3_dualscreen_v2_20260508/](./tracks/v3_dualscreen_v2_20260508/)*
+
+---
+
+- [ ] **Track: Submenus e Gavetas (Modular Control Panel)**
+*Link: [./tracks/v3_control_panel_drawers_20260531/](./tracks/v3_control_panel_drawers_20260531/)*
 

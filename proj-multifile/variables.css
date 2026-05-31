@@ -25,6 +25,14 @@
     --expanded-bg: rgba(15, 32, 39, 0.95);
     --input-bg: rgba(0, 0, 0, 0.2);
 
+    /* Team Colors (v2) */
+    --team-a: #FF5252;
+    --team-b: #448AFF;
+    --team-c: #69F0AE;
+    --team-d: #FFD740;
+    --team-e: #E040FB;
+    --team-f: #00E5FF;
+
     /* Poll Bar Colors (v2) */
     --poll-col-1: linear-gradient(180deg, #FF5252, #B71C1C);
     --poll-col-2: linear-gradient(180deg, #448AFF, #1565C0);

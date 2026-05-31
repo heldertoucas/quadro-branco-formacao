@@ -1,15 +1,15 @@
 # 🗺️ Implementation Plan: Scoreboard v2
 
 ## Phase 1: Gamification Dynamics
-- [ ] Task: Auto-Sorting Logic
-    - [ ] Refactor `features.score.build` to use Flexbox `order` or array sorting
-- [ ] Task: Number Animation (Odômetro)
-    - [ ] Create a CSS-based transition for the `score-val`
-- [ ] Task: Conductor - User Manual Verification 'Gamification Dynamics'
+- [x] Task: Auto-Sorting Logic
+    - [x] Refactor `features.score.build` to use Flexbox `order` or array sorting
+- [x] Task: Number Animation (Odômetro)
+    - [x] Create a CSS-based transition for the `score-val`
+- [x] Task: Conductor - User Manual Verification 'Gamification Dynamics'
 
 ## Phase 2: Visual Polish
-- [ ] Task: Implement Team Avatars & Colors
-    - [ ] Map teams to unique CSS variables
-- [ ] Task: Leadership Aura implementation
-    - [ ] Update `features.score.update` to refresh the leading team glow
-- [ ] Task: Conductor - User Manual Verification 'Visual Polish'
+- [x] Task: Implement Team Avatars & Colors
+    - [x] Map teams to unique CSS variables
+- [x] Task: Leadership Aura implementation
+    - [x] Update `features.score.update` to refresh the leading team glow
+- [x] Task: Conductor - User Manual Verification 'Visual Polish'
