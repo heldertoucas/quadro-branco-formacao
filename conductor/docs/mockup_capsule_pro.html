@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro UX: Inline Expandable Capsule</title>
+    <style>
+        :root {
+            /* Palette Profissional */
+            --bg-canvas: #0f172a;
+            --dock-bg: rgba(20, 20, 25, 0.85);
+            --dock-border: rgba(255, 255, 255, 0.1);
+            --btn-bg: rgba(255, 255, 255, 0.1);
+            --btn-hover: rgba(255, 255, 255, 0.2);
+            --text-color: #f8fafc;
+            
+            /* Sizing & Radius */
+            --icon-size: 52px;
+            --dock-padding: 8px;
+            --radius-pill: 50px;
+            
+            /* High-End Gradients */
+            --grad-blue: linear-gradient(135deg, #3b82f6, #0ea5e9);
+            --grad-gold: linear-gradient(135deg, #f59e0b, #fbbf24);
+            --grad-pink: linear-gradient(135deg, #ec4899, #f43f5e);
+            --grad-green: linear-gradient(135deg, #10b981, #34d399);
+            --grad-orange: linear-gradient(135deg, #f97316, #fb923c);
+            --grad-gray: linear-gradient(135deg, #64748b, #94a3b8);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: var(--bg-canvas);
+            /* Ambience effects */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.12), transparent 30%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.12), transparent 30%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 30px;
+        }
+
+        .canvas-area {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #475569;
+            user-select: none;
+            text-align: center;
+        }
+
+        .canvas-title { font-size: 2.5rem; font-weight: 800; letter-spacing: -1.5px; margin: 0; color: #cbd5e1; }
+        .canvas-subtitle { font-size: 1.1rem; color: #64748b; margin-top: 10px; }
+
+        /* The Main Dock */
+        .dock {
+            display: flex;
+            align-items: center;
+            background: var(--dock-bg);
+            padding: var(--dock-padding);
+            border-radius: var(--radius-pill);
+            gap: 4px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.6), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--dock-border);
+            z-index: 1000;
+        }
+
+        /* Divider Profissional */
+        .divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 0 8px;
+            border-radius: 1px;
+        }
+
+        /* Module Group (Icon + Expansion) */
+        .module-group {
+            display: flex;
+            align-items: center;
+            border-radius: var(--radius-pill);
+            transition: background 0.4s ease;
+            position: relative;
+            padding-right: 0;
+        }
+
+        /* Hover Buffer Area */
+        .module-group::after {
+            content: '';
+            position: absolute;
+            top: -15px; bottom: -15px; left: -5px; right: -5px;
+            z-index: -1;
+        }
+
+        .module-group:hover {
+            background: rgba(255, 255, 255, 0.04);
+            padding-right: 12px;
+        }
+
+        /* Main Circular Icon */
+        .main-icon {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            z-index: 2;
+            color: white;
+            box-shadow: 
+                inset 0 2px 3px rgba(255, 255, 255, 0.3), 
+                0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .module-group:hover .main-icon {
+            transform: scale(1.08);
+        }
+
+        .main-icon:active {
+            transform: scale(0.92);
+        }
+
+        /* State Indicator (Pulsing Dot) */
+        .main-icon.active-state::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            width: 5px;
+            height: 5px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* Colors mapping */
+        .bg-blue { background: var(--grad-blue); }
+        .bg-gold { background: var(--grad-gold); }
+        .bg-pink { background: var(--grad-pink); }
+        .bg-green { background: var(--grad-green); }
+        .bg-orange { background: var(--grad-orange); }
+        .bg-gray { background: var(--grad-gray); }
+
+        /* Quick Actions Container (Inline expansion) */
+        .quick-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            pointer-events: none;
+            /* Precise spring transition */
+            transition: max-width 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+                        opacity 0.3s ease, 
+                        margin-left 0.4s ease;
+            white-space: nowrap;
+            z-index: 1;
+        }
+
+        .module-group:hover .quick-actions {
+            max-width: 400px;
+            opacity: 1;
+            margin-left: 12px;
+            pointer-events: auto;
+        }
+
+        /* Action Buttons inside Expansion */
+        .action-btn {
+            background: var(--btn-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            border-radius: 14px;
+            height: 36px;
+            padding: 0 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-btn:hover {
+            background: var(--btn-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .action-btn:active {
+            transform: translateY(0px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .action-btn.icon-only {
+            padding: 0;
+            width: 36px;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* Action Labels / Tooltips */
+        [data-tooltip] { position: relative; }
+        [data-tooltip]:hover::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(15, 23, 42, 0.95);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+        }
+
+        [data-tooltip]:hover::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="canvas-area">
+        <h1 class="canvas-title">Quadro de Formação</h1>
+        <p class="canvas-subtitle">Estratégia UX: "Inline Expandable Capsule"</p>
+    </div>
+
+    <div class="dock">
+        
+        <!-- MODULE: TIME (Tempo) -->
+        <div class="module-group">
+            <div class="main-icon bg-blue active-state" data-tooltip="Cronómetro">⏱️</div>
+            <div class="quick-actions">
+                <button class="action-btn icon-only" data-tooltip="Pausar">⏸️</button>
+                <button class="action-btn icon-only" data-tooltip="Reiniciar">🔄</button>
+                <button class="action-btn" data-tooltip="Adicionar 5 minutos">+5m</button>
+            </div>
+        </div>
+
+        <!-- MODULE: SCORE (Gamificação) -->
+        <div class="module-group">
+            <div class="main-icon bg-gold" data-tooltip="Placar">🏆</div>
+            <div class="quick-actions">
+                <button class="action-btn" data-tooltip="Equipa A">+1 A</button>
+                <button class="action-btn" data-tooltip="Equipa B">+1 B</button>
+                <button class="action-btn icon-only" data-tooltip="Ver Pódio">🥇</button>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- MODULE: FEEDBACK (Sons) -->
+        <div class="module-group">
+            <div class="main-icon bg-pink" data-tooltip="Feedback Sonoro">🔊</div>
+            <div class="quick-actions">
+                <button class="action-btn icon-only" data-tooltip="Certo">✅</button>
+                <button class="action-btn icon-only" data-tooltip="Errado">❌</button>
+                <button class="action-btn icon-only" data-tooltip="Palmas">👏</button>
+                <button class="action-btn icon-only" data-tooltip="Rufar">🥁</button>
+            </div>
+        </div>
+
+        <!-- MODULE: ENGAGEMENT (Votação) -->
+        <div class="module-group">
+            <div class="main-icon bg-green" data-tooltip="Votações">📊</div>
+            <div class="quick-actions">
+                <button class="action-btn">📝 Nova</button>
+                <button class="action-btn icon-only" data-tooltip="Resultados">📈</button>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- MODULE: TOOLS (Dados/Sorteio) -->
+        <div class="module-group">
+            <div class="main-icon bg-orange" data-tooltip="Ferramentas">🎲</div>
+            <div class="quick-actions">
+                <button class="action-btn">Sorteio</button>
+                <button class="action-btn">Equipas</button>
+            </div>
+        </div>
+
+        <!-- MODULE: SYSTEM (Tema/QR) -->
+        <div class="module-group">
+            <div class="main-icon bg-gray" data-tooltip="Sistema">⚙️</div>
+            <div class="quick-actions">
+                <button class="action-btn icon-only" data-tooltip="Alternar Tema">🌓</button>
+                <button class="action-btn icon-only" data-tooltip="Partilhar QR">📱</button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup: Dock & Drawer</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --dock-bg: rgba(255, 255, 255, 0.8);
+            --accent: #007aff;
+            --drawer-width: 350px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ccc;
+            font-size: 2rem;
+            user-select: none;
+        }
+
+        /* Dock */
+        .dock-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dock-bg);
+            backdrop-filter: blur(20px);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            z-index: 1000;
+        }
+
+        .dock-item {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-size: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .dock-item:hover {
+            transform: scale(1.1) translateY(-5px);
+            background: #f9f9f9;
+        }
+
+        .dock-item.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Drawer */
+        .drawer {
+            position: absolute;
+            top: 0;
+            right: calc(-1 * var(--drawer-width));
+            width: var(--drawer-width);
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.05);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.open {
+            right: 0;
+        }
+
+        .drawer-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #999;
+        }
+
+        .module-placeholder {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px dashed #ddd;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1500;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="canvas">Área do Quadro Branco</div>
+
+    <div class="dock-container">
+        <div class="dock-item" data-module="Timer" title="Cronómetro">⏱️</div>
+        <div class="dock-item" data-module="Polls" title="Votação">📊</div>
+        <div class="dock-item" data-module="Audio" title="Sons">🔊</div>
+        <div class="dock-item" data-module="Dice" title="Dados">🎲</div>
+        <div class="dock-item" data-module="Settings" title="Configurações">⚙️</div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <h2 id="drawer-title">Módulo</h2>
+            <div class="close-btn" id="close-drawer">✕</div>
+        </div>
+        <div class="drawer-content" id="drawer-content">
+            <div class="module-placeholder">
+                <p>Configurações e controles do módulo apareceriam aqui.</p>
+                <button style="width: 100%; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 5px; cursor: pointer;">Ação Principal</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dockItems = document.querySelectorAll('.dock-item');
+        const drawer = document.getElementById('drawer');
+        const drawerTitle = document.getElementById('drawer-title');
+        const closeBtn = document.getElementById('close-drawer');
+        const overlay = document.getElementById('overlay');
+
+        function openDrawer(moduleName) {
+            drawerTitle.textContent = moduleName;
+            drawer.classList.add('open');
+            overlay.classList.add('visible');
+            
+            dockItems.forEach(item => {
+                if(item.dataset.module === moduleName) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            overlay.classList.remove('visible');
+            dockItems.forEach(item => item.classList.remove('active'));
+        }
+
+        dockItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const module = item.dataset.module;
+                openDrawer(module);
+            });
+        });
+
+        closeBtn.addEventListener('click', closeDrawer);
+        overlay.addEventListener('click', closeDrawer);
+    </script>
+</body>
+</html>

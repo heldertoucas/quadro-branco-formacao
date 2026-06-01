@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUTURO digital - Equipas ON!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: #ffffff;
+        }
+
+        /* Logo */
+        .logo {
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            z-index: 100;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo svg {
+            height: 10.56vw;
+            width: auto;
+            max-height: 135px;
+        }
+
+        /* Título Principal */
+        .main-title {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+            z-index: 50;
+        }
+
+        .main-title h2 {
+            --char-count: 1;
+            font-size: calc(clamp(1.5rem, calc(6vw * var(--scale-factor, 1)), 6.5rem) * var(--manual-zoom, 1));
+            font-weight: 900;
+            color: #000;
+            line-height: 1.1;
+            animation: slideInLeft 1.2s ease-out;
+            max-width: 45vw;
+            /* Intelligent URL & Word Breaking */
+            overflow-wrap: anywhere;
+            word-break: normal;
+        }
+
+        /* Imagem Circular */
+        .team-image-container {
+            position: absolute;
+            top: 50%;
+            right: 8%;
+            transform: translateY(-50%);
+            width: 35vw;
+            height: 35vw;
+            z-index: 60;
+            animation: fadeInRight 1.5s ease-out;
+        }
+
+        .team-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .team-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Onda Laranja (trás) */
+        .wave-orange {
+            position: absolute;
+            bottom: -18%;
+            left: -12%;
+            width: 58%;
+            height: 52%;
+            z-index: 1;
+            animation: waveFloat1 14s ease-in-out infinite;
+        }
+
+        .wave-orange svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Onda Verde (meio) */
+        .wave-green {
+            position: absolute;
+            bottom: -14%;
+            left: -10%;
+            width: 54%;
+            height: 42%;
+            z-index: 2;
+            animation: waveFloat2 18s ease-in-out infinite;
+        }
+
+        .wave-green svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Onda Azul (frente) */
+        .wave-blue {
+            position: absolute;
+            bottom: -16%;
+            left: -14%;
+            width: 42%;
+            height: 46%;
+            z-index: 3;
+            animation: waveFloat3 20s ease-in-out infinite;
+        }
+
+        .wave-blue svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Círculos Decorativos Animados */
+        .decorative-circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        /* Círculos decorativos realocados */
+        /* Grupo 1: Círculos perto das ondas (Canto Inferior Esquerdo) */
+        .circle-green-1 {
+            width: 1.08vw;
+            height: 1.08vw;
+            background: #FF4D00;
+            /* Changed to red */
+            bottom: 15%;
+            /* Lower than orange circle (18%) */
+            left: 48%;
+            /* Centered somewhat on X axis */
+            animation-delay: 0s;
+        }
+
+        .circle-blue-1 {
+            width: 1.3vw;
+            height: 1.3vw;
+            background: #5271ff;
+            bottom: 30%;
+            left: 20%;
+            animation-delay: -1s;
+        }
+
+        .circle-orange {
+            width: 1.15vw;
+            height: 1.15vw;
+            background: #ffb743;
+            bottom: 18%;
+            left: 12%;
+            animation-delay: -2.5s;
+        }
+
+        /* Grupo 2: Círculos perto da imagem (Direita) */
+        .circle-green-2 {
+            width: 0.86vw;
+            height: 0.86vw;
+            background: #FF4D00;
+            top: 25%;
+            right: 25%;
+            /* Perto da imagem */
+            animation-delay: -2s;
+        }
+
+        .circle-blue-2 {
+            width: 1.0vw;
+            height: 1.0vw;
+            background: #5271ff;
+            top: 75%;
+            right: 10%;
+            /* Perto da imagem */
+            animation-delay: -3s;
+        }
+
+        /* circle-green-3 removido para manter 3 perto da imagem (contando com os "around") ou ajustado? */
+        /* O utilizador pediu "3 perto das ondas e 3 perto da imagem" */
+        /* Já temos circle-around-1 e circle-around-2 que estão "perto da imagem". */
+        /* Vou posicionar circle-green-3 também perto da imagem para complementar. */
+
+        .circle-green-3 {
+            width: 0.94vw;
+            height: 0.94vw;
+            background: #FF4D00;
+            bottom: 20%;
+            right: 32%;
+            animation-delay: -4s;
+        }
+
+        /* Círculos ao redor da imagem */
+        /* Círculos ao redor da imagem */
+        .circle-around-1 {
+            width: 1.08vw;
+            height: 1.08vw;
+            background: #FF4D00;
+            top: 15%;
+            right: 12%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .circle-around-2 {
+            width: 1.44vw;
+            height: 1.44vw;
+            background: #5271ff;
+            bottom: 38%;
+            right: 2%;
+            /* Closer to edge */
+            animation: pulse 5s ease-in-out infinite;
+            animation-delay: -1s;
+        }
+
+        /* Animações das ondas — apenas translateX>=0 e translateY<=0 para nunca expor bordas */
+        @keyframes waveFloat1 {
+
+            0%,
+            100% {
+                transform: translate(0px, 0px);
+            }
+
+            25% {
+                transform: translate(22px, -12px);
+            }
+
+            50% {
+                transform: translate(40px, -6px);
+            }
+
+            75% {
+                transform: translate(18px, -18px);
+            }
+        }
+
+        @keyframes waveFloat2 {
+
+            0%,
+            100% {
+                transform: translate(0px, 0px);
+            }
+
+            30% {
+                transform: translate(30px, -18px);
+            }
+
+            60% {
+                transform: translate(14px, -8px);
+            }
+        }
+
+        @keyframes waveFloat3 {
+
+            0%,
+            100% {
+                transform: translate(0px, 0px);
+            }
+
+            20% {
+                transform: translate(18px, -14px);
+            }
+
+            50% {
+                transform: translate(36px, -22px);
+            }
+
+            80% {
+                transform: translate(12px, -10px);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) translateX(100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0);
+            }
+        }
+
+        /* Responsividade */
+        @media (max-width: 1400px) {
+            .team-image-container {
+                width: 450px;
+                height: 450px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .team-image-container {
+                width: 350px;
+                height: 350px;
+                right: 50px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+            }
+
+            .logo-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-text h1 {
+                font-size: 28px;
+            }
+
+            .logo-text p {
+                font-size: 22px;
+            }
+
+            .main-title {
+                left: 20px;
+                top: 40%;
+            }
+
+            .team-image-container {
+                width: 280px;
+                height: 280px;
+                right: 20px;
+                top: auto;
+                bottom: 350px;
+            }
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            bottom: 4%;
+            left: 3%;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 200;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            background: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn svg {
+            width: 32px;
+            height: 32px;
+            stroke: #333;
+            stroke-width: 2.5;
+            fill: none;
+        }
+
+        /* SCHEME OVERRIDES */
+        /* Scheme 2: Blue/Purple/Green */
+        body.scheme-scheme2 .logo svg path:first-child {
+            fill: #5271FF !important;
+        }
+
+        body.scheme-scheme2 .wave-orange path {
+            fill: #35B729 !important;
+        }
+
+        /* Back: Green */
+        body.scheme-scheme2 .wave-green path {
+            fill: #933EC5 !important;
+        }
+
+        /* Mid: Purple */
+        body.scheme-scheme2 .wave-blue path {
+            fill: #5271FF !important;
+        }
+
+        /* Front: Blue */
+
+        /* Map "Red" circles to Purple */
+        body.scheme-scheme2 .circle-green-1,
+        body.scheme-scheme2 .circle-green-2,
+        body.scheme-scheme2 .circle-green-3,
+        body.scheme-scheme2 .circle-around-1 {
+            background: #933EC5 !important;
+        }
+
+        /* Map "Blue" circles to Blue (Stay Blue) */
+        body.scheme-scheme2 .circle-blue-1,
+        body.scheme-scheme2 .circle-blue-2,
+        body.scheme-scheme2 .circle-around-2 {
+            background: #5271FF !important;
+        }
+
+        /* Map "Orange" circles to Green */
+        body.scheme-scheme2 .circle-orange {
+            background: #35B729 !important;
+        }
+
+        /* Scheme 3: Yellow/Green/Red */
+        body.scheme-scheme3 .logo svg path:first-child {
+            fill: #FF4D00 !important;
+        }
+
+        body.scheme-scheme3 .wave-orange path {
+            fill: #FFB743 !important;
+        }
+
+        /* Back: Yellow */
+        body.scheme-scheme3 .wave-green path {
+            fill: #35B729 !important;
+        }
+
+        /* Mid: Green */
+        body.scheme-scheme3 .wave-blue path {
+            fill: #FF4D00 !important;
+        }
+
+        /* Front: Red */
+
+        /* Map "Red" circles to Red */
+        body.scheme-scheme3 .circle-green-1,
+        body.scheme-scheme3 .circle-green-2,
+        body.scheme-scheme3 .circle-green-3,
+        body.scheme-scheme3 .circle-around-1 {
+            background: #FF4D00 !important;
+        }
+
+        /* Map "Blue" circles to Green */
+        body.scheme-scheme3 .circle-blue-1,
+        body.scheme-scheme3 .circle-blue-2,
+        body.scheme-scheme3 .circle-around-2 {
+            background: #35B729 !important;
+        }
+
+        /* Map "Orange" circles to Yellow */
+        body.scheme-scheme3 .circle-orange {
+            background: #FFB743 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Logo -->
+        <div class="logo">
+            <svg viewBox="0 0 8631 3406" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1702.69 0L3177.25 851.343V2554.03L1702.69 3405.37L228.117 2554.03V851.343L1702.69 0Z"
+                    fill="#FF4D00" />
+                <path
+                    d="M1692.03 478.196C1721.78 477.82 1748.02 487.205 1769.32 504.248C1788.38 519.491 1800.66 538.601 1808.99 554.516L1809.79 556.046L1809.79 556.058C1980.33 887.465 2151.18 1218.7 2322.02 1550.05L2327.96 1561.58C2340.74 1586.44 2353.05 1610.61 2365.79 1634.76L2368.74 1640.33L2368.75 1640.35C2378.9 1659.5 2387.05 1683.15 2386.35 1709.72C2385.61 1737.55 2375.26 1763.22 2357.1 1784.82C2357.08 1784.84 2357.07 1784.86 2357.05 1784.88C2339.53 1805.68 2317.15 1819.5 2291.55 1825.28C2267.26 1830.76 2244.11 1828.1 2224.9 1823.3L2224.89 1823.3C2143.92 1803.05 2062.87 1783.39 1981.54 1763.61C1982.35 1851.36 1983.25 1942.57 1984.01 2028.49C1984.3 2061.01 1978.04 2099.98 1948.79 2129.6C1919.5 2159.25 1880.59 2165.94 1848.06 2165.97C1848.05 2165.97 1848.05 2165.97 1848.04 2165.97C1754.65 2166.04 1661.21 2166.1 1567.79 2166.04C1567.78 2166.04 1567.77 2166.04 1567.76 2166.04C1535.12 2166.01 1497.02 2159.03 1467.94 2130.3C1438.81 2101.53 1431.42 2063.5 1431.07 2030.85V2030.85C1430.14 1941.89 1429.26 1852.88 1428.56 1763.86C1420.31 1765.88 1412.07 1767.91 1403.82 1769.93C1370.53 1778.11 1337.25 1786.28 1303.96 1794.46C1303.96 1794.46 1303.95 1794.46 1303.95 1794.46C1262.61 1804.61 1222.27 1814.3 1181.95 1824.68C1181.93 1824.69 1181.91 1824.69 1181.89 1824.7C1158.91 1830.6 1133.4 1831.69 1107.93 1823.23C1082.21 1814.69 1062.03 1798.24 1046.98 1778.29C1031.49 1757.76 1022.73 1734.06 1022.21 1708.56C1021.71 1684.15 1028.85 1662.58 1037.51 1645.15H1037.51C1195.73 1326.46 1353.84 1007.72 1511.81 688.935L1579.5 552.307C1588.5 534.122 1601.74 515.234 1621.68 500.825C1642.4 485.86 1666.52 478.516 1692.03 478.195V478.196Z"
+                    stroke="white" stroke-width="129.63" stroke-miterlimit="10" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <rect x="1808.33" y="2963.6" width="208.075" height="552.554" rx="92.5932"
+                    transform="rotate(180 1808.33 2963.6)" fill="white" />
+                <rect x="2048.76" y="2813.32" width="152.588" height="402.278" rx="76.294"
+                    transform="rotate(180 2048.76 2813.32)" fill="white" />
+                <rect x="1512.4" y="2813.32" width="152.588" height="402.278" rx="76.294"
+                    transform="rotate(180 1512.4 2813.32)" fill="white" />
+                <path
+                    d="M4224.33 797.534C4263.97 797.534 4304.35 797.908 4345.49 798.656C4387.37 798.656 4428.14 799.778 4467.78 802.022C4508.16 803.518 4545.56 806.135 4579.96 809.875L4570.99 933.282H4290.52C4270.32 933.282 4254.99 938.144 4244.52 947.867C4234.05 957.59 4228.81 971.8 4228.81 990.498V1575H4057.17V955.72C4057.17 907.853 4072.5 869.709 4103.16 841.288C4133.83 812.119 4174.22 797.534 4224.33 797.534ZM4077.36 1125.12H4529.48V1246.29H4077.36V1125.12ZM5336.83 800.9V1266.48C5336.83 1345.01 5327.11 1408.21 5307.66 1456.08C5288.22 1503.2 5256.06 1537.6 5211.18 1559.29C5167.05 1580.24 5107.97 1590.71 5033.92 1590.71C4955.39 1590.71 4892.57 1580.24 4845.45 1559.29C4798.33 1537.6 4764.3 1503.2 4743.36 1456.08C4722.41 1408.21 4711.94 1345.01 4711.94 1266.48V800.9H4883.59V1266.48C4883.59 1315.1 4887.71 1353.24 4895.93 1380.91C4904.91 1407.84 4919.87 1426.91 4940.81 1438.13C4961.75 1449.35 4989.8 1454.96 5024.95 1454.96C5060.1 1454.96 5087.77 1449.35 5107.97 1438.13C5128.91 1426.91 5143.49 1407.84 5151.72 1380.91C5160.7 1353.24 5165.18 1315.1 5165.18 1266.48V800.9H5336.83ZM5865.85 800.9V1575H5694.21V800.9H5865.85ZM6099.21 800.9V935.526H5461.98V800.9H6099.21ZM6848.13 800.9V1266.48C6848.13 1345.01 6838.41 1408.21 6818.96 1456.08C6799.52 1503.2 6767.36 1537.6 6722.48 1559.29C6678.35 1580.24 6619.27 1590.71 6545.22 1590.71C6466.69 1590.71 6403.87 1580.24 6356.75 1559.29C6309.63 1537.6 6275.6 1503.2 6254.66 1456.08C6233.71 1408.21 6223.24 1345.01 6223.24 1266.48V800.9H6394.89V1266.48C6394.89 1315.1 6399.01 1353.24 6407.23 1380.91C6416.21 1407.84 6431.17 1426.91 6452.11 1438.13C6473.05 1449.35 6501.1 1454.96 6536.25 1454.96C6571.4 1454.96 6599.07 1449.35 6619.27 1438.13C6640.21 1426.91 6654.8 1407.84 6663.02 1380.91C6672 1353.24 6676.48 1315.1 6676.48 1266.48V800.9H6848.13ZM7330.04 789.681C7398.1 789.681 7453.07 796.786 7494.95 810.997C7537.58 824.46 7568.62 848.019 7588.07 881.676C7608.26 914.584 7618.36 960.581 7618.36 1019.67C7618.36 1055.57 7613.5 1087.35 7603.77 1115.03C7594.8 1141.95 7579.47 1163.64 7557.78 1180.1C7536.09 1196.55 7506.54 1207.02 7469.15 1211.51V1217.12C7482.61 1219.36 7496.45 1224.6 7510.66 1232.83C7525.62 1241.05 7539.45 1253.39 7552.17 1269.85C7564.88 1285.55 7574.23 1306.87 7580.22 1333.79L7647.53 1575H7466.9L7407.45 1339.4C7400.71 1313.97 7390.62 1296.4 7377.15 1286.68C7364.44 1276.95 7346.49 1272.09 7323.3 1272.09C7272.44 1272.09 7229.44 1272.09 7194.29 1272.09C7159.88 1271.34 7130.71 1270.6 7106.78 1269.85C7083.59 1269.1 7062.65 1268.35 7043.95 1267.6L7047.32 1143.07H7326.67C7356.59 1143.07 7380.15 1140.08 7397.35 1134.1C7415.3 1127.37 7427.64 1115.78 7434.37 1099.32C7441.85 1082.87 7445.59 1060.06 7445.59 1030.89C7445.59 1000.97 7441.85 978.158 7434.37 962.451C7427.64 945.997 7415.3 934.778 7397.35 928.795C7380.15 922.063 7356.59 918.698 7326.67 918.698C7256.36 918.698 7196.9 919.072 7148.29 919.82C7099.67 920.568 7066.39 921.69 7048.44 923.185L7031.61 800.9C7063.03 797.16 7092.57 794.543 7120.24 793.047C7147.92 791.551 7178.21 790.803 7211.12 790.803C7244.02 790.055 7283.66 789.681 7330.04 789.681ZM7201.02 800.9V1575H7031.61V800.9H7201.02ZM8096.88 785.194C8158.21 785.194 8210.19 791.925 8252.82 805.387C8295.45 818.102 8329.48 839.792 8354.91 870.457C8381.09 900.374 8400.16 941.509 8412.13 993.864C8424.09 1045.47 8430.08 1110.17 8430.08 1187.95C8430.08 1265.73 8424.09 1330.8 8412.13 1383.16C8400.16 1434.76 8381.09 1475.9 8354.91 1506.57C8329.48 1536.48 8295.45 1558.17 8252.82 1571.63C8210.19 1584.35 8158.21 1590.71 8096.88 1590.71C8035.55 1590.71 7983.57 1584.35 7940.94 1571.63C7898.3 1558.17 7863.9 1536.48 7837.72 1506.57C7811.55 1475.9 7792.47 1434.76 7780.51 1383.16C7768.54 1330.8 7762.56 1265.73 7762.56 1187.95C7762.56 1110.17 7768.54 1045.47 7780.51 993.864C7792.47 941.509 7811.55 900.374 7837.72 870.457C7863.9 839.792 7898.3 818.102 7940.94 805.387C7983.57 791.925 8035.55 785.194 8096.88 785.194ZM8096.88 920.942C8057.24 920.942 8026.2 928.795 8003.76 944.501C7982.07 960.208 7966.37 987.507 7956.64 1026.4C7947.67 1064.54 7943.18 1118.39 7943.18 1187.95C7943.18 1256.76 7947.67 1310.61 7956.64 1349.5C7966.37 1388.39 7982.07 1415.69 8003.76 1431.4C8026.2 1447.11 8057.24 1454.96 8096.88 1454.96C8135.77 1454.96 8166.06 1447.11 8187.75 1431.4C8210.19 1415.69 8225.89 1388.39 8234.87 1349.5C8244.59 1310.61 8249.45 1256.76 8249.45 1187.95C8249.45 1118.39 8244.59 1064.54 8234.87 1026.4C8225.89 987.507 8210.19 960.208 8187.75 944.501C8166.06 928.795 8135.77 920.942 8096.88 920.942Z"
+                    fill="black" />
+                <path
+                    d="M5776.29 2354.88C5776.29 2374.35 5773.82 2391.94 5768.88 2407.63C5763.94 2423.03 5757.4 2436.69 5749.27 2448.61C5741.13 2460.23 5731.68 2470.26 5720.93 2478.69C5710.18 2486.83 5698.84 2493.51 5686.93 2498.74C5675.3 2503.97 5663.38 2507.9 5651.18 2510.51C5639.26 2512.84 5627.93 2514 5617.17 2514H5412.72C5393.24 2514 5375.81 2511.53 5360.4 2506.59C5345 2501.65 5331.34 2495.11 5319.42 2486.97C5307.8 2478.54 5297.77 2468.95 5289.34 2458.2C5281.21 2447.45 5274.52 2436.26 5269.29 2424.63C5264.06 2412.72 5260.14 2400.8 5257.52 2388.88C5255.19 2376.68 5254.03 2365.34 5254.03 2354.88V2201.43C5254.03 2172.36 5259.26 2147.81 5269.73 2127.75C5280.48 2107.41 5293.7 2090.99 5309.4 2078.49C5325.38 2065.7 5342.67 2056.55 5361.27 2051.03C5379.87 2045.5 5397.02 2042.74 5412.72 2042.74H5617.17V2156.09H5413.59C5398.48 2156.09 5387 2160.01 5379.15 2167.86C5371.3 2175.42 5367.38 2186.61 5367.38 2201.43V2354.01C5367.38 2369.41 5371.16 2381.04 5378.71 2388.88C5386.56 2396.73 5397.89 2400.65 5412.72 2400.65H5617.17C5632.58 2400.65 5644.06 2396.73 5651.61 2388.88C5659.17 2381.04 5662.95 2369.7 5662.95 2354.88V1843.52H5776.29V2354.88ZM6035.21 1945.96H5921.86V1843.52H6035.21V1945.96ZM6035.21 2514H5921.86V2042.74H6035.21V2514ZM6692.58 2559.34C6692.58 2578.81 6690.11 2596.25 6685.17 2611.65C6680.23 2627.35 6673.69 2641.01 6665.55 2652.63C6657.41 2664.55 6647.97 2674.57 6637.21 2682.71C6626.46 2691.14 6615.13 2697.97 6603.21 2703.2C6591.59 2708.43 6579.67 2712.21 6567.46 2714.53C6555.55 2717.15 6544.21 2718.46 6533.46 2718.46H6329V2605.11H6533.46C6548.86 2605.11 6560.34 2601.19 6567.9 2593.34C6575.46 2585.49 6579.23 2574.16 6579.23 2559.34V2201.43C6579.23 2186.61 6575.46 2175.42 6567.9 2167.86C6560.34 2160.01 6548.86 2156.09 6533.46 2156.09H6329C6315.05 2156.09 6304.01 2160.45 6295.87 2169.17C6287.73 2177.6 6283.66 2188.35 6283.66 2201.43V2354.88C6283.66 2369.7 6287.59 2381.04 6295.43 2388.88C6303.28 2396.73 6314.76 2400.65 6329.87 2400.65H6533.46V2514H6329C6318.25 2514 6306.91 2512.84 6295 2510.51C6283.08 2507.9 6271.17 2503.97 6259.25 2498.74C6247.63 2493.51 6236.44 2486.83 6225.68 2478.69C6214.93 2470.26 6205.48 2460.23 6197.35 2448.61C6189.21 2436.69 6182.67 2423.03 6177.73 2407.63C6172.79 2391.94 6170.32 2374.35 6170.32 2354.88V2201.43C6170.32 2190.67 6171.48 2179.34 6173.81 2167.42C6176.42 2155.51 6180.34 2143.74 6185.58 2132.11C6190.81 2120.2 6197.49 2108.86 6205.63 2098.11C6214.06 2087.36 6224.08 2077.91 6235.71 2069.77C6247.63 2061.63 6261.29 2055.1 6276.69 2050.15C6292.09 2045.21 6309.53 2042.74 6329 2042.74H6533.46C6544.21 2042.74 6555.55 2044.05 6567.46 2046.67C6579.67 2048.99 6591.59 2052.77 6603.21 2058C6615.13 2063.23 6626.46 2070.06 6637.21 2078.49C6647.97 2086.63 6657.41 2096.66 6665.55 2108.57C6673.69 2120.2 6680.23 2133.71 6685.17 2149.11C6690.11 2164.52 6692.58 2181.96 6692.58 2201.43V2559.34ZM6947.14 1945.96H6833.79V1843.52H6947.14V1945.96ZM6947.14 2514H6833.79V2042.74H6947.14V2514ZM7520.37 2156.09H7322.45V2514H7207.8V2156.09H7060.45V2042.74H7207.8V1888.86H7322.45V2042.74H7520.37V2156.09ZM8090.11 2357.93C8090.11 2373.63 8087.35 2390.63 8081.83 2408.94C8076.31 2426.96 8067.3 2443.81 8054.8 2459.51C8042.6 2474.91 8026.47 2487.84 8006.41 2498.31C7986.65 2508.77 7962.53 2514 7934.05 2514H7729.59C7713.89 2514 7696.89 2511.24 7678.58 2505.72C7660.56 2500.2 7643.71 2491.33 7628.01 2479.12C7612.61 2466.63 7599.68 2450.5 7589.21 2430.73C7578.75 2410.68 7573.52 2386.41 7573.52 2357.93C7573.52 2342.24 7576.28 2325.24 7581.8 2306.93C7587.32 2288.62 7596.19 2271.76 7608.4 2256.36C7620.89 2240.66 7637.02 2227.58 7656.79 2217.12C7676.84 2206.66 7701.11 2201.43 7729.59 2201.43H7934.05V2309.54H7729.59C7714.18 2309.54 7702.27 2314.34 7693.84 2323.93C7685.41 2333.23 7681.2 2344.85 7681.2 2358.8C7681.2 2373.63 7685.99 2385.25 7695.58 2393.68C7705.47 2401.82 7717.09 2405.89 7730.46 2405.89H7934.05C7949.45 2405.89 7961.37 2401.24 7969.79 2391.94C7978.22 2382.64 7982.44 2371.01 7982.44 2357.06V2198.81C7982.44 2183.99 7977.79 2172.22 7968.49 2163.5C7959.48 2154.78 7948 2150.42 7934.05 2150.42H7685.12V2042.74H7934.05C7949.74 2042.74 7966.6 2045.5 7984.62 2051.03C8002.93 2056.55 8019.78 2065.56 8035.19 2078.06C8050.88 2090.26 8063.96 2106.39 8074.42 2126.45C8084.88 2146.21 8090.11 2170.33 8090.11 2198.81V2357.93ZM8429.68 2514H8379.11C8362.84 2514 8345.4 2511.24 8326.8 2505.72C8308.49 2500.2 8291.34 2491.19 8275.36 2478.69C8259.37 2465.9 8246.15 2449.48 8235.68 2429.43C8225.22 2409.08 8219.99 2384.23 8219.99 2354.88V1843.52H8333.34V2354.88C8333.34 2368.83 8337.7 2380.02 8346.41 2388.45C8355.13 2396.59 8366.03 2400.65 8379.11 2400.65H8429.68V2514Z"
+                    fill="black" />
+            </svg>
+        </div>
+
+        <!-- Título Principal -->
+        <div class="main-title">
+            <h2>Equipas ON !</h2>
+        </div>
+
+        <!-- Imagem da Equipa -->
+        <div class="team-image-container">
+            <div class="team-image">
+                <img src="https://i.imgur.com/ZJvakeb.png" alt="Equipa a trabalhar">
+            </div>
+        </div>
+
+        <!-- Círculos Decorativos -->
+        <!-- Círculos Decorativos -->
+        <div class="decorative-circles">
+            <!-- Perto das ondas -->
+            <div class="circle circle-green-1"></div>
+            <div class="circle circle-blue-1"></div>
+            <div class="circle circle-orange"></div>
+
+            <!-- Perto da imagem -->
+            <div class="circle circle-green-2"></div>
+            <div class="circle circle-green-3"></div>
+            <div class="circle circle-blue-2"></div>
+
+            <!-- Ao redor da imagem (pontos de destaque) -->
+            <div class="circle circle-around-1"></div>
+            <div class="circle circle-around-2"></div>
+        </div>
+
+        <!-- Onda Laranja (trás) -->
+        <div class="wave-orange">
+            <svg viewBox="0 0 774 422" preserveAspectRatio="none">
+                <path
+                    d="M49.1451 385.137C-40.3629 369.62 3.65351 8.817 91.1533 0.652877C178.653 -7.51124 207.253 62.1509 222.653 139.153C238.053 216.154 251.153 251.153 304.653 251.153C358.153 251.153 390.653 167.153 482.153 179.653C589.153 194.27 549.154 308.153 737.154 385.137C917.654 459.049 368.137 400.12 289.145 385.137C210.153 370.153 138.653 400.653 49.1451 385.137Z"
+                    fill="#FFB743" />
+            </svg>
+        </div>
+
+        <!-- Onda Verde (agora Vermelha) (meio) -->
+        <div class="wave-green">
+            <svg viewBox="0 0 786 324" preserveAspectRatio="none">
+                <path
+                    d="M64.944 289.223C-13.5641 276.127 -29.372 -50.5103 64.9441 6.7229C113.688 36.3018 128.552 53.3184 154.952 119.318C181.352 185.318 214.452 201.819 272.452 207.318C330.452 212.818 424.952 162.318 528.952 162.318C693.952 162.318 758.452 229.222 783.952 289.223C809.452 349.223 371.452 313.318 305.452 308.818C239.452 304.318 143.452 302.318 64.944 289.223Z"
+                    fill="#FF4D00" />
+            </svg>
+        </div>
+
+        <!-- Onda Azul (frente) -->
+        <div class="wave-blue">
+            <svg viewBox="0 0 567 351" preserveAspectRatio="none">
+                <path
+                    d="M59.5377 315.369C16.0379 296.869 -49.2676 20.1075 59.5377 1.87072C140.97 -11.778 207.538 51.8696 214.038 107.869C220.538 163.869 188.2 198.369 231.538 228.369C258.474 247.016 354.038 205.37 422.538 205.37C452.038 203.37 539.538 224.37 565.038 284.371C583.525 327.87 421.315 350.37 324.038 350.37C246.106 350.37 103.038 333.869 59.5377 315.369Z"
+                    fill="#5271FF" />
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        // Script opcional para interatividade adicional
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Ctrl + Scroll to zoom
+            document.addEventListener('wheel', function (e) {
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    let zoom = parseFloat(document.documentElement.style.getPropertyValue('--manual-zoom')) || 1;
+                    if (e.deltaY < 0) zoom += 0.1;
+                    else zoom -= 0.1;
+                    zoom = Math.max(0.5, Math.min(zoom, 5));
+                    document.documentElement.style.setProperty('--manual-zoom', zoom);
+                }
+            }, { passive: false });
+
+            // --- LOGICA V3 DO SLIDE ---
+            // 1. Botão de Voltar
+            const backBtn = document.createElement('div');
+            backBtn.className = 'back-btn';
+            backBtn.setAttribute('title', 'Voltar ao Quadro Branco');
+            backBtn.innerHTML = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>';
+            backBtn.onclick = () => window.location.href = 'index.html';
+            document.body.appendChild(backBtn);
+
+            // 1.1 Botão Ecrã Inteiro
+            const fsBtn = document.createElement('div');
+            fsBtn.className = 'back-btn'; // Reusing base style
+            fsBtn.style.left = 'auto';
+            fsBtn.style.right = '3%'; // Position opposite
+            fsBtn.setAttribute('title', 'Ecrã Inteiro');
+            // Four corners icon similar to request
+            fsBtn.innerHTML = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>';
+            fsBtn.onclick = () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(e => console.log(e));
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                }
+            };
+            document.body.appendChild(fsBtn);
+
+            // Helper: Aplicar Tema
+            const applyTheme = (scheme) => {
+                const img = document.querySelector('.team-image img');
+
+                // Limpar temas anteriores
+                document.body.classList.remove('scheme-scheme2', 'scheme-scheme3');
+
+                // Aplicar novo tema
+                document.body.classList.add('scheme-' + scheme);
+
+                if (scheme === 'scheme2') {
+                    if (img) img.src = 'https://i.imgur.com/6FOOuFp.png';
+                } else if (scheme === 'scheme3') {
+                    if (img) img.src = 'https://i.imgur.com/RKBwuaM.png';
+                }
+            };
+
+            // 2. Carregar Dados (LocalStorage + URL Params)
+            try {
+                const h2 = document.querySelector('.main-title h2');
+
+                const updateSlideText = (text) => {
+                    if (!h2) return;
+
+                    // Natural URL Breaking
+                    let processedText = text.split(/(\s+)/).map(word => {
+                        // Detects URL-like strings or very long words
+                        if (word.includes('/') || word.includes('www.') || word.match(/\.[a-z]{2,}/i) || word.length > 25) {
+                            return word.replace(/([/.\-?=&_])/g, '$1\u200B');
+                        }
+                        return word;
+                    }).join('');
+
+                    // Dynamic Smooth Scaling Logic via clamp modifier
+                    const len = processedText.length;
+                    let factor = 1.0;
+                    if (len > 15) {
+                        factor = Math.max(0.35, 1.0 - ((len - 15) * 0.005));
+                    }
+                    h2.style.setProperty('--scale-factor', factor);
+
+                    h2.innerText = processedText;
+                };
+
+                // A. LocalStorage (Base)
+                const dataStr = localStorage.getItem('slideData');
+                if (dataStr) {
+                    const data = JSON.parse(dataStr);
+                    if (data.text) updateSlideText(data.text);
+                    if (data.scheme) applyTheme(data.scheme);
+                }
+
+                // B. URL Params (Override)
+                const params = new URLSearchParams(window.location.search);
+
+                if (params.has('text')) {
+                    updateSlideText(params.get('text'));
+                }
+
+                if (params.has('theme')) {
+                    applyTheme(params.get('theme'));
+                }
+
+            } catch (e) {
+                console.error("Erro ao carregar dados do slide:", e);
+            }
+
+            // --- FIM DA LOGICA V3 ---
+
+            // Adicionar efeito de parallax suave ao mover o mouse
+            document.addEventListener('mousemove', function (e) {
+                const circles = document.querySelectorAll('.circle');
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+
+                circles.forEach((circle, index) => {
+                    const speed = (index + 1) * 0.5;
+                    const x = (mouseX - 0.5) * speed * 20;
+                    const y = (mouseY - 0.5) * speed * 20;
+                    circle.style.transform = `translate(${x}px, ${y}px)`;
+                });
+            });
+
+            // Efeito de rotação suave na imagem ao passar o mouse
+            const teamImage = document.querySelector('.team-image');
+            teamImage.addEventListener('mouseenter', function () {
+                this.style.transform = 'scale(1.05) rotate(2deg)';
+                this.style.transition = 'all 0.5s ease';
+            });
+            teamImage.addEventListener('mouseleave', function () {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+    </script>
+</body>
+
+</html>

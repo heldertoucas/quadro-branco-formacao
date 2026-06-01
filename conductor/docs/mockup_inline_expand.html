@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup: Inline Expandable Capsule</title>
+    <style>
+        :root {
+            --bg-color: #f9a826;
+            --bg-gradient: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            --dock-bg: #1c1c1e;
+            --dock-padding: 8px;
+            --icon-size: 60px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 40px;
+        }
+
+        .canvas {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 2rem;
+            user-select: none;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Capsule Dock */
+        .dock-capsule {
+            display: flex;
+            align-items: center;
+            background: var(--dock-bg);
+            padding: var(--dock-padding);
+            border-radius: 100px;
+            gap: 2px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Item Group (Icon + Expandable Options) */
+        .dock-item-group {
+            display: flex;
+            align-items: center;
+            border-radius: 100px;
+            background: transparent;
+            transition: background 0.3s ease, padding 0.3s ease;
+            position: relative;
+            height: var(--icon-size);
+        }
+
+        .dock-item-group:hover {
+            background: rgba(255,255,255,0.1);
+            padding-right: 12px;
+        }
+
+        /* Main Circular Icon */
+        .icon {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            z-index: 2;
+            color: white;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), 0 2px 5px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+        }
+        
+        .icon-blue { background: linear-gradient(180deg, #4facfe, #00f2fe); }
+        .icon-green { background: linear-gradient(180deg, #43e97b, #38f9d7); }
+        .icon-dark { background: linear-gradient(180deg, #434343, #000000); }
+        .icon-pink { background: linear-gradient(180deg, #fa709a, #fee140); }
+
+        /* Expandable Options Area */
+        .options-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            pointer-events: none;
+            transition: max-width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1), 
+                        opacity 0.3s ease, 
+                        margin-left 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .dock-item-group:hover .options-container {
+            max-width: 400px; 
+            opacity: 1;
+            margin-left: 10px;
+            pointer-events: auto;
+        }
+
+        /* Sub-option buttons */
+        .sub-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .sub-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
+        }
+        
+        .sub-btn:active {
+            transform: scale(0.95);
+        }
+
+        .item-label {
+            color: white;
+            font-weight: 500;
+            font-size: 1rem;
+            padding-right: 8px;
+            letter-spacing: 0.5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="canvas">Escritório do Futuro</div>
+
+    <div class="dock-capsule">
+        
+        <!-- Timer Group -->
+        <div class="dock-item-group">
+            <div class="icon icon-blue">⏱️</div>
+            <div class="options-container">
+                <button class="sub-btn">5m</button>
+                <button class="sub-btn">10m</button>
+                <button class="sub-btn">Zerar</button>
+            </div>
+        </div>
+
+        <!-- Polls Group -->
+        <div class="dock-item-group">
+            <div class="icon icon-green">📊</div>
+            <div class="options-container">
+                <span class="item-label">Votação Rápida</span>
+            </div>
+        </div>
+
+        <!-- Audio Group -->
+        <div class="dock-item-group">
+            <div class="icon icon-dark">🔊</div>
+            <div class="options-container">
+                <button class="sub-btn">✅ Sucesso</button>
+                <button class="sub-btn">❌ Erro</button>
+                <button class="sub-btn">👏 Palmas</button>
+            </div>
+        </div>
+
+        <!-- Theme Group -->
+        <div class="dock-item-group">
+            <div class="icon icon-pink">🎨</div>
+            <div class="options-container">
+                <button class="sub-btn">Claro</button>
+                <button class="sub-btn">Escuro</button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

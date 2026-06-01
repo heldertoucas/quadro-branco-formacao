@@ -51,6 +51,11 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Submenus e Gavetas (Modular Control Panel)**
+- [x] **Track: Submenus e Gavetas (Modular Pro Capsule)**
 *Link: [./tracks/v3_control_panel_drawers_20260531/](./tracks/v3_control_panel_drawers_20260531/)*
 
+
+---
+
+- [ ] **Track: Migração para Multificheiro v2**
+*Link: [./tracks/multifile_migration_v2_20260601/](./tracks/multifile_migration_v2_20260601/)*

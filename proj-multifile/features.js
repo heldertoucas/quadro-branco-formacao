@@ -69,10 +69,6 @@ const features = {
         dragOffset: { x: 0, y: 0 },
 
         async setup() {
-            if (state.timerInterval) {
-                this.stop();
-                return;
-            }
             const min = await modal.show({
                 title: 'Definir Timer',
                 html: '<input type="number" class="modal-input" placeholder="Minutos (ex: 5)" value="5" min="1">'
@@ -80,44 +76,52 @@ const features = {
             if (min) this.start(parseInt(min) * 60);
         },
 
-        start(seconds, isSync = false) {
+        toggle() {
+            if (state.timerInterval) {
+                this.stop();
+            } else {
+                this.setup();
+            }
+        },
+
+        start(seconds, isSync = false, isExtension = false) {
+            if (isExtension && state.timerInterval) {
+                this.remaining += seconds;
+                this.duration += seconds;
+                if (!isSync) app.broadcastState();
+                return;
+            }
+
             if (state.timerInterval) clearInterval(state.timerInterval);
-            
+
             this.duration = seconds;
             this.remaining = seconds;
-            
+
             const el = document.getElementById('timer-overlay');
             const display = document.getElementById('timer-display');
             const progress = document.getElementById('timer-progress');
-            
+            const extendBtn = document.getElementById('timer-extend-btn');
+
             el.style.display = 'flex';
+            if (extendBtn) extendBtn.style.display = 'block';
             el.classList.remove('hectic');
-            
+
             const updateUI = () => {
                 const m = Math.floor(this.remaining / 60).toString().padStart(2, '0');
                 const s = (this.remaining % 60).toString().padStart(2, '0');
                 display.innerText = `${m}:${s}`;
-                
-                // Update Progress Ring (C = 2 * PI * 80 ≈ 502.65)
                 const offset = 502.65 - (this.remaining / this.duration * 502.65);
                 progress.style.strokeDashoffset = offset;
-                
-                if (this.remaining <= 10 && this.remaining > 0) {
-                    el.classList.add('hectic');
-                }
+                if (this.remaining <= 10 && this.remaining > 0) el.classList.add('hectic');
             };
 
             updateUI();
-            
             if (!isSync) app.broadcastState();
 
             state.timerInterval = setInterval(() => {
                 this.remaining--;
                 updateUI();
-                
-                if (this.remaining <= 0) {
-                    this.finish();
-                }
+                if (this.remaining <= 0) this.finish();
             }, 1000);
             ui.syncRunningIndicators();
         },
@@ -126,6 +130,8 @@ const features = {
             clearInterval(state.timerInterval);
             state.timerInterval = null;
             document.getElementById('timer-overlay').style.display = 'none';
+            const extendBtn = document.getElementById('timer-extend-btn');
+            if (extendBtn) extendBtn.style.display = 'none';
             ui.syncRunningIndicators();
             app.broadcastState();
         },
@@ -133,6 +139,8 @@ const features = {
         finish() {
             clearInterval(state.timerInterval);
             state.timerInterval = null;
+            const extendBtn = document.getElementById('timer-extend-btn');
+            if (extendBtn) extendBtn.style.display = 'none';
             ui.syncRunningIndicators();
             
             AudioService.toggle('success');
@@ -208,28 +216,38 @@ const features = {
     },
 
     picker: {
-        async setup() {
-            const text = await modal.show({
-                title: 'Sorteio Aleatório',
-                html: '<textarea class="modal-input" placeholder="Nomes separados por vírgula" rows="4"></textarea>'
-            });
-            if (text) this.run(text.split(',').map(s => s.trim()).filter(Boolean));
-        },
-        run(names) {
-            if (names.length < 2) return;
-            features.setView('picker');
-            const resEl = document.getElementById('picker-result');
-            let spins = 0;
-            const interval = setInterval(() => {
-                if (state.view !== 'picker' || !resEl) { clearInterval(interval); return; }
-                resEl.innerText = names[Math.floor(Math.random() * names.length)];
-                if (++spins >= 30) {
-                    clearInterval(interval);
-                    resEl.style.animation = "none";
-                    resEl.style.transform = "scale(1.2)";
-                    AudioService.toggle('fanfare');
+        setup() {
+            modal.show({
+                title: "Sorteio Aleatório",
+                html: '<textarea class="modal-input" id="picker-list" placeholder="Nomes (um por linha)" rows="5"></textarea>',
+                onConfirm: () => {
+                    const list = document.getElementById('picker-list').value.trim().split('\\n').filter(n => n.trim());
+                    if (list.length) this.spin(list);
                 }
-            }, 100);
+            });
+        },
+        spin(list) {
+            features.setView('picker');
+            const display = document.getElementById('picker-result');
+            let counter = 0;
+            let speed = 50;
+            const maxSpins = 30 + Math.floor(Math.random() * 20);
+            
+            const run = () => {
+                counter++;
+                display.innerText = list[Math.floor(Math.random() * list.length)];
+                if (counter < maxSpins) {
+                    speed *= 1.1; // Smooth deceleration
+                    setTimeout(run, speed);
+                } else {
+                    display.style.animation = 'none';
+                    display.offsetHeight; // reflow
+                    display.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                    AudioService.toggle('success');
+                    ui.confetti();
+                }
+            };
+            run();
         }
     },
 
@@ -486,19 +504,22 @@ const features = {
         active: false,
         toggleInline() {
             const toolbarColors = document.getElementById('slide-colors-toolbar');
+            const slideDivider = document.getElementById('slide-divider');
             const drawer = document.getElementById('links-drawer');
             if (drawer.classList.contains('visible')) ui.toggleLinkMenu();
             this.active = !this.active;
             const btn = document.getElementById('btn-create-slide');
             btn.classList.toggle('active', this.active);
             if (this.active) {
-                document.getElementById('control-panel').classList.add('expanded');
+                ui.toggleExpand(); // Ensure rich toolbar is open
                 toolbarColors.style.display = 'flex';
+                if (slideDivider) slideDivider.style.display = 'block';
                 ui.els.input.focus();
                 this.setScheme(this.activeScheme);
             } else {
                 toolbarColors.style.display = 'none';
-                document.getElementById('control-panel').classList.remove('expanded');
+                if (slideDivider) slideDivider.style.display = 'none';
+                if (state.isExpanded) ui.toggleExpand(); // Close rich toolbar
                 if (ui.els.input) ui.els.input.style.borderColor = '';
             }
         },
@@ -541,9 +562,9 @@ const features = {
         ctx: null,
         points: [],
         _lastMidPoint: null,
-        setup() {
+        init() {
             const canvas = document.getElementById('ink-canvas');
-            if (!this.ctx) {
+            if (canvas && !this.ctx) {
                 this.ctx = canvas.getContext('2d');
                 this.resize();
                 window.addEventListener('resize', () => this.resize());
@@ -555,6 +576,9 @@ const features = {
                 canvas.ontouchmove = (e) => { e.preventDefault(); this.draw(e.touches[0]); };
                 canvas.ontouchend = () => this.stop();
             }
+        },
+        setup() {
+            this.init();
             this.toggle();
         },
         resize() {
@@ -574,9 +598,11 @@ const features = {
         toggle() {
             this.active = !this.active;
             const canvas = document.getElementById('ink-canvas');
-            const toolbar = document.getElementById('ink-toolbar');
+            const toggleBtn = document.getElementById('btn-ink-toggle');
+            
             canvas.classList.toggle('active', this.active);
-            toolbar.classList.toggle('visible', this.active);
+            if (toggleBtn) toggleBtn.innerText = this.active ? 'Desativar' : 'Ativar';
+            
             ui.syncRunningIndicators();
             if (this.active) {
                 this.resize();
@@ -589,19 +615,18 @@ const features = {
             if (!container) return;
             const colors = PALETTES[state.theme] || PALETTES.dark;
             
-            // Set default color if current one not in palette and not highlighter
-            if (!colors.includes(state.inkColor) && !state.isInkHighlighter) {
+            if (!colors.includes(state.inkColor)) {
                 state.inkColor = colors[0];
             }
 
             container.innerHTML = colors.map(c => `
-                <div class="ink-color ${state.inkColor === c ? 'active' : ''}" 
-                     id="ink-col-${c.replace('#', '')}" 
-                     style="background:${c};" 
+                <div class="ink-color ${state.inkColor === c && this.ctx.globalCompositeOperation !== 'destination-out' ? 'active' : ''}" 
+                     style="background:${c}; width:24px; height:24px; border-radius:50%; cursor:pointer; border:2px solid rgba(255,255,255,0.2);" 
                      onclick="features.ink.setColor('${c}')"></div>
             `).join('');
         },
         start(e) {
+            if (!this.active) return;
             this.isDrawing = true;
             const pt = { x: e.clientX, y: e.clientY };
             this.points = [pt];
@@ -647,62 +672,51 @@ const features = {
         stop() { this.isDrawing = false; this.points = []; },
         applyBrushSettings() {
             if (!this.ctx) return;
-            const isDark = ['dark', 'neon', 'ocean', 'sunset', 'gameboy', '8bit'].includes(state.theme);
-
-            this.ctx.globalCompositeOperation = 'source-over';
+            this.ctx.strokeStyle = state.inkColor;
+            this.ctx.fillStyle = state.inkColor;
+            this.ctx.lineWidth = state.inkSize || 4;
             this.ctx.lineCap = 'round';
             this.ctx.lineJoin = 'round';
-
-            if (state.isInkHighlighter) {
-                const hex = state.inkColor;
-                const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
-                this.ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
-                this.ctx.lineWidth = 40;
-                this.ctx.shadowBlur = 0;
-            } else {
-                this.ctx.strokeStyle = state.inkColor;
-                this.ctx.lineWidth = 4;
-                if (isDark && state.theme === 'neon') {
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.shadowColor = state.inkColor;
-                } else {
-                    this.ctx.shadowBlur = 0;
-                }
-            }
-            this.ctx.fillStyle = this.ctx.strokeStyle;
+            this.ctx.shadowBlur = 0;
         },
         setColor(c) {
             state.inkColor = c;
-            state.isInkHighlighter = false;
+            this.ctx.globalCompositeOperation = 'source-over';
             this.applyBrushSettings();
             this.renderPalette();
-            document.getElementById('ink-pen').classList.add('active');
-            document.getElementById('ink-eraser').classList.remove('active');
-            document.getElementById('ink-highlighter').classList.remove('active');
+            const eraserBtn = document.getElementById('ink-eraser');
+            if (eraserBtn) eraserBtn.classList.remove('active');
+            
+            const p1 = document.getElementById('ink-pen1');
+            const p2 = document.getElementById('ink-pen2');
+            if (p1 && state.inkSize === 4) p1.classList.add('active');
+            if (p2 && state.inkSize === 12) p2.classList.add('active');
         },
-        setPen() {
-            state.isInkHighlighter = false;
+        setPen(type) {
+            state.inkSize = type === 1 ? 4 : 12;
+            this.ctx.globalCompositeOperation = 'source-over';
             this.applyBrushSettings();
-            document.getElementById('ink-pen').classList.add('active');
-            document.getElementById('ink-highlighter').classList.remove('active');
-            document.getElementById('ink-eraser').classList.remove('active');
+            
+            const p1 = document.getElementById('ink-pen1');
+            const p2 = document.getElementById('ink-pen2');
+            const eraserBtn = document.getElementById('ink-eraser');
+            
+            if (p1) p1.classList.toggle('active', type === 1);
+            if (p2) p2.classList.toggle('active', type === 2);
+            if (eraserBtn) eraserBtn.classList.remove('active');
             this.renderPalette();
-        },
-        setHighlighter() {
-            state.isInkHighlighter = !state.isInkHighlighter;
-            this.applyBrushSettings();
-            document.getElementById('ink-highlighter').classList.toggle('active', state.isInkHighlighter);
-            document.getElementById('ink-pen').classList.toggle('active', !state.isInkHighlighter);
-            document.getElementById('ink-eraser').classList.remove('active');
         },
         setEraser() {
             this.ctx.globalCompositeOperation = 'destination-out';
-            this.ctx.lineWidth = 30;
+            this.ctx.lineWidth = 40;
             this.ctx.shadowBlur = 0;
             document.querySelectorAll('.ink-color').forEach(el => el.classList.remove('active'));
-            document.getElementById('ink-eraser').classList.add('active');
-            document.getElementById('ink-pen').classList.remove('active');
-            document.getElementById('ink-highlighter').classList.remove('active');
+            const p1 = document.getElementById('ink-pen1');
+            const p2 = document.getElementById('ink-pen2');
+            const eraserBtn = document.getElementById('ink-eraser');
+            if (eraserBtn) eraserBtn.classList.add('active');
+            if (p1) p1.classList.remove('active');
+            if (p2) p2.classList.remove('active');
         },
         clear() {
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);

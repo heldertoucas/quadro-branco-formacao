@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup: macOS Dock</title>
+    <style>
+        :root {
+            --dock-bg: rgba(255, 255, 255, 0.4);
+            --dock-border: rgba(255, 255, 255, 0.3);
+            --icon-size: 55px;
+            --icon-spacing: 12px;
+            --accent: #007aff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 25px;
+        }
+
+        .canvas {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(0,0,0,0.2);
+            font-size: 2rem;
+            user-select: none;
+        }
+
+        /* macOS Dock Container */
+        .dock-container {
+            display: flex;
+            align-items: flex-end;
+            padding: 10px 15px;
+            background: var(--dock-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 26px;
+            border: 1px solid var(--dock-border);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.6);
+            gap: var(--icon-spacing);
+            position: relative;
+            transform-origin: bottom center;
+        }
+
+        /* Dock Divider */
+        .dock-divider {
+            width: 1px;
+            height: 40px;
+            background: rgba(0,0,0,0.1);
+            margin: 0 5px;
+            align-self: center;
+        }
+
+        /* Input Field (First Element) */
+        .dock-input-wrapper {
+            display: flex;
+            align-items: center;
+            height: var(--icon-size);
+            padding: 0 8px;
+        }
+
+        .dock-input {
+            width: 140px;
+            height: 38px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.6);
+            padding: 0 12px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), background 0.2s;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .dock-input:focus {
+            width: 220px;
+            background: rgba(255,255,255,0.9);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.2);
+        }
+
+        /* Dock Items */
+        .dock-item-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .dock-item {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: width 0.1s ease, height 0.1s ease, transform 0.1s ease;
+            transform-origin: bottom center;
+            position: relative;
+        }
+
+        /* Active Indicator (Dot) */
+        .dock-item::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background: #444;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .dock-item.active::after {
+            opacity: 1;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: absolute;
+            bottom: calc(var(--icon-size) + 35px);
+            background: rgba(30,30,30,0.85);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            transform: translateY(10px);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Options Popover */
+        .options-popover {
+            position: absolute;
+            bottom: calc(var(--icon-size) + 40px);
+            background: rgba(255,255,255,0.9);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            transform: translateY(10px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 140px;
+            border: 1px solid rgba(0,0,0,0.05);
+            backdrop-filter: blur(20px);
+        }
+
+        .option-btn {
+            padding: 10px 14px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.9rem;
+            transition: all 0.1s;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .option-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Visible States */
+        .dock-item-wrapper.show-tooltip .tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dock-item-wrapper.has-options.show-tooltip .tooltip {
+            display: none; 
+        }
+
+        .dock-item-wrapper.has-options.show-tooltip .options-popover {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="canvas">Escritório do Futuro</div>
+
+    <div class="dock-container" id="dock">
+        <div class="dock-input-wrapper">
+            <input type="text" class="dock-input" placeholder="Nova nota...">
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- Timer -->
+        <div class="dock-item-wrapper">
+            <div class="tooltip">Cronómetro</div>
+            <div class="dock-item">⏱️</div>
+        </div>
+
+        <!-- Polls -->
+        <div class="dock-item-wrapper">
+            <div class="tooltip">Votações</div>
+            <div class="dock-item">📊</div>
+        </div>
+
+        <!-- Audio (Has Options) -->
+        <div class="dock-item-wrapper has-options">
+            <div class="options-popover">
+                <button class="option-btn">✅ Sucesso</button>
+                <button class="option-btn">❌ Erro</button>
+                <button class="option-btn">👏 Palmas</button>
+            </div>
+            <div class="dock-item">🔊</div>
+        </div>
+
+        <!-- Dice -->
+        <div class="dock-item-wrapper">
+            <div class="tooltip">Lançar Dados</div>
+            <div class="dock-item">🎲</div>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- Theme (Has Options) -->
+        <div class="dock-item-wrapper has-options">
+            <div class="options-popover">
+                <button class="option-btn">Modo Vidro</button>
+                <button class="option-btn">Modo Escuro</button>
+                <button class="option-btn">Modo Neon</button>
+            </div>
+            <div class="dock-item active">🎨</div>
+        </div>
+        
+        <!-- Settings -->
+        <div class="dock-item-wrapper">
+            <div class="tooltip">Configurações</div>
+            <div class="dock-item">⚙️</div>
+        </div>
+    </div>
+
+    <script>
+        const dock = document.getElementById('dock');
+        const wrappers = document.querySelectorAll('.dock-item-wrapper');
+
+        // macOS Magnification Simulation
+        document.addEventListener('mousemove', (e) => {
+            const dockRect = dock.getBoundingClientRect();
+            
+            // Only affect if mouse is near the dock's vertical plane
+            if (e.clientY > dockRect.top - 200) {
+                wrappers.forEach((wrapper) => {
+                    const item = wrapper.querySelector('.dock-item');
+                    const rect = item.getBoundingClientRect();
+                    const itemCenterX = rect.left + rect.width / 2;
+                    
+                    const distance = Math.abs(e.clientX - itemCenterX);
+                    const maxDistance = 180;
+                    
+                    if (distance < maxDistance) {
+                        const power = (1 - distance / maxDistance);
+                        const scale = 1 + (0.5 * power); // Max scale 1.5
+                        const translateY = -20 * power;   // Lift effect
+                        
+                        item.style.width = `${55 * scale}px`;
+                        item.style.height = `${55 * scale}px`;
+                        item.style.transform = `translateY(${translateY}px)`;
+                        wrapper.style.zIndex = Math.round(scale * 10);
+                    } else {
+                        item.style.width = '55px';
+                        item.style.height = '55px';
+                        item.style.transform = 'translateY(0)';
+                        wrapper.style.zIndex = 10;
+                    }
+                });
+            } else {
+                resetDock();
+            }
+        });
+
+        function resetDock() {
+            wrappers.forEach(wrapper => {
+                const item = wrapper.querySelector('.dock-item');
+                item.style.width = '55px';
+                item.style.height = '55px';
+                item.style.transform = 'translateY(0)';
+                wrapper.style.zIndex = 10;
+            });
+        }
+
+        dock.addEventListener('mouseleave', resetDock);
+
+        // Hover for Tooltips/Popovers
+        wrappers.forEach(wrapper => {
+            wrapper.addEventListener('mouseenter', () => {
+                wrapper.classList.add('show-tooltip');
+            });
+            wrapper.addEventListener('mouseleave', () => {
+                wrapper.classList.remove('show-tooltip');
+            });
+        });
+    </script>
+</body>
+</html>

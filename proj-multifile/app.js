@@ -8,6 +8,7 @@ const app = {
     processInput() {
         const val = ui.els.input.innerText.trim() ? ui.els.input.innerHTML : "";
         ui.els.input.innerHTML = "";
+        if (ui.els.sendBtn) ui.els.sendBtn.classList.remove('visible');
         if (val) this.showContent(val);
         ui.els.input.focus();
     },
@@ -21,6 +22,7 @@ const app = {
         if (!text) return;
         this.showContent(text);
         ui.els.input.innerHTML = "";
+        if (ui.els.sendBtn) ui.els.sendBtn.classList.remove('visible');
         ui.els.input.focus();
     },
 

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup: Dock & Popovers</title>
+    <style>
+        :root {
+            --bg-color: #e2e8f0;
+            --dock-bg: rgba(255, 255, 255, 0.9);
+            --accent: #6366f1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 2rem;
+            user-select: none;
+        }
+
+        /* Dock */
+        .dock {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dock-bg);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 24px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid white;
+            z-index: 1000;
+        }
+
+        .dock-item {
+            width: 48px;
+            height: 48px;
+            background: #f8fafc;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.4rem;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .dock-item:hover {
+            background: white;
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .dock-item.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Popover */
+        .popover {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            width: 280px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000;
+        }
+
+        .popover.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .popover::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+
+        .popover-header {
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .popover-body {
+            font-size: 0.9rem;
+            color: #475569;
+        }
+
+        .close-popover {
+            cursor: pointer;
+            color: #94a3b8;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-mini {
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-mini:hover {
+            background: #f1f5f9;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="canvas">Área do Quadro Branco</div>
+
+    <div class="dock">
+        <div class="dock-item" data-target="timer-pop">⏱️</div>
+        <div class="dock-item" data-target="audio-pop">🔊</div>
+        <div class="dock-item" data-target="theme-pop">🎨</div>
+        <div class="dock-item" data-target="tools-pop">🛠️</div>
+    </div>
+
+    <!-- Popovers -->
+    <div class="popover" id="timer-pop">
+        <div class="popover-header">Cronómetro <span class="close-popover">✕</span></div>
+        <div class="popover-body">
+            Controles rápidos de tempo:
+            <div class="control-group">
+                <button class="btn-mini">Iniciar 5:00</button>
+                <button class="btn-mini">Pausar</button>
+                <button class="btn-mini">Zerar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popover" id="audio-pop">
+        <div class="popover-header">Áudio <span class="close-popover">✕</span></div>
+        <div class="popover-body">
+            Sons de feedback:
+            <div class="control-group">
+                <button class="btn-mini">Certo ✅</button>
+                <button class="btn-mini">Errado ❌</button>
+                <button class="btn-mini">Palmas 👏</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popover" id="theme-pop">
+        <div class="popover-header">Tema <span class="close-popover">✕</span></div>
+        <div class="popover-body">
+            Visual do quadro:
+            <div class="control-group">
+                <button class="btn-mini">Claro ☀️</button>
+                <button class="btn-mini">Escuro 🌙</button>
+                <button class="btn-mini">Retro 🕹️</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popover" id="tools-pop">
+        <div class="popover-header">Ferramentas <span class="close-popover">✕</span></div>
+        <div class="popover-body">
+            Mais funcionalidades:
+            <div class="control-group">
+                <button class="btn-mini">Votação 📊</button>
+                <button class="btn-mini">Dados 🎲</button>
+                <button class="btn-mini">QR Code 📱</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dockItems = document.querySelectorAll('.dock-item');
+        const popovers = document.querySelectorAll('.popover');
+        const closeBtns = document.querySelectorAll('.close-popover');
+
+        function hideAllPopovers() {
+            popovers.forEach(p => p.classList.remove('visible'));
+            dockItems.forEach(i => i.classList.remove('active'));
+        }
+
+        dockItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const targetId = item.dataset.target;
+                const targetPop = document.getElementById(targetId);
+                
+                const isAlreadyVisible = targetPop.classList.contains('visible');
+                
+                hideAllPopovers();
+
+                if (!isAlreadyVisible) {
+                    // Position popover relative to dock item
+                    const itemRect = item.getBoundingClientRect();
+                    const popWidth = targetPop.offsetWidth;
+                    targetPop.style.left = `${itemRect.left + (itemRect.width / 2)}px`;
+                    
+                    targetPop.classList.add('visible');
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hideAllPopovers();
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dock') && !e.target.closest('.popover')) {
+                hideAllPopovers();
+            }
+        });
+    </script>
+</body>
+</html>
