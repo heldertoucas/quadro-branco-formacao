@@ -1,7 +1,7 @@
 {
   "id": "multifile_migration_v2_20260601",
   "title": "Migração para Multificheiro v2",
-  "status": "in-progress",
+  "status": "completed",
   "priority": "high",
   "tags": ["architecture", "refactor", "scaffolding"],
   "created_at": "2026-06-01"

@@ -1,0 +1,174 @@
+/* --- 1. THEME & VARIABLES --- */
+:root {
+    --bg-grad-1: #0f2027;
+    --bg-grad-2: #203a43;
+    --bg-grad-3: #2c5364;
+    --text-color: #ffffff;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-hover: rgba(255, 255, 255, 0.2);
+    --accent-color: #4facfe;
+    --danger-color: #ff6b6b;
+    --success-color: #51cf66;
+    --warn-color: #fcc419;
+    --clap-color: #d63384;
+    --gold-color: #ffd700;
+    --font-main: 'Montserrat', sans-serif;
+    --font-serif: 'Playfair Display', serif;
+
+    /* Optical Scaling Defaults */
+    --optical-weight: 800;
+    --optical-spacing: normal;
+    --optical-lh: 1.2;
+    --font-size-base: 5rem;
+    --modal-overlay: rgba(0, 0, 0, 0.6);
+    --expanded-bg: rgba(15, 32, 39, 0.95);
+    --input-bg: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] {
+    --bg-grad-1: #dfe9f3;
+    --bg-grad-2: #ffffff;
+    --bg-grad-3: #fdfbfb;
+    --text-color: #1a1a1a;
+    --glass-bg: rgba(0, 0, 0, 0.04);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-hover: rgba(0, 0, 0, 0.08);
+    --accent-color: #005bea;
+    --modal-overlay: rgba(255, 255, 255, 0.6);
+    --expanded-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: rgba(0, 0, 0, 0.05);
+}
+
+/* 1. Neon (Cyberpunk) */
+[data-theme="neon"] {
+    --bg-grad-1: #050510;
+    --bg-grad-2: #100b20;
+    --bg-grad-3: #0a0a1a;
+    --text-color: #e0e0ff;
+    --glass-bg: rgba(10, 10, 30, 0.6);
+    --glass-border: #00ff9f;
+    --glass-hover: rgba(0, 255, 159, 0.1);
+    --accent-color: #00ff9f;
+    --warn-color: #ff0055;
+    --modal-overlay: rgba(0, 5, 20, 0.8);
+    --expanded-bg: rgba(5, 5, 20, 0.95);
+    --input-bg: rgba(0, 0, 0, 0.5);
+    --font-main: 'Orbitron', sans-serif;
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+/* 2. Sketch (Papel) */
+[data-theme="sketch"] {
+    --bg-grad-1: #fdf6e3;
+    --bg-grad-2: #fdf6e3;
+    --bg-grad-3: #eee8d5;
+    --text-color: #2b2b2b;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: #2b2b2b;
+    --glass-hover: rgba(0, 0, 0, 0.05);
+    --accent-color: #d33682;
+    --modal-overlay: rgba(255, 248, 220, 0.8);
+    --expanded-bg: #fdf6e3;
+    --input-bg: rgba(255, 255, 255, 0.5);
+    --font-main: 'Patrick Hand', cursive;
+}
+
+/* Specific override for Sketch borders */
+[data-theme="sketch"] * {
+    border-radius: 2px !important;
+}
+
+/* 3. Nature (Natureza) */
+[data-theme="nature"] {
+    --bg-grad-1: #e0f7fa;
+    --bg-grad-2: #e8f5e9;
+    --bg-grad-3: #c8e6c9;
+    --text-color: #2e4a3d;
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-hover: rgba(255, 255, 255, 0.6);
+    --accent-color: #00897b;
+    --modal-overlay: rgba(230, 245, 235, 0.7);
+    --expanded-bg: rgba(240, 255, 245, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.3);
+    --font-main: 'Quicksand', sans-serif;
+}
+
+/* 4. Ocean (Oceano) */
+[data-theme="ocean"] {
+    --bg-grad-1: #001f3f;
+    --bg-grad-2: #003366;
+    --bg-grad-3: #004080;
+    --text-color: #dbeaff;
+    --glass-bg: rgba(0, 30, 60, 0.4);
+    --glass-border: rgba(100, 200, 255, 0.2);
+    --glass-hover: rgba(100, 200, 255, 0.1);
+    --accent-color: #4facfe;
+    --modal-overlay: rgba(0, 20, 40, 0.7);
+    --expanded-bg: rgba(0, 31, 63, 0.95);
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --font-main: 'Raleway', sans-serif;
+}
+
+/* 5. Sunset (Pôr do Sol) */
+[data-theme="sunset"] {
+    --bg-grad-1: #2b102f;
+    --bg-grad-2: #5b1e3e;
+    --bg-grad-3: #8c2d4a;
+    --text-color: #ffe3e3;
+    --glass-bg: rgba(80, 30, 50, 0.3);
+    --glass-border: rgba(255, 100, 100, 0.2);
+    --glass-hover: rgba(255, 200, 200, 0.1);
+    --accent-color: #ff9f1c;
+    --modal-overlay: rgba(43, 16, 47, 0.8);
+    --expanded-bg: rgba(91, 30, 62, 0.95);
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --font-main: 'Poppins', sans-serif;
+}
+
+/* 6. Gameboy (Retro) */
+[data-theme="gameboy"] {
+    --bg-grad-1: #8b956d;
+    --bg-grad-2: #8b956d;
+    --bg-grad-3: #c4cfa1;
+    --text-color: #0f380f;
+    --glass-bg: rgba(15, 56, 15, 0.1);
+    --glass-border: #0f380f;
+    --glass-hover: rgba(15, 56, 15, 0.2);
+    --accent-color: #306230;
+    --warn-color: #0f380f;
+    /* No red in gameboy */
+    --modal-overlay: rgba(139, 149, 109, 0.9);
+    --expanded-bg: #8b956d;
+    --input-bg: rgba(15, 56, 15, 0.1);
+    --font-main: 'VT323', monospace;
+}
+
+[data-theme="gameboy"] * {
+    border-radius: 0 !important;
+    /* Sharp edges */
+}
+
+/* 7. 8-bit (Arcade) */
+[data-theme="8bit"] {
+    --bg-grad-1: #000000;
+    --bg-grad-2: #1a1a1a;
+    --bg-grad-3: #222222;
+    --text-color: #ffffff;
+    --glass-bg: #000000;
+    --glass-border: #ffffff;
+    --glass-hover: #333333;
+    --accent-color: #ff0044;
+    --warn-color: #ffcc00;
+    --modal-overlay: rgba(0, 0, 0, 0.9);
+    --expanded-bg: #000000;
+    --input-bg: #222222;
+    --font-main: 'Press Start 2P', cursive;
+}
+
+[data-theme="8bit"] * {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-width: 2px !important;
+}

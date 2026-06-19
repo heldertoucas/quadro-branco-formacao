@@ -1,3 +1,10 @@
 
 # Graphify
 **/graphify-out/
+
+# macOS
+.DS_Store
+
+# Tool artifacts
+.agents/
+.codex/

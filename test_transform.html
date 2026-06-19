@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.parent {
+  position: relative;
+  overflow: hidden;
+  height: 120px;
+  width: 400px;
+  border: 1px solid red;
+  mask-image: linear-gradient(to bottom, transparent, black);
+}
+.child {
+  width: 100%;
+  height: 60px;
+  background: blue;
+  color: white;
+  will-change: transform;
+}
+</style>
+</head>
+<body>
+<div class="parent">
+  <div class="child" id="child">Item 1</div>
+  <div class="child" id="child2">Item 2</div>
+  <div class="child" id="child3">Item 3</div>
+</div>
+<script>
+  const c = document.getElementById('child3');
+  c.style.transform = 'translateY(-60px)';
+  console.log('child3 top:', c.getBoundingClientRect().top);
+  console.log('transform:', getComputedStyle(c).transform);
+</script>
+</body>
+</html>
