@@ -1349,63 +1349,43 @@ h1.highlight-mode {
     box-shadow: 0 0 8px var(--accent-color);
 }
 
-/* ===== SLOT MACHINE (Picker) ===== */
-.slot-stage {
+/* ===== WHEEL OF FORTUNE (Picker) ===== */
+.wheel-stage {
     display: flex;
     justify-content: center;
     width: 100%;
     margin-bottom: 30px;
 }
 
-.slot-window {
-    width: 100%;
-    max-width: 400px;
-    height: 120px;
-    overflow: hidden;
+.wheel-wrapper {
     position: relative;
-    border-radius: 12px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    font-size: 0;
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-}
-
-.slot-reel {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     display: flex;
-    flex-direction: column;
-    will-change: transform;
+    align-items: center;
+    justify-content: center;
 }
 
-.slot-name {
-    flex: 0 0 60px;
-    width: 100%;
-    height: 60px;
-    line-height: 60px;
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0 20px;
-    color: var(--text-color);
-    transition: color 0.4s, text-shadow 0.4s;
+.wheel-canvas {
+    display: block;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
 }
 
-.slot-name.winner {
-    color: var(--gold-color) !important;
-    text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 15px rgba(255, 215, 0, 0.4);
-    transform: scale(1.15);
-    background: rgba(255, 215, 0, 0.08);
-    border-radius: 8px;
+.wheel-pointer {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-top: 28px solid var(--gold-color);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+    z-index: 2;
 }
 
-.slot-winner {
+.wheel-winner {
     font-size: 3rem;
     font-weight: 800;
     color: var(--gold-color);
@@ -1416,44 +1396,50 @@ h1.highlight-mode {
     text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
 }
 
-.slot-winner.show {
+.wheel-winner.show {
     opacity: 1;
     transform: scale(1);
 }
 
-/* Theme: 8-bit Slot */
-[data-theme="8bit"] .slot-name {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 1.2rem;
+/* Theme: 8-bit Wheel */
+[data-theme="8bit"] .wheel-pointer {
+    border-top-color: var(--accent-color);
+    filter: none;
 }
-[data-theme="8bit"] .slot-window {
-    border-radius: 4px;
+[data-theme="8bit"] .wheel-winner {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.4rem;
 }
 
-/* Theme: Gameboy Slot */
-[data-theme="gameboy"] .slot-name {
+/* Theme: Gameboy Wheel */
+[data-theme="gameboy"] .wheel-pointer {
+    border-top-color: var(--accent-color);
+    filter: none;
+}
+[data-theme="gameboy"] .wheel-winner {
     font-family: 'VT323', monospace;
     font-size: 2.8rem;
 }
-[data-theme="gameboy"] .slot-window {
-    border-radius: 0;
-}
 
-/* Theme: Sketch Slot */
-[data-theme="sketch"] .slot-name {
+/* Theme: Sketch Wheel */
+[data-theme="sketch"] .wheel-pointer {
+    border-top-color: var(--text-color);
+}
+[data-theme="sketch"] .wheel-winner {
     font-family: 'Patrick Hand', cursive;
 }
-[data-theme="sketch"] .slot-window {
-    border: 2px dashed #2b2b2b;
-}
 
-/* Theme: Neon Slot */
-[data-theme="neon"] .slot-name {
-    font-family: 'Orbitron', sans-serif;
-    text-shadow: 0 0 10px var(--accent-color);
+/* Theme: Neon Wheel */
+[data-theme="neon"] .wheel-pointer {
+    border-top-color: var(--accent-color);
+    filter: drop-shadow(0 0 8px var(--accent-color));
 }
-[data-theme="neon"] .slot-window {
-    box-shadow: 0 0 20px rgba(0,255,159,0.2);
+[data-theme="neon"] .wheel-canvas {
+    box-shadow: 0 0 30px rgba(0, 255, 159, 0.2);
+}
+[data-theme="neon"] .wheel-winner {
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 20px var(--accent-color);
 }
 
 /* Responsive */
@@ -1509,8 +1495,12 @@ h1.highlight-mode {
     .dice-sum {
         font-size: 2rem;
     }
-    .slot-name {
-        font-size: 1.8rem;
+    .wheel-canvas {
+        width: 280px;
+        height: 280px;
+    }
+    .wheel-winner {
+        font-size: 2rem;
     }
 }
 

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup: slot-text Name Picker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slot-text@0.3.1/style.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #fff;
+        }
+        h1 { font-size: 1.5rem; font-weight: 400; opacity: 0.7; margin-bottom: 2rem; }
+        .stage {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 3rem 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            backdrop-filter: blur(12px);
+        }
+        #name-display {
+            font-size: 2.8rem;
+            font-weight: 700;
+            min-width: 200px;
+            text-align: center;
+            line-height: 1.4;
+            letter-spacing: 0.02em;
+        }
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        textarea {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            padding: 0.75rem 1rem;
+            resize: vertical;
+            width: 280px;
+            min-height: 70px;
+            font-family: inherit;
+        }
+        textarea::placeholder { color: rgba(255,255,255,0.35); }
+        button {
+            background: #6c5ce7;
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: transform 0.15s, background 0.2s;
+        }
+        button:hover { background: #7c6ff0; transform: scale(1.04); }
+        button:active { transform: scale(0.96); }
+        button.outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        button.outline:hover { background: rgba(255,255,255,0.08); }
+        .legend {
+            font-size: 0.8rem;
+            opacity: 0.4;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .winner-badge {
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .winner-badge.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <h1>slot-text · Name Picker</h1>
+    <div class="stage">
+        <div id="name-display" data-slot-text>---</div>
+        <div id="winner-badge" class="winner-badge"></div>
+        <textarea id="names-input" placeholder="Nomes separados por vírgula&#10;ex: Ana, Bruno, Carla, Daniel">Ana, Bruno, Carla, Daniel, Eva, Filipe</textarea>
+        <div class="controls">
+            <button id="btn-sort">Sortear</button>
+            <button id="btn-reset" class="outline">Reset</button>
+        </div>
+        <div class="legend">cada letra rola individualmente · zero deps · CDN</div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "slot-text": "https://cdn.jsdelivr.net/npm/slot-text@0.3.1/dist/index.js"
+        }
+    }
+    </script>
+    <script type="module">
+        import { slotText, chromatic } from "slot-text";
+
+        const display = document.getElementById("name-display");
+        const input = document.getElementById("names-input");
+        const badge = document.getElementById("winner-badge");
+
+        const label = slotText(display, "---");
+
+        function getNames() {
+            return input.value
+                .split(",")
+                .map(s => s.trim())
+                .filter(Boolean);
+        }
+
+        function pick() {
+            const names = getNames();
+            if (names.length < 2) return;
+            badge.classList.remove("show");
+            badge.textContent = "";
+
+            const winner = names[Math.floor(Math.random() * names.length)];
+
+            label.set(winner, {
+                direction: Math.random() > 0.5 ? "up" : "down",
+                color: chromatic(),
+            });
+
+            setTimeout(() => {
+                badge.textContent = "Winner: " + winner;
+                badge.classList.add("show");
+            }, 800);
+        }
+
+        function reset() {
+            badge.classList.remove("show");
+            badge.textContent = "";
+            label.set("---", { direction: "down" });
+        }
+
+        document.getElementById("btn-sort").addEventListener("click", pick);
+        document.getElementById("btn-reset").addEventListener("click", reset);
+    </script>
+</body>
+</html>

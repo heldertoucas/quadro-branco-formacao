@@ -74,15 +74,14 @@ const features = {
                 ui.els.mainText.style.flexDirection = 'column';
                 ui.els.mainText.style.alignItems = 'center';
                 ui.els.mainText.style.justifyContent = 'center';
-                ui.els.mainText.style.alignSelf = 'stretch';
-                ui.els.mainText.style.width = '100%';
                 ui.els.mainText.innerHTML = `
-                    <div class="slot-stage">
-                        <div class="slot-window">
-                            <div class="slot-reel" id="slot-reel"></div>
+                    <div class="wheel-stage">
+                        <div class="wheel-wrapper">
+                            <div class="wheel-pointer"></div>
+                            <canvas class="wheel-canvas" id="wheel-canvas" width="380" height="380"></canvas>
                         </div>
                     </div>
-                    <div id="slot-winner" class="slot-winner"></div>`;
+                    <div id="wheel-winner" class="wheel-winner"></div>`;
                 ui.els.mainText.classList.add('visible');
                 break;
             }
@@ -182,86 +181,171 @@ const features = {
     },
 
     picker: {
+        spinning: false,
+        currentAngle: 0,
+
+        PALETTES: {
+            dark: ['#e94560','#0f3460','#533483','#ff6b35','#00b4d8','#2ec4b6','#e71d36','#ff9f1c','#7209b7','#3a0ca3','#4361ee','#4cc9f0'],
+            light: ['#b8c6db','#f5b7b1','#a3de83','#f9e79f','#85c1e9','#d7bde2','#f0b27a','#a9cce3','#f1948a','#82e0aa','#d2b4de','#fad7a0'],
+            neon: ['#ff0055','#00ff9f','#00d4ff','#ffd700','#8b5cf6','#ff6bcb','#00ffc8','#ff4400','#aa00ff','#00e5ff','#76ff03','#f50057'],
+            sketch: ['#d33682','#268bd2','#b58900','#cb4b16','#859900','#6c71c4','#2aa198','#dc322f','#073642','#586e75'],
+            nature: ['#2e7d32','#558b2f','#00897b','#5d4037','#795548','#3e2723','#81c784','#a5d6a7','#4db6ac','#8d6e63'],
+            ocean: ['#004080','#006994','#00b4d8','#48cae4','#caf0f8','#ff6b6b','#023e8a','#0077b6','#90e0ef','#ff9f1c'],
+            sunset: ['#7209b7','#b5179e','#f72585','#ff9f1c','#ff6b35','#ff0054','#560bad','#3a0ca3','#e0aaff','#f48c6e'],
+            gameboy: ['#0f380f','#306230','#8bac0f','#9bbc0f'],
+            '8bit': ['#ff0044','#00e5ff','#ffcc00','#00c853','#ff9100','#d500f9','#f44336','#2196f3'],
+            mint: ['#ffb5c2','#a8e6cf','#dcedc1','#ffd3b6','#ffaaa5','#a8edea','#fed6e3','#b5ead7','#c7ecee','#ffc3a0'],
+            warm: ['#ff6b35','#f7931e','#ffd700','#ff4500','#ff7e5f','#feb47b','#ff8c42','#e65c00','#ffaa71','#d94b00'],
+            slate: ['#94a3b8','#64748b','#475569','#818cf8','#6366f1','#a5b4fc','#7c3aed','#6d28d9','#8b5cf6','#c4b5fd'],
+            neutral: ['#007aff','#5856d6','#34c759','#ff9500','#ff3b30','#af52de','#5ac8fa','#ff2d55','#00c7be','#ffcc00'],
+            navy: ['#3b82f6','#0ea5e9','#f59e0b','#10b981','#8b5cf6','#f43f5e','#06b6d4','#84cc16','#f97316','#6366f1'],
+            silver: ['#10b981','#0ea5e9','#8b5cf6','#f43f5e','#f59e0b','#06b6d4','#84cc16','#f97316','#6366f1','#3b82f6'],
+        },
+        getPalette() {
+            const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            return this.PALETTES[theme] || this.PALETTES.dark;
+        },
+
         async setup() {
             const text = await modal.show({
-                title: 'Sorteio Aleatório',
-                html: '<textarea class="modal-input" placeholder="Nomes separados por vírgula" rows="4"></textarea>'
+                title: 'Sorteio Aleatorio',
+                html: '<textarea class="modal-input" placeholder="Nomes separados por virgula" rows="4"></textarea>'
             });
             if (text) this.run(text.split(',').map(s => s.trim()).filter(Boolean));
         },
-        async run(names) {
-            if (names.length < 2) return;
-            features.setView('picker');
-            const reelOld = document.getElementById('slot-reel');
-            const winEl = document.getElementById('slot-winner');
-            if (!reelOld || !winEl) return;
 
-            // Limpar troféu de sorteios anteriores
+        drawWheel(names, canvas, angle) {
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const size = canvas.clientWidth;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            const cx = size / 2;
+            const cy = size / 2;
+            const r = size / 2 - 10;
+            const count = names.length;
+
+            if (count === 0) {
+                ctx.clearRect(0, 0, size, size);
+                return;
+            }
+
+            const slice = (Math.PI * 2) / count;
+            const offset = -Math.PI / 2;
+            ctx.clearRect(0, 0, size, size);
+
+            for (let i = 0; i < count; i++) {
+                const start = offset + angle + i * slice;
+                const end = start + slice;
+
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, start, end);
+                ctx.closePath();
+                const palette = this.getPalette();
+                ctx.fillStyle = palette[i % palette.length];
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                const mid = start + slice / 2;
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(mid);
+                const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim() || '#fff';
+                ctx.fillStyle = textColor;
+                ctx.font = `bold ${Math.max(11, 14 - count * 0.15)}px -apple-system, "Montserrat", sans-serif`;
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+
+                let display = names[i];
+                const maxWidth = r * 0.55;
+                if (ctx.measureText(display).width > maxWidth) {
+                    while (ctx.measureText(display + '...').width > maxWidth && display.length > 2) {
+                        display = display.slice(0, -1);
+                    }
+                    display += '...';
+                }
+                ctx.fillText(display, r - 16, 0);
+                ctx.restore();
+            }
+
+            const hubRadius = Math.max(18, size * 0.06);
+            const style = getComputedStyle(document.documentElement);
+            const accent = style.getPropertyValue('--accent-color').trim() || '#4facfe';
+            const bg = style.getPropertyValue('--bg-grad-1').trim() || '#0f2027';
+            ctx.beginPath();
+            ctx.arc(cx, cy, hubRadius, 0, Math.PI * 2);
+            ctx.fillStyle = bg;
+            ctx.fill();
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.shadowColor = accent;
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+            ctx.fillStyle = accent;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        },
+
+        run(names) {
+            if (this.spinning || names.length < 2) return;
+            features.setView('picker');
+
+            const canvas = document.getElementById('wheel-canvas');
+            const winEl = document.getElementById('wheel-winner');
+            if (!canvas || !winEl) return;
+
+            this.spinning = true;
             winEl.classList.remove('show');
             winEl.textContent = '';
 
-            // CRÍTICO: Clonar o reel para limpar estado de composição preso
-            // (animações anteriores podem deixar o transform num estado "preso" que
-            // não aceita novas transformações. Clonar o elemento reseta o estado.)
-            const reel = reelOld.cloneNode(true);
-            reelOld.parentNode.replaceChild(reel, reelOld);
-            reel.id = 'slot-reel';
-
-            const nameHeight = 60;
             const winIndex = Math.floor(Math.random() * names.length);
-            const extraSpins = 3 + Math.floor(Math.random() * 2);
-            const target = names.length * extraSpins + winIndex;
-            const copiesNeeded = extraSpins + 2;
-            const namesMulti = [];
-            for (let i = 0; i < copiesNeeded; i++) namesMulti.push(...names);
-            reel.innerHTML = namesMulti.map(n => `<div class="slot-name">${n}</div>`).join('');
+            const slice = (Math.PI * 2) / names.length;
+            const fullSpins = 5 + Math.floor(Math.random() * 4);
 
-            // Cancelar qualquer animação pendente
-            reel.getAnimations().forEach(a => a.cancel());
+            // Calculate where the wheel must stop so slice winIndex is at the pointer (top)
+            // With offset -π/2 in drawWheel, the pointer (top) is at canvas angle 0 in the
+            // wheel's reference frame. Slice i spans from angle+i*slice to angle+(i+1)*slice.
+            // For slice winIndex to contain the pointer: angle ≡ -winIndex*slice - extraOffset
+            const extraOffset = slice * (0.05 + Math.random() * 0.85);
+            const desiredAngle = -(winIndex * slice + extraOffset);
 
-            // Calcular posições
-            const winHeight = parseFloat(getComputedStyle(reel.parentElement).height);
-            const initOffset = Math.floor(Math.random() * 3) * nameHeight;
-            const targetY = target * nameHeight - winHeight / 2 + nameHeight / 2;
-            const startY = initOffset;
-            const endY = targetY;
-            const totalDuration = 7000 + (extraSpins - 3) * 1600;
+            // One full rotation forward from current position to desired angle
+            const startAngle = this.currentAngle;
+            const oneMore = ((desiredAngle - startAngle) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            const totalRotation = fullSpins * Math.PI * 2 + oneMore;
+            const endAngle = startAngle + totalRotation;
+            const duration = 4000 + Math.random() * 2000;
             const startTime = performance.now();
 
-            // Definir posição inicial e forçar reflow
-            reel.style.transform = `translateY(-${startY}px)`;
-            void reel.offsetHeight;
+            const animate = (now) => {
+                const elapsed = now - startTime;
+                const t = Math.min(elapsed / duration, 1);
+                const progress = 1 - Math.pow(1 - t, 4);
 
-            // Animar com requestAnimationFrame
-            await new Promise(resolve => {
-                function animate(now) {
-                    const elapsed = now - startTime;
-                    const t = Math.min(elapsed / totalDuration, 1);
+                this.currentAngle = startAngle + (endAngle - startAngle) * progress;
+                this.drawWheel(names, canvas, this.currentAngle);
 
-                    // Easing: ease-out quintic — rápido no início, desaceleração forte no final
-                    const progress = 1 - Math.pow(1 - t, 5);
-
-                    const currentY = startY + (endY - startY) * progress;
-                    reel.style.transform = `translateY(-${currentY}px)`;
-
-                    if (t < 1) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        reel.style.transform = `translateY(-${endY}px)`;
-                        resolve();
-                    }
+                if (t < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    this.currentAngle = endAngle;
+                    this.drawWheel(names, canvas, this.currentAngle);
+                    this.spinning = false;
+                    winEl.textContent = '\u{1F3C6} ' + names[winIndex];
+                    winEl.classList.add('show');
+                    AudioService.toggle('fanfare');
+                    ui.confetti();
                 }
-                requestAnimationFrame(animate);
-            });
+            };
 
-            // Phase 3: Winner
-            reel.querySelectorAll('.slot-name').forEach((el, i) => {
-                if (i === target) el.classList.add('winner');
-            });
-            winEl.textContent = `🏆 ${names[winIndex]}`;
-            winEl.classList.add('show');
-            AudioService.toggle('fanfare');
-            ui.confetti();
+            requestAnimationFrame(animate);
         }
     },
 

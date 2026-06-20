@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup: Web Animations API Reel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #fff;
+        }
+        h1 { font-size: 1.5rem; font-weight: 400; opacity: 0.7; margin-bottom: 2rem; }
+        .stage {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 3rem 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            backdrop-filter: blur(12px);
+        }
+        .slot-window {
+            width: 320px;
+            height: 72px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .slot-window::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(
+                to bottom,
+                rgba(26,26,46,1) 0%,
+                transparent 25%,
+                transparent 75%,
+                rgba(26,26,46,1) 100%
+            );
+        }
+        .slot-reel {
+            will-change: transform;
+        }
+        .slot-name {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            padding: 0 1.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .slot-name.winner {
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255,215,0,0.4);
+        }
+        #winner-badge {
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        #winner-badge.show { opacity: 1; }
+        .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+        textarea {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            padding: 0.75rem 1rem;
+            resize: vertical;
+            width: 280px;
+            min-height: 70px;
+            font-family: inherit;
+        }
+        textarea::placeholder { color: rgba(255,255,255,0.35); }
+        button {
+            background: #e94560;
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: transform 0.15s, background 0.2s;
+        }
+        button:hover { background: #ff6b81; transform: scale(1.04); }
+        button:active { transform: scale(0.96); }
+        button.outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        button.outline:hover { background: rgba(255,255,255,0.08); }
+        .legend { font-size: 0.8rem; opacity: 0.4; margin-top: 1rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>Web Animations API · Reel</h1>
+    <div class="stage">
+        <div class="slot-window">
+            <div class="slot-reel" id="reel"></div>
+        </div>
+        <div id="winner-badge" class="winner-badge"></div>
+        <textarea id="names-input" placeholder="Nomes separados por vírgula&#10;ex: Ana, Bruno, Carla, Daniel">Ana, Bruno, Carla, Daniel, Eva, Filipe</textarea>
+        <div class="controls">
+            <button id="btn-sort">Sortear</button>
+            <button id="btn-reset" class="outline">Reset</button>
+        </div>
+        <div class="legend">element.animate() · sem rAF · sem estado preso</div>
+    </div>
+
+    <script>
+        const NAME_HEIGHT = 72;
+        let currentAnim = null;
+
+        const reel = document.getElementById("reel");
+        const input = document.getElementById("names-input");
+        const badge = document.getElementById("winner-badge");
+
+        function getNames() {
+            return input.value.split(",").map(s => s.trim()).filter(Boolean);
+        }
+
+        function buildReel(names, winIndex, copies) {
+            const items = [];
+            for (let i = 0; i < copies; i++) items.push(...names);
+            reel.innerHTML = items.map((n, i) =>
+                `<div class="slot-name${i === winIndex + copies * 2 ? ' winner' : ''}">${n}</div>`
+            ).join("");
+        }
+
+        function pick() {
+            const names = getNames();
+            if (names.length < 2) return;
+
+            if (currentAnim) {
+                currentAnim.cancel();
+                currentAnim = null;
+            }
+
+            badge.classList.remove("show");
+            badge.textContent = "";
+
+            const winIndex = Math.floor(Math.random() * names.length);
+            const copies = 4;
+            const targetIndex = winIndex + copies * 2;
+            const totalItems = names.length * copies;
+
+            buildReel(names, winIndex, copies);
+
+            const startY = 0;
+            const endY = (targetIndex - 1) * NAME_HEIGHT;
+            const totalDistance = endY - startY;
+
+            const duration = 5000 + Math.random() * 3000;
+
+            const keyframes = [
+                { transform: `translateY(0px)`, offset: 0 },
+                { transform: `translateY(${endY * 0.3}px)`, offset: 0.35 },
+                { transform: `translateY(${endY * 0.65}px)`, offset: 0.65 },
+                { transform: `translateY(${endY * 0.88}px)`, offset: 0.82 },
+                { transform: `translateY(${endY}px)`, offset: 1 },
+            ];
+
+            const timing = {
+                duration,
+                easing: "cubic-bezier(0.15, 0.85, 0.25, 1)",
+                fill: "forwards",
+            };
+
+            currentAnim = reel.animate(keyframes, timing);
+
+            currentAnim.finished.then(() => {
+                currentAnim = null;
+                reel.style.transform = `translateY(-${endY}px)`;
+                badge.textContent = "Winner: " + names[winIndex];
+                badge.classList.add("show");
+            }).catch(() => {});
+        }
+
+        function reset() {
+            if (currentAnim) {
+                currentAnim.cancel();
+                currentAnim = null;
+            }
+            badge.classList.remove("show");
+            badge.textContent = "";
+            reel.innerHTML = "";
+            reel.style.transform = "translateY(0px)";
+        }
+
+        document.getElementById("btn-sort").addEventListener("click", pick);
+        document.getElementById("btn-reset").addEventListener("click", reset);
+    </script>
+</body>
+</html>

@@ -59,3 +59,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Migração para Multificheiro v2**
 *Link: [./tracks/multifile_migration_v2_20260601/](./tracks/multifile_migration_v2_20260601/)*
+
+---
+
+- [ ] **Track: Name Picker v2 (slot-text / WAAPI / Wheel)**
+*Link: [./tracks/v3_name_picker_v2_20260620/](./tracks/v3_name_picker_v2_20260620/)*

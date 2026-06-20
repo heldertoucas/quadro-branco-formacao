@@ -172,3 +172,95 @@
     box-shadow: none !important;
     border-width: 2px !important;
 }
+
+/* 8. Mint (Fresh) — from mockup_macos_dock */
+[data-theme="mint"] {
+    --bg-grad-1: #a8edea;
+    --bg-grad-2: #dbf7f3;
+    --bg-grad-3: #fed6e3;
+    --text-color: #1a1a1a;
+    --glass-bg: rgba(255, 255, 255, 0.5);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-hover: rgba(255, 255, 255, 0.7);
+    --accent-color: #007aff;
+    --modal-overlay: rgba(255, 255, 255, 0.6);
+    --expanded-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.7);
+}
+
+/* 9. Warm (Coral) — from mockup_inline_expand */
+[data-theme="warm"] {
+    --bg-grad-1: #ff7e5f;
+    --bg-grad-2: #fe9468;
+    --bg-grad-3: #feb47b;
+    --text-color: #ffffff;
+    --glass-bg: rgba(28, 28, 30, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-hover: rgba(255, 255, 255, 0.15);
+    --accent-color: #4facfe;
+    --warn-color: #ff6b6b;
+    --modal-overlay: rgba(0, 0, 0, 0.6);
+    --expanded-bg: rgba(28, 28, 30, 0.95);
+    --input-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* 10. Slate (Neutral Cool) — from mockup_dock_popovers */
+[data-theme="slate"] {
+    --bg-grad-1: #e2e8f0;
+    --bg-grad-2: #e2e8f0;
+    --bg-grad-3: #cbd5e1;
+    --text-color: #1e293b;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.06);
+    --glass-hover: rgba(255, 255, 255, 0.9);
+    --accent-color: #6366f1;
+    --modal-overlay: rgba(0, 0, 0, 0.3);
+    --expanded-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.8);
+}
+
+/* 11. Neutral (Light Apple) — from mockup_dock_drawer */
+[data-theme="neutral"] {
+    --bg-grad-1: #f0f2f5;
+    --bg-grad-2: #f0f2f5;
+    --bg-grad-3: #e5e7eb;
+    --text-color: #1a1a1a;
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.06);
+    --glass-hover: rgba(255, 255, 255, 0.9);
+    --accent-color: #007aff;
+    --modal-overlay: rgba(0, 0, 0, 0.2);
+    --expanded-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.7);
+}
+
+/* 12. Navy (Dark Premium) — from mockup_capsule_pro */
+[data-theme="navy"] {
+    --bg-grad-1: #0f172a;
+    --bg-grad-2: #1e293b;
+    --bg-grad-3: #0f172a;
+    --text-color: #f8fafc;
+    --glass-bg: rgba(20, 20, 25, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-hover: rgba(255, 255, 255, 0.15);
+    --accent-color: #3b82f6;
+    --warn-color: #f59e0b;
+    --modal-overlay: rgba(15, 23, 42, 0.8);
+    --expanded-bg: rgba(15, 23, 42, 0.95);
+    --input-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* 13. Silver (Cool Gray) — from mockup_spotlight */
+[data-theme="silver"] {
+    --bg-grad-1: #f3f4f6;
+    --bg-grad-2: #f3f4f6;
+    --bg-grad-3: #e5e7eb;
+    --text-color: #1f2937;
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.06);
+    --glass-hover: rgba(255, 255, 255, 0.9);
+    --accent-color: #10b981;
+    --modal-overlay: rgba(0, 0, 0, 0.15);
+    --expanded-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.7);
+}

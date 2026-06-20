@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup: Canvas Wheel of Fortune</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0d0d0d, #1a1a2e, #0d0d0d);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #fff;
+        }
+        h1 { font-size: 1.5rem; font-weight: 400; opacity: 0.7; margin-bottom: 2rem; }
+        .stage {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 2rem 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            backdrop-filter: blur(12px);
+        }
+        .wheel-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        canvas {
+            display: block;
+            border-radius: 50%;
+        }
+        .pointer {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 28px solid #ffd700;
+            filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+            z-index: 2;
+        }
+        #winner-badge {
+            font-size: 1.3rem;
+            font-weight: 700;
+            min-height: 2rem;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        #winner-badge.show { opacity: 1; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.4); }
+        .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+        textarea {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            padding: 0.75rem 1rem;
+            resize: vertical;
+            width: 280px;
+            min-height: 70px;
+            font-family: inherit;
+        }
+        textarea::placeholder { color: rgba(255,255,255,0.35); }
+        button {
+            background: #ff6b35;
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: transform 0.15s, background 0.2s;
+        }
+        button:hover { background: #ff8c5a; transform: scale(1.04); }
+        button:active { transform: scale(0.96); }
+        button.outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        button.outline:hover { background: rgba(255,255,255,0.08); }
+        .legend { font-size: 0.8rem; opacity: 0.4; margin-top: 0.5rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>Canvas · Wheel of Fortune</h1>
+    <div class="stage">
+        <div class="wheel-wrapper">
+            <div class="pointer"></div>
+            <canvas id="wheel" width="360" height="360"></canvas>
+        </div>
+        <div id="winner-badge" class="winner-badge"></div>
+        <textarea id="names-input" placeholder="Nomes separados por vírgula&#10;ex: Ana, Bruno, Carla, Daniel">Ana, Bruno, Carla, Daniel, Eva, Filipe</textarea>
+        <div class="controls">
+            <button id="btn-sort">Girar</button>
+            <button id="btn-reset" class="outline">Reset</button>
+        </div>
+        <div class="legend">canvas puro · rotação com física · sem dependências</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("wheel");
+        const ctx = canvas.getContext("2d");
+        const input = document.getElementById("names-input");
+        const badge = document.getElementById("winner-badge");
+
+        const PALETTE = [
+            "#e94560", "#0f3460", "#533483", "#ff6b35",
+            "#00b4d8", "#2ec4b6", "#e71d36", "#ff9f1c",
+            "#7209b7", "#3a0ca3", "#4361ee", "#4cc9f0",
+            "#f72585", "#b5179e", "#4895ef", "#560bad",
+        ];
+
+        let names = [];
+        let currentAngle = 0;
+        let spinning = false;
+
+        function getNames() {
+            return input.value.split(",").map(s => s.trim()).filter(Boolean);
+        }
+
+        function drawWheel(names, angle) {
+            const cx = 180, cy = 180, r = 170;
+            const count = names.length;
+            if (count === 0) {
+                ctx.clearRect(0, 0, 360, 360);
+                ctx.fillStyle = "#333";
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.fill();
+                return;
+            }
+
+            const slice = (Math.PI * 2) / count;
+
+            ctx.clearRect(0, 0, 360, 360);
+
+            for (let i = 0; i < count; i++) {
+                const start = angle + i * slice;
+                const end = start + slice;
+
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, start, end);
+                ctx.closePath();
+                ctx.fillStyle = PALETTE[i % PALETTE.length];
+                ctx.fill();
+                ctx.strokeStyle = "rgba(255,255,255,0.15)";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                const mid = start + slice / 2;
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(mid);
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 12px -apple-system, sans-serif";
+                ctx.textAlign = "right";
+                ctx.textBaseline = "middle";
+
+                const text = names[i];
+                const maxWidth = r * 0.6;
+                let display = text;
+                if (ctx.measureText(text).width > maxWidth) {
+                    while (ctx.measureText(display + "…").width > maxWidth && display.length > 2) {
+                        display = display.slice(0, -1);
+                    }
+                    display += "…";
+                }
+                ctx.fillText(display, r - 14, 0);
+                ctx.restore();
+            }
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, 24, 0, Math.PI * 2);
+            ctx.fillStyle = "#1a1a2e";
+            ctx.fill();
+            ctx.strokeStyle = "rgba(255,255,255,0.2)";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function spin() {
+            if (spinning) return;
+            names = getNames();
+            if (names.length < 2) return;
+
+            spinning = true;
+            badge.classList.remove("show");
+            badge.textContent = "";
+            document.getElementById("btn-sort").disabled = true;
+
+            const winIndex = Math.floor(Math.random() * names.length);
+            const slice = (Math.PI * 2) / names.length;
+            const targetAngle = winIndex * slice;
+            const fullSpins = 5 + Math.floor(Math.random() * 4);
+            const extraOffset = slice * (0.05 + Math.random() * 0.85);
+            const totalRotation = fullSpins * Math.PI * 2 + (Math.PI * 2 - targetAngle - extraOffset);
+
+            const startAngle = currentAngle;
+            const endAngle = startAngle + totalRotation;
+            const duration = 4000 + Math.random() * 2000;
+            const startTime = performance.now();
+
+            function animate(now) {
+                const elapsed = now - startTime;
+                const t = Math.min(elapsed / duration, 1);
+
+                const progress = 1 - Math.pow(1 - t, 4);
+
+                currentAngle = startAngle + (endAngle - startAngle) * progress;
+                drawWheel(names, currentAngle);
+
+                if (t < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    currentAngle = endAngle;
+                    spinning = false;
+                    document.getElementById("btn-sort").disabled = false;
+                    badge.textContent = "Winner: " + names[winIndex];
+                    badge.classList.add("show");
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function resetWheel() {
+            if (spinning) return;
+            names = getNames();
+            currentAngle = 0;
+            drawWheel(names, 0);
+            badge.classList.remove("show");
+            badge.textContent = "";
+        }
+
+        document.getElementById("btn-sort").addEventListener("click", spin);
+        document.getElementById("btn-reset").addEventListener("click", resetWheel);
+
+        // Initial draw
+        resetWheel();
+    </script>
+</body>
+</html>
