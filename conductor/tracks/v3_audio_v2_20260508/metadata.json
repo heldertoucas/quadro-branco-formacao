@@ -1,8 +1,8 @@
 {
   "track_id": "v3_audio_v2_20260508",
   "type": "feature",
-  "status": "in-progress",
+  "status": "completed",
   "created_at": "2026-05-08T02:00:00Z",
-  "updated_at": "2026-06-19T18:00:00Z",
-  "description": "Refinamento da Atmosfera Sonora: Kits por tema, micro-interações de UI e visualização reativa."
+  "updated_at": "2026-06-21T00:30:00Z",
+  "description": "Atmosfera Sonora v2: playTick em interações, volume slider persistente, SOUND_KITS per-theme (pro/neon/8bit/gameboy/sketch) com synth fallback, reactive CSS pulse no h1. Per-theme MP3 sets e BiquadFilter explicitamente fora de escopo. Implementation: proj-multifile-v2/ui.js:1-86, state.js:8-18, layout.css:740-748."
 }

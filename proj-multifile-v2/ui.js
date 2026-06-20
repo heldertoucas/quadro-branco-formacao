@@ -1,9 +1,9 @@
 const SOUND_KITS = {
-    pro: { wave: 'sine', filter: 0 },
-    neon: { wave: 'sawtooth', filter: 800 },
-    '8bit': { wave: 'square', filter: 0 },
-    gameboy: { wave: 'triangle', filter: 0 },
-    sketch: { wave: 'sine', filter: 300 }
+    pro: { wave: 'sine' },
+    neon: { wave: 'sawtooth' },
+    '8bit': { wave: 'square' },
+    gameboy: { wave: 'triangle' },
+    sketch: { wave: 'sine' }
 };
 
 class AudioService {

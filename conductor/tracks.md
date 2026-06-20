@@ -31,7 +31,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Dados e Sorteio (Dados 3D)**
+- [x] **Track: Dados e Sorteio (Dados 3D)**
 *Link: [./tracks/v3_dice_3d_20260508/](./tracks/v3_dice_3d_20260508/)*
 
 ---
@@ -41,7 +41,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Feedback Sonoro e Atmosfera v2**
+- [x] **Track: Feedback Sonoro e Atmosfera v2**
 *Link: [./tracks/v3_audio_v2_20260508/](./tracks/v3_audio_v2_20260508/)*
 
 ---
@@ -62,5 +62,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Name Picker v2 (slot-text / WAAPI / Wheel)**
+- [x] **Track: Name Picker v2 (slot-text / WAAPI / Wheel)**
 *Link: [./tracks/v3_name_picker_v2_20260620/](./tracks/v3_name_picker_v2_20260620/)*

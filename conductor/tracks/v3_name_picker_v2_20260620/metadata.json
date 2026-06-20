@@ -1,8 +1,8 @@
 {
   "track_id": "v3_name_picker_v2_20260620",
   "type": "feature",
-  "status": "new",
+  "status": "completed",
   "created_at": "2026-06-20T13:00:00Z",
-  "updated_at": "2026-06-20T13:00:00Z",
-  "description": "Random Name Picker v2 — explorar e avaliar 3 frameworks/abordagens de animação alternativos ao slot atual (slot-text, Web Animations API, Canvas Wheel)."
+  "updated_at": "2026-06-20T23:50:00Z",
+  "description": "Random Name Picker v2 — adopted approach C (Canvas Wheel of Fortune). Replaces the rAF reel with a Canvas 2D wheel, 5–8 spin decel, themed palettes, fanfare + confetti on winner. Implementation: proj-multifile-v2/features.js:183-350 + layout.css:1353-1502."
 }

@@ -1,8 +1,8 @@
 {
   "track_id": "v3_dice_3d_20260508",
   "type": "feature",
-  "status": "new",
+  "status": "completed",
   "created_at": "2026-05-08T02:00:00Z",
-  "updated_at": "2026-05-08T02:00:00Z",
-  "description": "Dramatização física do acaso: Dados 3D (Pure CSS), efeito slot machine para sorteios e tematização de objetos."
+  "updated_at": "2026-06-20T23:55:00Z",
+  "description": "Dados 3D (CSS cube + 30-tick chaotic spin + 1.5s cubic-bezier decel) com theming para 8bit/gameboy/sketch/neon. Slot Machine Reel do spec original foi substituído pelo Canvas Wheel of Fortune no track v3_name_picker_v2_20260620. Implementation: proj-multifile-v2/features.js:132-180 + layout.css:1233-1348."
 }
