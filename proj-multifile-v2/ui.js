@@ -21,8 +21,6 @@ class AudioService {
         localStorage.setItem('qv_volume', state.volume);
         const slider = document.getElementById('volume-slider');
         if (slider) slider.value = state.volume;
-        const label = document.getElementById('volume-label');
-        if (label) label.innerText = Math.round(state.volume * 100) + '%';
     }
 
     static toggle(key) {
@@ -318,6 +316,13 @@ const ui = {
             if (state.isExpanded) this.updateFormatButtons();
         });
 
+        // Escape exits cinema mode (when QR is fullscreen)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.els.qrContainer.classList.contains('cinema-mode')) {
+                this.els.qrContainer.classList.remove('cinema-mode');
+            }
+        });
+
         // --- URL Params Handling ---
         const params = new URLSearchParams(window.location.search);
 
@@ -425,12 +430,19 @@ const ui = {
         });
     },
 
+    buildQrLogoOverlay() {
+        const b = BRANDS[state.brand];
+        if (!b) return '';
+        const logoUrl = state.theme === 'light' ? b.light : b.dark;
+        return '<div id="qr-logo-overlay"><img src="' + logoUrl + '" alt="' + b.name + '"></div>';
+    },
+
     renderSoundDrawer() {
         const drawer = document.getElementById('sound-drawer');
         const allowedLabels = ['clap', 'palmas', 'pointUp', 'pointDown'];
         drawer.innerHTML = '<button class="submenu-close" onclick="ui.toggleSoundDrawer()" title="Fechar">×</button>' +
             '<div class="sound-grid">' +
-            '<div class="volume-inline"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg><input type="range" id="volume-slider" min="0" max="1" step="0.05" value="' + state.volume + '" oninput="AudioService.setVolume(this.value)"><span id="volume-label" class="volume-pct">' + Math.round(state.volume * 100) + '%</span></div>' +
+            '<div class="volume-inline"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg><input type="range" id="volume-slider" min="0" max="1" step="0.05" value="' + state.volume + '" oninput="AudioService.setVolume(this.value)"></div>' +
             SOUND_METADATA.map(s => `
             <button id="btn-${s.id}" class="tool-btn sound-drawer-btn" onclick="AudioService.toggle('${s.id}')" title="${s.label}">
                 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="stroke:${s.color}">${ICONS[s.icon]}</svg>
@@ -494,13 +506,25 @@ const ui = {
         this.els.mainText.classList.add('visible');
 
         if (isQR) {
-            this.els.qrContainer.style.display = 'block';
-            this.els.qrWrapper.innerHTML = "";
-            const canvas = document.createElement('canvas');
-            this.els.qrWrapper.appendChild(canvas);
-            new QRious({ element: canvas, value: (isHtml ? this.els.mainText.innerText : processedText), size: 256, level: 'H' });
+            const flipCard = document.getElementById('flip-card');
+            if (flipCard) flipCard.classList.add('flipped');
+            this.els.qrWrapper.innerHTML = '<div style="position:relative; display:inline-block;"><canvas id="qr-canvas" width="256" height="256"></canvas></div>' + this.buildQrLogoOverlay();
+            const canvas = document.getElementById('qr-canvas');
+            if (canvas) {
+                new QRious({
+                    element: canvas,
+                    value: (isHtml ? this.els.mainText.innerText : processedText),
+                    size: 256,
+                    level: 'H',
+                    background: 'transparent',
+                    backgroundAlpha: 0,
+                    foreground: '#000000',
+                    foregroundAlpha: 1
+                });
+            }
         } else {
-            this.els.qrContainer.style.display = 'none';
+            const flipCard = document.getElementById('flip-card');
+            if (flipCard) flipCard.classList.remove('flipped');
         }
     },
 
@@ -532,8 +556,18 @@ const ui = {
     },
 
     closeQR() {
-        this.els.qrContainer.style.display = 'none';
-        this.els.input.focus(); // Restore focus to prevent toolbar collapse
+        const flipCard = document.getElementById('flip-card');
+        if (flipCard) flipCard.classList.remove('flipped');
+        this.els.qrContainer.classList.remove('cinema-mode');
+        if (state.view === 'qr') {
+            if (state.history.length > 0) features.setView('text', state.history[state.historyIndex]);
+            else app.clear();
+        }
+        this.els.input.focus();
+    },
+
+    toggleCinemaQR() {
+        this.els.qrContainer.classList.toggle('cinema-mode');
     },
 
     toggleExpand() {

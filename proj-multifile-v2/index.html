@@ -160,10 +160,17 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
     <!-- MAIN CONTENT -->
     <main id="display-area" aria-live="polite">
-        <h1 id="main-text"></h1>
-        <div id="qr-container">
-            <button id="qr-close" onclick="ui.closeQR()" aria-label="Fechar QR Code">×</button>
-            <div id="qr-canvas-wrapper"></div>
+        <div id="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front"><h1 id="main-text"></h1></div>
+                <div class="flip-card-back">
+                    <div id="qr-container">
+                        <button id="qr-close" onclick="ui.closeQR()" aria-label="Fechar QR Code">×</button>
+                        <button id="qr-expand" onclick="ui.toggleCinemaQR()" aria-label="Ecrã Inteiro" title="Ecrã Inteiro">⤢</button>
+                        <div id="qr-canvas-wrapper"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="poll-display"></div>
         <div id="poll-actions">

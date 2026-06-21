@@ -12,11 +12,13 @@ const features = {
 
         ui.els.mainText.classList.remove('hidden', 'visible', 'rich-content');
         ui.els.mainText.style.display = 'none';
-        ui.els.qrContainer.style.display = 'none';
         document.getElementById('scoreboard').style.display = 'none';
 
         switch (mode) {
             case 'text':
+                const flipCardEl = document.getElementById('flip-card');
+                if (flipCardEl) flipCardEl.classList.remove('flipped');
+                ui.els.qrContainer.classList.remove('cinema-mode');
                 ui.els.mainText.style.display = 'block';
                 const isHtml = data && (/<[a-z][\s\S]*>/i.test(data) || data.includes('style=') || data.includes('<b>'));
                 if (isHtml) {
@@ -30,15 +32,30 @@ const features = {
                 break;
 
             case 'qr':
-                ui.els.qrContainer.style.display = 'block';
+                const flipCard = document.getElementById('flip-card');
+                if (flipCard) flipCard.classList.add('flipped');
+                ui.els.qrContainer.classList.remove('cinema-mode');
                 ui.els.qrWrapper.innerHTML = `
-                    <div style="font-size:1.2rem; margin-bottom:1.5rem; color:var(--accent-color); font-weight:600; text-align:center; max-width:400px; word-break:break-all;">
+                    <div style="font-size:1.1rem; margin-bottom:1.2rem; color:var(--accent-color); font-weight:600; text-align:center; max-width:400px; word-break:break-all;">
                         ${data}
                     </div>
-                `;
-                const canvas = document.createElement('canvas');
-                ui.els.qrWrapper.appendChild(canvas);
-                new QRious({ element: canvas, value: data, size: 280, level: 'H' });
+                    <div style="position:relative; display:inline-block;">
+                        <canvas id="qr-canvas" width="280" height="280"></canvas>
+                    </div>
+                ` + ui.buildQrLogoOverlay();
+                const canvas = document.getElementById('qr-canvas');
+                if (canvas) {
+                    new QRious({
+                        element: canvas,
+                        value: data,
+                        size: 280,
+                        level: 'H',
+                        background: 'transparent',
+                        backgroundAlpha: 0,
+                        foreground: '#000000',
+                        foregroundAlpha: 1
+                    });
+                }
                 break;
 
             case 'dice': {
