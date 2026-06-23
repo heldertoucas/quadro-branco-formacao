@@ -2,35 +2,30 @@
   "project": "quadro-branco-formacao",
   "date": "2026-06-23",
   "diff_source": "last commit",
-  "change_count": 19,
+  "change_count": 14,
   "file_changes": [
-    "commit 217b8269dd8826cddccd66f9f0aa8c5b7b9f250a",
+    "commit bd8a49f5484134c39ab4839566c2bd50b3f934ff",
     "Author: Helder Tou├ºas (DMRH/DDF/CQ) <helder.toucas@cm-lisboa.pt>",
-    "Date:   Tue Jun 23 18:17:14 2026 +0100",
+    "Date:   Tue Jun 23 18:29:02 2026 +0100",
     "",
-    "    style(qrcode): remove brand logo overlay and overhaul cinema mode to fullscreen edge-to-edge",
+    "    feat(qrcode): open cinema mode in a clean new tab with giant QR code",
     "    ",
-    "    - Removed the white pill-shaped brand logo overlay from the center of the QR code in both features.js and ui.js. Removed corresponding css styles in layout.css to align with premium glassmorphism aesthetics.",
-    "    - Redesigned cinema mode in layout.css to occupy full viewport (width: 100vw, height: 100vh, padding: 0) instead of a centered card.",
-    "    - Scaled up the QR canvas wrapper in cinema mode to fill 82% of the viewport (82vmin) cleanly.",
-    "    - Added crisp image-rendering styles (pixelated and crisp-edges) to prevent pixel blur at large scales.",
-    "    - Hidden the text label under the QR code during cinema mode to keep the display clean.",
-    "    - Repositioned and resized the close and fullscreen toggle buttons in cinema mode to be larger and placed at the upper corners.",
-    "    - Updated conductor track plan.md and metadata.json to reflect status completed.",
+    "    - Refactored toggleCinemaQR() in ui.js to export the generated QR code canvas as a data URL and open it in a clean, dedicated new tab using window.open().",
+    "    - The new tab has a modern glass-inspired styling matching the dark/light theme background, displaying a giant, crisp QR code (78vmin) inside a premium white shadow card.",
+    "    - Displays the raw QR content text below the QR code in a small, low-opacity label (1.1rem) for context.",
+    "    - Removed legacy cinema-mode CSS selectors from layout.css and residual references in features.js and ui.js.",
     "",
-    "M\tconductor/tracks/v3_qrcode_v2_20260508/metadata.json",
-    "M\tconductor/tracks/v3_qrcode_v2_20260508/plan.md",
     "M\tproj-multifile-v2/features.js",
     "M\tproj-multifile-v2/layout.css",
     "M\tproj-multifile-v2/ui.js"
   ],
   "recent_commits": [
+    "bd8a49f feat(qrcode): open cinema mode in a clean new tab with giant QR code",
+    "384fa26 chore(session): auto-sync on close for quadro-branco-formacao",
     "217b826 style(qrcode): remove brand logo overlay and overhaul cinema mode to fullscreen edge-to-edge",
     "25df675 feat(qrcode): glassify container, brand logo overlay, 3D flip, cinema mode",
-    "72e070a chore(conductor): close 3 tracks, clean dead assets",
-    "9506770 chore(session): auto-sync on close for quadro-branco-formacao",
-    "df7f816 chore(session): auto-sync on close for quadro-branco-formacao"
+    "72e070a chore(conductor): close 3 tracks, clean dead assets"
   ],
   "conductor_tracks": "# Project Tracks\r\n\r\nThis file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.\r\n\r\n---\r\n\r\n- [x] **Track: Bibliotecas offline, Acessibilidade de Modais e Melhoria do Modo Zen.**\r\n  *Link: [./tracks/melhorias_20260507/](./tracks/melhorias_20260507/)*\r\n---\r\n\r\n- [x] **Track: Sistema de Votação Visual (Polls)**\r\n*Link: [./tracks/polls_20260507/](./tracks/polls_20260507/)*\r\n\r\n\r\n\r\n---\r\n\r\n- [x] **Track: Painel de Controlo (Floating Island)**\r\n*Link: [./tracks/v3_control_panel_20260508/](./tracks/v3_control_panel_20260508/)*\r\n\r\n---\r\n\r\n- [ ] **Track: Temas, Marcas e Coesão v2**\r\n*Link: [./tracks/v3_themes_v2_20260508/](./tracks/v3_themes_v2_20260508/)*\r\n\r\n\r\n---\r\n\r\n- [x] **Track: Placar (Scoreboard) v2**\r\n*Link: [./tracks/v3_scoreboard_v2_20260508/](./tracks/v3_scoreboard_v2_20260508/)*\r\n\r\n---\r\n\r\n- [x] **Track: Dados e Sorteio (Dados 3D)**\r\n*Link: [./tracks/v3_dice_3d_20260508/](./tracks/v3_dice_3d_20260508/)*\r\n\r\n---\r\n\r\n- [x] **Track: QR Code e Partilha v2**\r\n*Link: [./tracks/v3_qrcode_v2_20260508/](./tracks/v3_qrcode_v2_20260508/)*\r\n\r\n---\r\n\r\n- [x] **Track: Feedback Sonoro e Atmosfera v2**\r\n*Link: [./tracks/v3_audio_v2_20260508/](./tracks/v3_audio_v2_20260508/)*\r\n\r\n---\r\n\r\n- [ ] **Track: Dual Screen e Sincronização v2**\r\n*Link: [./tracks/v3_dualscreen_v2_20260508/](./tracks/v3_dualscreen_v2_20260508/)*\r\n\r\n---\r\n\r\n- [x] **Track: Submenus e Gavetas (Modular Pro Capsule)**\r\n*Link: [./tracks/v3_control_panel_drawers_20260531/](./tracks/v3_control_panel_drawers_20260531/)*\r\n\r\n\r\n---\r\n\r\n- [x] **Track: Migração para Multificheiro v2**\r\n*Link: [./tracks/multifile_migration_v2_20260601/](./tracks/multifile_migration_v2_20260601/)*\r\n\r\n---\r\n\r\n- [x] **Track: Name Picker v2 (slot-text / WAAPI / Wheel)**\r\n*Link: [./tracks/v3_name_picker_v2_20260620/](./tracks/v3_name_picker_v2_20260620/)*\r\n",
-  "git_diff": "commit 217b8269dd8826cddccd66f9f0aa8c5b7b9f250a\nAuthor: Helder Tou├ºas (DMRH/DDF/CQ) <helder.toucas@cm-lisboa.pt>\nDate:   Tue Jun 23 18:17:14 2026 +0100\n\n    style(qrcode): remove brand logo overlay and overhaul cinema mode to fullscreen edge-to-edge\n    \n    - Removed the white pill-shaped brand logo overlay from the center of the QR code in both features.js and ui.js. Removed corresponding css styles in layout.css to align with premium glassmorphism aesthetics.\n    - Redesigned cinema mode in layout.css to occupy full viewport (width: 100vw, height: 100vh, padding: 0) instead of a centered card.\n    - Scaled up the QR canvas wrapper in cinema mode to fill 82% of the viewport (82vmin) cleanly.\n    - Added crisp image-rendering styles (pixelated and crisp-edges) to prevent pixel blur at large scales.\n    - Hidden the text label under the QR code during cinema mode to keep the display clean.\n    - Repositioned and resized the close and fullscreen toggle buttons in cinema mode to be larger and placed at the upper corners.\n    - Updated conductor track plan.md and metadata.json to reflect status completed.\n\n .../tracks/v3_qrcode_v2_20260508/metadata.json     |  2 +-\n conductor/tracks/v3_qrcode_v2_20260508/plan.md     | 15 ++++--\n proj-multifile-v2/features.js                      |  2 +-\n proj-multifile-v2/layout.css                       | 58 ++++++++++------------\n proj-multifile-v2/ui.js                            |  8 +--\n 5 files changed, 42 insertions(+), 43 deletions(-)"
+  "git_diff": "commit bd8a49f5484134c39ab4839566c2bd50b3f934ff\nAuthor: Helder Tou├ºas (DMRH/DDF/CQ) <helder.toucas@cm-lisboa.pt>\nDate:   Tue Jun 23 18:29:02 2026 +0100\n\n    feat(qrcode): open cinema mode in a clean new tab with giant QR code\n    \n    - Refactored toggleCinemaQR() in ui.js to export the generated QR code canvas as a data URL and open it in a clean, dedicated new tab using window.open().\n    - The new tab has a modern glass-inspired styling matching the dark/light theme background, displaying a giant, crisp QR code (78vmin) inside a premium white shadow card.\n    - Displays the raw QR content text below the QR code in a small, low-opacity label (1.1rem) for context.\n    - Removed legacy cinema-mode CSS selectors from layout.css and residual references in features.js and ui.js.\n\n proj-multifile-v2/features.js |  1 -\n proj-multifile-v2/layout.css  | 47 ----------------------\n proj-multifile-v2/ui.js       | 90 ++++++++++++++++++++++++++++++++++++++++++-\n 3 files changed, 88 insertions(+), 50 deletions(-)"
 }
