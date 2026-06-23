@@ -430,12 +430,6 @@ const ui = {
         });
     },
 
-    buildQrLogoOverlay() {
-        const b = BRANDS[state.brand];
-        if (!b) return '';
-        const logoUrl = state.theme === 'light' ? b.light : b.dark;
-        return '<div id="qr-logo-overlay"><img src="' + logoUrl + '" alt="' + b.name + '"></div>';
-    },
 
     renderSoundDrawer() {
         const drawer = document.getElementById('sound-drawer');
@@ -508,7 +502,7 @@ const ui = {
         if (isQR) {
             const flipCard = document.getElementById('flip-card');
             if (flipCard) flipCard.classList.add('flipped');
-            this.els.qrWrapper.innerHTML = '<div style="position:relative; display:inline-block;"><canvas id="qr-canvas" width="256" height="256"></canvas></div>' + this.buildQrLogoOverlay();
+            this.els.qrWrapper.innerHTML = '<div style="position:relative; display:inline-block;"><canvas id="qr-canvas" width="256" height="256"></canvas></div>';
             const canvas = document.getElementById('qr-canvas');
             if (canvas) {
                 new QRious({

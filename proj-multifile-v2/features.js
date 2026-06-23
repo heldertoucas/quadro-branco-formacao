@@ -42,7 +42,7 @@ const features = {
                     <div style="position:relative; display:inline-block;">
                         <canvas id="qr-canvas" width="280" height="280"></canvas>
                     </div>
-                ` + ui.buildQrLogoOverlay();
+                `;
                 const canvas = document.getElementById('qr-canvas');
                 if (canvas) {
                     new QRious({

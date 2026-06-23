@@ -26,8 +26,17 @@
     - [x] Escape key exits cinema mode (keeps QR view); `ui.closeQR()` exits both cinema and flip
 - [x] Task: Conductor - User Manual Verification 'Cinematic Reach'
 
+## Phase 3: Polish & Refinements (Current Session)
+- [x] Task: Remove Brand Logo Overlay from QR Code
+    - [x] Remove `ui.buildQrLogoOverlay()` call sites in `features.js:case 'qr'` and `ui.js:updateDisplay`
+    - [x] Clean up CSS styles for `#qr-logo-overlay` in `layout.css`
+    - [x] Delete/deprecate `ui.buildQrLogoOverlay()` helper method in `ui.js`
+- [x] Task: Giant Fullscreen Cinema Mode
+    - [x] Overhaul `#qr-container.cinema-mode` to be edge-to-edge fullscreen (no card margins, border, or glass container limits)
+    - [x] Scale QR wrapper to fill the viewport (e.g. `85vmin`)
+    - [x] Apply pixelated rendering to the canvas element for crisp scaling
+
 ## Notes
 - The flip replaces the old `popIn` scale animation — transition now feels like a physical card flip.
-- Both QRious call sites (features.js and ui.js sync path) use the same config and logo overlay helper.
-- Removed `qrContainer.style.display = 'none'` from `setView` — the flip card's `backface-visibility: hidden` now controls QR visibility.
-- Logo overlay uses `max-width: 80px; max-height: 36px` to handle both square icons (Futuro Digital) and wide banner logos (CML) without distortion.
+- Removing the logo overlay restores readability and makes the QR code blend naturally with the glass backdrop wrapper.
+- `image-rendering: pixelated` is applied to canvas to avoid browser blurring when scaling the QR code up to `85vmin`.

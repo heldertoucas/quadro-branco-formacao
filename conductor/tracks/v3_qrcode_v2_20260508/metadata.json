@@ -3,6 +3,6 @@
   "type": "feature",
   "status": "completed",
   "created_at": "2026-05-08T02:00:00Z",
-  "updated_at": "2026-06-21T01:15:00Z",
+  "updated_at": "2026-06-23T17:17:00Z",
   "description": "QR Code v2: glassified container com backdrop-blur, QRious transparent bg + black dots + level H, active brand logo overlay (pill-shaped white backing), 3D card flip animation entre slide e QR, cinema mode fullscreen com Escape to exit. Implementation: index.html:162-171, layout.css:1106-1280, features.js:32-58, ui.js:426-431,494-509,528-548."
 }
