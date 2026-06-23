@@ -46,7 +46,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Dual Screen e Sincronização v2**
+- [x] **Track: Dual Screen e Sincronização v2**
 *Link: [./tracks/v3_dualscreen_v2_20260508/](./tracks/v3_dualscreen_v2_20260508/)*
 
 ---

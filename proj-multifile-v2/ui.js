@@ -316,13 +316,6 @@ const ui = {
             if (state.isExpanded) this.updateFormatButtons();
         });
 
-        // Escape exits cinema mode (when QR is fullscreen)
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.els.qrContainer.classList.contains('cinema-mode')) {
-                this.els.qrContainer.classList.remove('cinema-mode');
-            }
-        });
-
         // --- URL Params Handling ---
         const params = new URLSearchParams(window.location.search);
 
@@ -362,10 +355,47 @@ const ui = {
         // Projector Mode logic
         if (params.get('mode') === 'projector') {
             document.body.classList.add('projector-mode');
+            // Heartbeat ping
+            setInterval(() => {
+                if (state.channel) state.channel.postMessage({ type: 'projector_ping' });
+            }, 1500);
+
             // Request initial state
             setTimeout(() => {
                 if (state.channel) state.channel.postMessage({ type: 'request_sync' });
             }, 500);
+        } else {
+            // Trainer Mode: Monitor projector pings
+            setInterval(() => {
+                const connected = (Date.now() - state.lastProjectorPing) < 3500;
+                const led = document.getElementById('on-air-indicator');
+                const controls = document.getElementById('stage-controls');
+                if (led) led.classList.toggle('hidden', !connected);
+                if (controls) controls.classList.toggle('hidden', !connected);
+            }, 1000);
+
+            // Laser Pointer: Track coordinates over #display-area
+            const displayArea = document.getElementById('display-area');
+            if (displayArea) {
+                let laserTimer;
+                displayArea.addEventListener('mousemove', (e) => {
+                    const rect = displayArea.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+                    if (state.channel) {
+                        state.channel.postMessage({ type: 'laser_move', x, y });
+                    }
+
+                    if (laserTimer) clearTimeout(laserTimer);
+                    laserTimer = setTimeout(() => {
+                        if (state.channel) state.channel.postMessage({ type: 'laser_hide' });
+                    }, 2000);
+                });
+                displayArea.addEventListener('mouseleave', () => {
+                    if (state.channel) state.channel.postMessage({ type: 'laser_hide' });
+                });
+            }
         }
 
         // Idle Detection for Zen Mode
@@ -520,6 +550,7 @@ const ui = {
             const flipCard = document.getElementById('flip-card');
             if (flipCard) flipCard.classList.remove('flipped');
         }
+        this.updateStandbyView();
     },
 
     updateOpticalScaling(charCount) {
@@ -858,6 +889,43 @@ const ui = {
                 // Optional: remove from DOM to keep it clean
                 setTimeout(() => msg.remove(), 1000);
             }, 3100);
+        }
+    },
+
+    toggleSafeArea() {
+        state.showSafeArea = !state.showSafeArea;
+        const overlay = document.getElementById('safe-area-overlay');
+        if (overlay) overlay.classList.toggle('visible', state.showSafeArea);
+
+        const btn = document.getElementById('btn-safe-area');
+        if (btn) btn.classList.toggle('active', state.showSafeArea);
+    },
+
+    updatePublishButton() {
+        const btn = document.getElementById('btn-publish');
+        if (btn) {
+            btn.classList.toggle('has-changes', state.stagedChanges);
+        }
+    },
+
+    updateStandbyView() {
+        const isProjector = new URLSearchParams(window.location.search).get('mode') === 'projector';
+        if (!isProjector) return;
+
+        const standby = document.getElementById('projector-standby');
+        if (!standby) return;
+
+        const isEmpty = (state.view === 'text' && (!this.els.mainText.innerText.trim() || this.els.mainText.innerText === '...'));
+        if (isEmpty) {
+            const logo = document.getElementById('standby-logo');
+            const b = BRANDS[state.brand];
+            if (logo && b) {
+                logo.src = state.theme === 'light' ? b.light : b.dark;
+                logo.alt = b.name;
+            }
+            standby.classList.add('visible');
+        } else {
+            standby.classList.remove('visible');
         }
     }
 };

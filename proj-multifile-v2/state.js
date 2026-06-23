@@ -56,5 +56,9 @@ const state = {
     textAlignment: 'center',
     diceValues: null,
     view: 'text',
-    channel: null
-    };
+    channel: null,
+    stageMode: false,
+    stagedChanges: false,
+    lastProjectorPing: 0,
+    showSafeArea: false
+};

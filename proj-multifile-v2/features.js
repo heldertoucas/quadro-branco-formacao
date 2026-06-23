@@ -683,7 +683,7 @@ const features = {
             this.ctx.stroke();
 
             // Broadcast stroke
-            if (state.channel) {
+            if (state.channel && !state.stageMode) {
                 state.channel.postMessage({
                     type: 'ink_stroke',
                     from: { x: this.lastX, y: this.lastY },
@@ -718,7 +718,7 @@ const features = {
         },
         clear() {
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-            if (state.channel) state.channel.postMessage({ type: 'ink_clear' });
+            if (state.channel && !state.stageMode) state.channel.postMessage({ type: 'ink_clear' });
         }
     }
 };

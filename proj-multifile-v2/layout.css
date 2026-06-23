@@ -2006,3 +2006,189 @@ body.projector-mode #display-area {
     transform: scale(1.2);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
+
+/* ===== DUAL SCREEN & SYNC V2 ===== */
+
+/* 1. On-Air LED Indicator */
+.on-air-led {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fca5a5;
+    letter-spacing: 0.5px;
+    transition: opacity 0.3s;
+    user-select: none;
+    margin-left: 14px;
+    height: fit-content;
+    align-self: center;
+}
+
+.on-air-led.hidden {
+    display: none !important;
+}
+
+.on-air-led .led-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ef4444;
+    animation: ledPulse 1.5s infinite;
+}
+
+@keyframes ledPulse {
+    0%, 100% {
+        transform: scale(0.9);
+        opacity: 0.6;
+        box-shadow: 0 0 4px #ef4444;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+        box-shadow: 0 0 12px #ef4444;
+    }
+}
+
+/* 2. Safe Area Outline (16:9 ratio) */
+#safe-area-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1.5px dashed rgba(255, 255, 255, 0.15);
+    pointer-events: none;
+    box-sizing: border-box;
+    z-index: 5;
+    display: none;
+}
+
+body[data-theme="light"] #safe-area-overlay {
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+#safe-area-overlay.visible {
+    display: block;
+}
+
+/* 3. Digital Laser Pointer */
+.laser-pointer {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.85);
+    box-shadow: 0 0 15px 5px rgba(239, 68, 68, 0.8), 0 0 30px 12px rgba(239, 68, 68, 0.4);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    transition: opacity 0.15s ease;
+    opacity: 0;
+}
+
+.laser-pointer.visible {
+    opacity: 1;
+}
+
+/* 4. Stage & Publish Controls */
+.stage-controls-group.hidden {
+    display: none !important;
+}
+
+#btn-stage-mode.active {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
+}
+
+#btn-publish.has-changes {
+    border-color: var(--warn-color);
+    color: var(--warn-color);
+    animation: publishPulse 1.5s infinite;
+}
+
+@keyframes publishPulse {
+    0%, 100% {
+        box-shadow: 0 0 4px rgba(245, 158, 11, 0.2);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 14px rgba(245, 158, 11, 0.5);
+        transform: scale(1.03);
+    }
+}
+
+/* 5. Projector Standby Screen */
+#projector-standby {
+    position: absolute;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.98), rgba(9, 13, 22, 1));
+    overflow: hidden;
+}
+
+#projector-standby.visible {
+    display: flex !important;
+}
+
+.standby-card {
+    text-align: center;
+    padding: 50px 70px;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 28px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 440px;
+}
+
+#standby-logo {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.15));
+    animation: standbyFloatLogo 4s ease-in-out infinite;
+}
+
+@keyframes standbyFloatLogo {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.standby-card p {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-color);
+}
+
+.standby-card span {
+    font-size: 0.95rem;
+    opacity: 0.5;
+    animation: standbyBlinkText 2.5s infinite;
+}
+
+@keyframes standbyBlinkText {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+}

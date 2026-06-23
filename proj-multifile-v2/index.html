@@ -57,6 +57,10 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     stroke-linejoin="round" />
             </svg>
         </button>
+        <div id="on-air-indicator" class="on-air-led hidden" title="Transmissão Ativa (Projetor Ligado)">
+            <span class="led-dot"></span>
+            <span class="led-text">NO AR</span>
+        </div>
 
         <div id="style-menu" class="dropdown-menu" role="menu">
             <button class="menu-close-btn" onclick="toggleMenu(event)" aria-label="Fechar Menu">×</button>
@@ -83,6 +87,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 </button>
                 <button class="menu-item" onclick="app.setMode('simple')" id="mode-simple" role="menuitem">
                     <div class="menu-dot"></div> Zen
+                </button>
+                <button class="menu-item" onclick="ui.toggleSafeArea()" id="btn-safe-area" role="menuitem">
+                    <div class="menu-dot"></div> Enquadramento (16:9)
                 </button>
 
                 <div class="menu-divider"></div>
@@ -160,6 +167,15 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
     <!-- MAIN CONTENT -->
     <main id="display-area" aria-live="polite">
+        <div id="safe-area-overlay"></div>
+        <div id="projector-standby" class="hidden">
+            <div class="standby-card">
+                <img id="standby-logo" src="" alt="Logo">
+                <p>Sessão de Formação</p>
+                <span>A aguardar transmissão...</span>
+            </div>
+        </div>
+        <div id="laser-pointer" class="laser-pointer"></div>
         <div id="flip-card">
             <div class="flip-card-inner">
                 <div class="flip-card-front"><h1 id="main-text"></h1></div>
@@ -342,6 +358,22 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 </svg>
                 <span>Projetor</span>
             </button>
+
+            <div id="stage-controls" class="stage-controls-group hidden" style="display: flex; gap: 8px;">
+                <button id="btn-stage-mode" class="tool-btn" onclick="app.toggleStageMode()" title="Modo Stage (Preparação Privada)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>Stage</span>
+                </button>
+                <button id="btn-publish" class="tool-btn" onclick="app.publishStagedChanges()" title="Publicar Alterações para o Projetor">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 2 11 13 22 22"></polyline>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    <span>Publicar</span>
+                </button>
+            </div>
         </div>
 
         <div id="rich-toolbar">

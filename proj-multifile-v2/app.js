@@ -68,8 +68,15 @@ const app = {
         this.broadcastState();
     },
 
-    broadcastState() {
+    broadcastState(force = false) {
         if (!state.channel) return;
+        if (state.stageMode && !force) {
+            state.stagedChanges = true;
+            ui.updatePublishButton();
+            return;
+        }
+        state.stagedChanges = false;
+        ui.updatePublishButton();
         state.channel.postMessage({
             type: 'sync',
             state: {
@@ -97,8 +104,12 @@ const app = {
         const params = new URLSearchParams(window.location.search);
         const isProjector = params.get('mode') === 'projector';
 
+        if (data.type === 'projector_ping' && !isProjector) {
+            state.lastProjectorPing = Date.now();
+        }
+
         if (data.type === 'request_sync' && !isProjector) {
-            this.broadcastState();
+            this.broadcastState(true);
         }
 
         if (data.type === 'sync' && isProjector) {
@@ -122,6 +133,7 @@ const app = {
             } else {
                 features.setView(s.view, data.data);
             }
+            ui.updateStandbyView();
         }
 
         if (data.type === 'ink_stroke' && isProjector) {
@@ -143,6 +155,56 @@ const app = {
 
         if (data.type === 'ink_clear' && isProjector) {
             if (features.ink.ctx) features.ink.ctx.clearRect(0, 0, features.ink.ctx.canvas.width, features.ink.ctx.canvas.height);
+        }
+
+        if (data.type === 'sync_ink' && isProjector) {
+            const canvas = document.getElementById('ink-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = data.image;
+            }
+        }
+
+        if (data.type === 'laser_move' && isProjector) {
+            const pointer = document.getElementById('laser-pointer');
+            if (pointer) {
+                pointer.style.left = `${data.x}%`;
+                pointer.style.top = `${data.y}%`;
+                pointer.classList.add('visible');
+            }
+        }
+
+        if (data.type === 'laser_hide' && isProjector) {
+            const pointer = document.getElementById('laser-pointer');
+            if (pointer) pointer.classList.remove('visible');
+        }
+    },
+
+    toggleStageMode() {
+        state.stageMode = !state.stageMode;
+        document.getElementById('btn-stage-mode').classList.toggle('active', state.stageMode);
+        if (!state.stageMode) {
+            // Publishing immediately when exiting stage mode
+            this.publishStagedChanges();
+        }
+    },
+
+    publishStagedChanges() {
+        // Force state broadcast
+        this.broadcastState(true);
+
+        // If ink canvas is active, broadcast the ink image to sync drawing
+        const canvas = document.getElementById('ink-canvas');
+        if (canvas && state.channel) {
+            state.channel.postMessage({
+                type: 'sync_ink',
+                image: canvas.toDataURL()
+            });
         }
     }
 };
