@@ -573,8 +573,9 @@ const ui = {
             return;
         }
 
-        const bg = state.theme === 'dark' ? '#0f172a' : '#f8fafc';
-        const fg = state.theme === 'dark' ? '#f8fafc' : '#0f172a';
+        const bg = '#090d16'; // Deep space dark page background
+        const cardBg = '#111827'; // Dark card background
+        const fg = '#f8fafc'; // Crisp light text
 
         newTab.document.write(`
             <!DOCTYPE html>
@@ -607,10 +608,11 @@ const ui = {
                         height: 90vh;
                     }
                     .img-wrapper {
-                        background: white;
-                        padding: 24px;
-                        border-radius: 20px;
-                        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+                        background: ${cardBg};
+                        padding: 32px;
+                        border-radius: 24px;
+                        border: 2px solid rgba(255, 255, 255, 0.08);
+                        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -626,14 +628,16 @@ const ui = {
                         object-fit: contain;
                         image-rendering: pixelated;
                         image-rendering: crisp-edges;
+                        filter: invert(1); /* Invert black dots to white for contrast */
                     }
                     .text-label {
                         font-size: 1.1rem;
                         font-weight: 500;
-                        opacity: 0.7;
+                        opacity: 0.8;
                         word-break: break-all;
                         text-align: center;
                         max-width: 85%;
+                        letter-spacing: 0.5px;
                     }
                 </style>
             </head>
