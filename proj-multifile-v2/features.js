@@ -34,7 +34,6 @@ const features = {
             case 'qr':
                 const flipCard = document.getElementById('flip-card');
                 if (flipCard) flipCard.classList.add('flipped');
-                ui.els.qrContainer.classList.remove('cinema-mode');
                 ui.els.qrWrapper.innerHTML = `
                     <div style="font-size:1.1rem; margin-bottom:1.2rem; color:var(--accent-color); font-weight:600; text-align:center; max-width:400px; word-break:break-all;">
                         ${data}

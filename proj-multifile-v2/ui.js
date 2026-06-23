@@ -552,7 +552,6 @@ const ui = {
     closeQR() {
         const flipCard = document.getElementById('flip-card');
         if (flipCard) flipCard.classList.remove('flipped');
-        this.els.qrContainer.classList.remove('cinema-mode');
         if (state.view === 'qr') {
             if (state.history.length > 0) features.setView('text', state.history[state.historyIndex]);
             else app.clear();
@@ -561,7 +560,94 @@ const ui = {
     },
 
     toggleCinemaQR() {
-        this.els.qrContainer.classList.toggle('cinema-mode');
+        const canvas = document.getElementById('qr-canvas');
+        if (!canvas) return;
+
+        const dataUrl = canvas.toDataURL();
+        let content = this.els.input.innerText.trim();
+        if (!content && state.view === 'text') content = this.els.mainText.innerText;
+
+        const newTab = window.open('', '_blank');
+        if (!newTab) {
+            alert('Por favor, permita pop-ups para abrir o modo cinema.');
+            return;
+        }
+
+        const bg = state.theme === 'dark' ? '#0f172a' : '#f8fafc';
+        const fg = state.theme === 'dark' ? '#f8fafc' : '#0f172a';
+
+        newTab.document.write(`
+            <!DOCTYPE html>
+            <html lang="pt">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>QR Code - Modo Cinema</title>
+                <style>
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        background: ${bg};
+                        color: ${fg};
+                        font-family: system-ui, -apple-system, sans-serif;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        min-height: 100vh;
+                        overflow: hidden;
+                    }
+                    .container {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 30px;
+                        width: 90vw;
+                        height: 90vh;
+                    }
+                    .img-wrapper {
+                        background: white;
+                        padding: 24px;
+                        border-radius: 20px;
+                        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 78vmin;
+                        height: 78vmin;
+                        max-width: 800px;
+                        max-height: 800px;
+                        box-sizing: border-box;
+                    }
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                        image-rendering: pixelated;
+                        image-rendering: crisp-edges;
+                    }
+                    .text-label {
+                        font-size: 1.1rem;
+                        font-weight: 500;
+                        opacity: 0.7;
+                        word-break: break-all;
+                        text-align: center;
+                        max-width: 85%;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="img-wrapper">
+                        <img src="${dataUrl}" alt="QR Code">
+                    </div>
+                    ${content ? `<div class="text-label">${content}</div>` : ''}
+                </div>
+            </body>
+            </html>
+        `);
+        newTab.document.close();
     },
 
     toggleExpand() {
