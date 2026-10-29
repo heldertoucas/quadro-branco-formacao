@@ -1,0 +1,25 @@
+---
+---
+
+# Session Lifecycle & Handoff Protocol
+
+## 1. Session Wake-up & Context Assembly
+- At the start of every work session, assemble the in-memory Context Capsule for the active project:
+  - `python -m dev.cli session start <project-id>`
+- Understand the current objective from `02-projects/<project-id>/current-state.md`, constraints, and active decisions from the Context Capsule.
+- Note: Context Capsules are pure in-memory runtime objects. No persistent hot cache or session JSON is created in the vault.
+
+## 2. Session Conclusion & Canonical Recording
+- Before closing a session, record the canonical session note in `06-sessions/`:
+  - `python -m dev.cli session close --project <project-id> --summary "<Executive Summary>"`
+- Proactively tag any reusable pattern or trap as `status: candidate` for human review and governance.
+- Update `02-projects/<project-id>/current-state.md` if the project's operational state has evolved.
+
+## 3. Continuous Dogfooding & Operational Feedback (CON-0012)
+At the conclusion of each substantial development session, the agent must explicitly summarize:
+1. **What the DU helped with** (where context, LanceDB, Code Graph, or session state accelerated work).
+2. **What the DU got wrong / noise** (irrelevant results or incorrect assumptions).
+3. **What was missing** (context or tooling gaps).
+4. **What created friction** (manual commands, UX quirks, or overhead).
+5. **Root Classification** (Architectural, UX, Retrieval, or Agent-specific).
+6. **Regression Candidate**: Whether the observed friction should be codified into an automated regression test.

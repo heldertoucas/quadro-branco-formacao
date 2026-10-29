@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estúdio de Transmissão — Futuro Digital</title>
+  <style>
+    :root {
+      --cml-blue: #004b87;
+      --fd-blue: #0078d4;
+      --fd-cyan: #00bcf2;
+      --live-red: #ef4444;
+      --text-white: #ffffff;
+      --text-sub: #cbd5e1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+
+    /* Palco da Emissão */
+    #broadcast-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Vídeo da Partilha do PC (Fundo no Modo PC) */
+    #screenVideo {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #050505;
+      z-index: 1;
+      display: none;
+    }
+
+    /* Vídeo da Webcam */
+    #webcamContainer {
+      position: absolute;
+      z-index: 5;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modo 1: Orador Ecrã Inteiro */
+    .mode-speaker #webcamContainer {
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
+
+    .mode-speaker #screenVideo {
+      display: none;
+    }
+
+    /* Modo 2: Ecrã PC + Webcam PiP */
+    .mode-pc #screenVideo {
+      display: block;
+    }
+
+    .mode-pc #webcamContainer {
+      width: 320px;
+      height: 190px;
+      bottom: 36px;
+      right: 48px;
+      top: auto;
+      left: auto;
+      border-radius: 16px;
+      border: 3px solid var(--fd-cyan);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+    }
+
+    #webcamVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* Espelhado */
+      transition: transform 0.3s ease;
+    }
+
+    #webcamVideo.no-mirror {
+      transform: scaleX(1);
+    }
+
+    /* --- OVERLAYS GRÁFICOS --- */
+    #overlay-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 32px 48px;
+    }
+
+    /* Topo: Logótipo e Em Direto */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Logótipo Futuro Digital (Canto Superior Esquerdo) */
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .logo-graphic {
+      display: flex;
+      align-items: center;
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      color: #fff;
+    }
+
+    .logo-graphic span.highlight {
+      color: var(--fd-cyan);
+      margin-left: 4px;
+    }
+
+    .logo-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      padding-left: 10px;
+    }
+
+    /* Badge Em Direto (Canto Superior Direito) */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 8px 18px;
+      border-radius: 9999px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      background-color: var(--live-red);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 4px var(--live-red); }
+      50% { transform: scale(1.25); opacity: 1; box-shadow: 0 0 14px var(--live-red); }
+      100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 4px var(--live-red); }
+    }
+
+    /* Base: Lower-Third Noticiário (Apenas visível no Modo Orador por defeito) */
+    .bottom-bar {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      max-width: 820px;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bottom-bar.hidden, .mode-pc .bottom-bar {
+      opacity: 0;
+      transform: translateY(40px);
+      pointer-events: none;
+    }
+
+    .lower-third-main {
+      background: linear-gradient(135deg, rgba(0, 75, 135, 0.94) 0%, rgba(15, 23, 42, 0.96) 100%);
+      backdrop-filter: blur(16px);
+      border-left: 6px solid var(--fd-cyan);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      border-right: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 0 14px 14px 0;
+      padding: 14px 28px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .presenter-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .presenter-role {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--fd-cyan);
+      letter-spacing: 0.03em;
+    }
+
+    .lower-third-topic {
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(14px);
+      border-left: 6px solid var(--cml-blue);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0 10px 10px 0;
+      padding: 8px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* --- PAINEL DE CONTROLO --- */
+    #control-panel {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+      transition: all 0.3s ease;
+      max-width: 95vw;
+    }
+
+    #control-panel.collapsed {
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -30px);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background: #0f172a;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      gap: 4px;
+    }
+
+    .btn-mode {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-mode.active {
+      background: var(--fd-blue);
+      color: #fff;
+    }
+
+    .btn-action {
+      background: var(--cml-blue);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-action:hover {
+      background: var(--fd-blue);
+    }
+
+    .btn-secondary {
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    #toggle-panel-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 99;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .shortcut-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      z-index: 50;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body class="mode-speaker">
+
+  <div id="broadcast-stage">
+    <!-- Fundo: Partilha de Ecrã do PC -->
+    <video id="screenVideo" autoplay playsinline></video>
+
+    <!-- Caixa da Webcam (Muda entre Ecrã Inteiro e PiP) -->
+    <div id="webcamContainer">
+      <video id="webcamVideo" autoplay playsinline muted></video>
+    </div>
+
+    <!-- Camada de Grafismo e Overlays -->
+    <div id="overlay-layer">
+      <!-- Topo: Logótipo Canto Superior Esquerdo + Em Direto Canto Superior Direito -->
+      <div class="top-bar">
+        <div class="logo-container">
+          <div class="logo-graphic">
+            FUTURO<span class="highlight">DIGITAL</span>
+          </div>
+          <div class="logo-tag">CML • EQUIPA ON</div>
+        </div>
+
+        <div class="live-badge">
+          <span class="live-dot"></span>
+          <span>EM DIRETO</span>
+        </div>
+      </div>
+
+      <!-- Base: Lower-Third Noticiário -->
+      <div id="lowerThird" class="bottom-bar">
+        <div class="lower-third-main">
+          <div id="dispName" class="presenter-name">Hélder Touças</div>
+          <div id="dispRole" class="presenter-role">Formador Equipa ON • Programa Futuro Digital</div>
+        </div>
+        <div id="dispTopic" class="lower-third-topic">
+          <span>📘</span>
+          <span id="topicText">Curso Online Teams e SharePoint • 1ª Sessão Síncrona</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button id="toggle-panel-btn" title="Atalho: Tecla 'H'">⚙️ Menu (H)</button>
+
+  <!-- Painel de Controlo de Modos -->
+  <div id="control-panel">
+    <div class="mode-switch-group">
+      <button id="modeSpeakerBtn" class="btn-mode active" title="Atalho: Tecla '1'">
+        🎙️ 1. Modo Orador (Full)
+      </button>
+      <button id="modePcBtn" class="btn-mode" title="Atalho: Tecla '2'">
+        🖥️ 2. Modo PC + Webcam PiP
+      </button>
+    </div>
+
+    <button id="selectScreenBtn" class="btn-action" style="display: none;">
+      🔄 Escolher Janela / Ecrã PC
+    </button>
+
+    <button id="toggleLowerBtn" class="btn-secondary" title="Atalho: Tecla 'L'">
+      🏷️ Rodapé
+    </button>
+
+    <button id="mirrorBtn" class="btn-secondary" title="Atalho: Tecla 'M'">
+      🪞 Espelhar
+    </button>
+
+    <button id="fullscreenBtn" class="btn-action" title="Atalho: Tecla 'F'">
+      📺 Ecrã Inteiro (F)
+    </button>
+
+    <button id="hidePanelBtn" class="btn-secondary">✕</button>
+  </div>
+
+  <div class="shortcut-hint">
+    Teclas: <strong>1</strong> (Orador) | <strong>2</strong> (PC + PiP) | <strong>F</strong> (Ecrã Inteiro) | <strong>H</strong> (Ocultar Menu) | <strong>L</strong> (Rodapé) | <strong>M</strong> (Espelhar)
+  </div>
+
+  <script>
+    const body = document.body;
+    const webcamVideo = document.getElementById('webcamVideo');
+    const screenVideo = document.getElementById('screenVideo');
+    const modeSpeakerBtn = document.getElementById('modeSpeakerBtn');
+    const modePcBtn = document.getElementById('modePcBtn');
+    const selectScreenBtn = document.getElementById('selectScreenBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const toggleLowerBtn = document.getElementById('toggleLowerBtn');
+    const mirrorBtn = document.getElementById('mirrorBtn');
+    const lowerThird = document.getElementById('lowerThird');
+    const controlPanel = document.getElementById('control-panel');
+    const togglePanelBtn = document.getElementById('toggle-panel-btn');
+    const hidePanelBtn = document.getElementById('hidePanelBtn');
+
+    let screenStream = null;
+    let webcamStream = null;
+    let isMirrored = true;
+    let lowerThirdVisible = true;
+
+    // Inicializar Webcam
+    async function initWebcam() {
+      try {
+        webcamStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, min: 30 } },
+          audio: false
+        });
+        webcamVideo.srcObject = webcamStream;
+      } catch (err) {
+        console.error('Erro ao iniciar câmara:', err);
+      }
+    }
+
+    // Iniciar Captura de Ecrã do PC
+    async function startScreenShare() {
+      try {
+        if (screenStream) {
+          screenStream.getTracks().forEach(t => t.stop());
+        }
+        screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: { cursor: "always", frameRate: { ideal: 60, min: 30 } },
+          audio: false
+        });
+        screenVideo.srcObject = screenStream;
+        selectScreenBtn.style.display = 'inline-flex';
+
+        screenStream.getVideoTracks()[0].onended = () => {
+          setMode('speaker');
+        };
+      } catch (err) {
+        console.log('Partilha cancelada ou não autorizada:', err);
+        setMode('speaker');
+      }
+    }
+
+    // Mudar de Modo
+    async function setMode(mode) {
+      if (mode === 'speaker') {
+        body.classList.remove('mode-pc');
+        body.classList.add('mode-speaker');
+        modeSpeakerBtn.classList.add('active');
+        modePcBtn.classList.remove('active');
+        selectScreenBtn.style.display = 'none';
+      } else if (mode === 'pc') {
+        if (!screenStream || !screenStream.active) {
+          await startScreenShare();
+        }
+        body.classList.remove('mode-speaker');
+        body.classList.add('mode-pc');
+        modePcBtn.classList.add('active');
+        modeSpeakerBtn.classList.remove('active');
+        if (screenStream && screenStream.active) {
+          selectScreenBtn.style.display = 'inline-flex';
+        }
+      }
+    }
+
+    modeSpeakerBtn.addEventListener('click', () => setMode('speaker'));
+    modePcBtn.addEventListener('click', () => setMode('pc'));
+    selectScreenBtn.addEventListener('click', startScreenShare);
+
+    // Ecrã Inteiro
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => alert(`Erro: ${err.message}`));
+        controlPanel.classList.add('collapsed');
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    fullscreenBtn.addEventListener('click', toggleFullScreen);
+
+    // Espelhar
+    mirrorBtn.addEventListener('click', () => {
+      isMirrored = !isMirrored;
+      webcamVideo.classList.toggle('no-mirror', !isMirrored);
+    });
+
+    // Rodapé
+    function toggleLower() {
+      lowerThirdVisible = !lowerThirdVisible;
+      lowerThird.classList.toggle('hidden', !lowerThirdVisible);
+    }
+    toggleLowerBtn.addEventListener('click', toggleLower);
+
+    // Painel
+    togglePanelBtn.addEventListener('click', () => controlPanel.classList.toggle('collapsed'));
+    hidePanelBtn.addEventListener('click', () => controlPanel.classList.add('collapsed'));
+
+    // Teclas de Atalho Rápidas
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '1') {
+        setMode('speaker');
+      } else if (e.key === '2') {
+        setMode('pc');
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      } else if (e.key === 'h' || e.key === 'H') {
+        controlPanel.classList.toggle('collapsed');
+      } else if (e.key === 'l' || e.key === 'L') {
+        toggleLower();
+      } else if (e.key === 'm' || e.key === 'M') {
+        isMirrored = !isMirrored;
+        webcamVideo.classList.toggle('no-mirror', !isMirrored);
+      }
+    });
+
+    initWebcam();
+  </script>
+</body>
+</html>

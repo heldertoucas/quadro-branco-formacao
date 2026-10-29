@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Câmara Flutuante PiP — Futuro Digital</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --success: #10b981;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 580px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(37, 99, 235, 0.2);
+      color: #60a5fa;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .preview-container {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--border);
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* Espelhado por defeito */
+      transition: transform 0.3s ease;
+    }
+
+    video.no-mirror {
+      transform: scaleX(1);
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    select {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--success);
+      margin-top: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .instructions {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      text-align: left;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .instructions strong {
+      color: var(--text);
+    }
+
+    .instructions ol {
+      margin-left: 20px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-badge">Futuro Digital • CML</div>
+    <h1>Câmara Flutuante (Picture-in-Picture)</h1>
+    <p class="subtitle">Ative uma janela flutuante no Windows que fica sempre visível por cima do Teams, PowerPoint e browser sem instalar nada.</p>
+
+    <div class="preview-container">
+      <video id="webcamVideo" autoplay playsinline muted></video>
+    </div>
+
+    <div class="controls">
+      <div class="row">
+        <select id="cameraSelect">
+          <option value="">A detetar câmaras...</option>
+        </select>
+        <button id="mirrorBtn" class="btn-secondary" title="Inverter imagem horizontalmente">
+          🪞 Espelhar
+        </button>
+      </div>
+
+      <button id="pipBtn" class="btn">
+        <span>🚀 Abrir Janela Flutuante (PiP)</span>
+      </button>
+    </div>
+
+    <div id="statusIndicator" class="status-tag" style="display: none;">
+      <span class="status-dot"></span>
+      <span id="statusText">Câmara ativa em janela flutuante</span>
+    </div>
+
+    <div class="instructions">
+      <strong>Como utilizar na sessão de amanhã:</strong>
+      <ol>
+        <li>Abra este ficheiro no <strong>Microsoft Edge</strong> ou <strong>Google Chrome</strong>.</li>
+        <li>Autorize o acesso à sua câmara no browser.</li>
+        <li>Clique no botão azul <strong>"Abrir Janela Flutuante"</strong>.</li>
+        <li>Arraste e redimensione a janela flutuante para o canto do ecrã que preferir.</li>
+        <li>No Teams, ao partilhar o <strong>Ecrã Inteiro</strong>, os formandos verão o seu ecrã com o seu rosto no canto!</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('webcamVideo');
+    const pipBtn = document.getElementById('pipBtn');
+    const cameraSelect = document.getElementById('cameraSelect');
+    const mirrorBtn = document.getElementById('mirrorBtn');
+    const statusIndicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+
+    let currentStream = null;
+    let isMirrored = true;
+
+    async function getCameras() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        
+        cameraSelect.innerHTML = '';
+        videoDevices.forEach((device, index) => {
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          option.text = device.label || `Câmara ${index + 1}`;
+          cameraSelect.appendChild(option);
+        });
+
+        if (videoDevices.length > 0) {
+          startCamera(videoDevices[0].deviceId);
+        }
+      } catch (err) {
+        console.error('Erro ao listar câmaras:', err);
+      }
+    }
+
+    async function startCamera(deviceId) {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+
+      const constraints = {
+        video: {
+          deviceId: deviceId ? { exact: deviceId } : undefined,
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          frameRate: { ideal: 30 }
+        },
+        audio: false
+      };
+
+      try {
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = currentStream;
+        await video.play();
+      } catch (err) {
+        console.error('Erro ao aceder à câmara:', err);
+        alert('Não foi possível aceder à câmara. Verifique as permissões do browser.');
+      }
+    }
+
+    // Inicialização
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then(() => getCameras())
+      .catch(err => {
+        console.error('Permissão de câmara necessária:', err);
+      });
+
+    cameraSelect.addEventListener('change', () => {
+      startCamera(cameraSelect.value);
+    });
+
+    mirrorBtn.addEventListener('click', () => {
+      isMirrored = !isMirrored;
+      if (isMirrored) {
+        video.classList.remove('no-mirror');
+      } else {
+        video.classList.add('no-mirror');
+      }
+    });
+
+    pipBtn.addEventListener('click', async () => {
+      try {
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+        } else {
+          await video.requestPictureInPicture();
+          statusIndicator.style.display = 'inline-flex';
+        }
+      } catch (err) {
+        console.error('Erro ao ativar PiP:', err);
+        alert('O seu navegador não permitiu ativar o modo PiP. Certifique-se de que a câmara está ativa.');
+      }
+    });
+
+    video.addEventListener('enterpictureinpicture', () => {
+      pipBtn.innerHTML = '<span>⏸️ Fechar Janela Flutuante</span>';
+      statusIndicator.style.display = 'inline-flex';
+      statusText.innerText = 'Janela flutuante ativa (Always on Top)';
+    });
+
+    video.addEventListener('leavepictureinpicture', () => {
+      pipBtn.innerHTML = '<span>🚀 Abrir Janela Flutuante (PiP)</span>';
+      statusIndicator.style.display = 'none';
+    });
+  </script>
+</body>
+</html>

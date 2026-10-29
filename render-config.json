@@ -1,0 +1,82 @@
+{
+  "output": {
+    "fileName": "futuro-digital-5min.mp4",
+    "fps": 60,
+    "width": 1920,
+    "height": 1080,
+    "bitrate": "12M"
+  },
+  "defaultSettings": {
+    "theme": "scheme2",
+    "logo": {
+      "visible": true,
+      "scale": 0.65,
+      "x": 4,
+      "y": 5,
+      "shine": true,
+      "shineInterval": 10.5
+    },
+    "waves": {
+      "model": 1,
+      "direction": -1,
+      "speed": 0.4,
+      "amplitude": 1.05,
+      "posX": -8,
+      "posY": 14
+    },
+    "image": {
+      "visible": true,
+      "size": 31,
+      "x": 11,
+      "y": 36,
+      "floatSpeed": 6.0
+    },
+    "particles": {
+      "visible": true,
+      "count": 8,
+      "size": 1.0,
+      "speed": 6.0,
+      "opacity": 0.9
+    }
+  },
+  "timeline": [
+    {
+      "duration": 50,
+      "title": "Futuro Digital",
+      "subtitle": "",
+      "theme": "scheme2"
+    },
+    {
+      "duration": 50,
+      "title": "Microcertificado Futuro Digital",
+      "subtitle": "",
+      "image": "img/frame-19.png",
+      "theme": "default"
+    },
+    {
+      "duration": 50,
+      "title": "Microcertificado Futuro Digital",
+      "subtitle": "",
+      "image": "img/frame-357.png",
+      "theme": "scheme2"
+    },
+    {
+      "duration": 50,
+      "title": "Equipa ON",
+      "subtitle": "",
+      "theme": "scheme3"
+    },
+    {
+      "duration": 50,
+      "title": "Atrito Digital",
+      "subtitle": "",
+      "theme": "default"
+    },
+    {
+      "duration": 50,
+      "title": "Zero Papel",
+      "subtitle": "Projeto de Sustentabilidade Ambiental",
+      "theme": "scheme3"
+    }
+  ]
+}

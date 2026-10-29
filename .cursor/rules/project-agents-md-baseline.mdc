@@ -1,0 +1,57 @@
+---
+description: Baseline template and rules for project AGENTS.md files across all registered repositories
+---
+
+# Project AGENTS.md Baseline Contract
+
+Every registered repository in the Development Universe MUST have an `AGENTS.md` file at its root conforming to this strict structure.
+
+## Required Sections (in order)
+
+```markdown
+---
+last_verified: YYYY-MM-DD
+project: <project-name>
+repository_id: <REP-XXXX>
+---
+
+# Project Instructions: <project-name>
+
+## Product Vision
+<One-line description of what the project is and why it exists.>
+
+## Tech Stack
+- **Framework**: <name + version>
+- **Language**: <name + version>
+- **Database/Cache**: <if applicable>
+- **Key Libraries**: <3-5 critical dependencies>
+- **Testing**: <framework or "none (known gap)">
+- **Deployment**: <platform>
+
+## Architecture
+- **Structure**: <monorepo, SPA, engine, content-only>
+- **Key Directories**: <main folders and their purpose>
+- **Key Pattern**: <dominant architectural pattern>
+- **Constraints**: <critical project-specific constraints>
+
+## Build & Run Commands
+- **Install**: `<exact command>`
+- **Dev**: `<exact command>`
+- **Build**: `<exact command>`
+- **Lint**: `<exact command>`
+- **Test**: `<exact command>`
+
+## Code Standards
+<Project-specific rules only. Do NOT repeat generic rules covered by the global baseline.>
+
+## Quality Gates
+<Pre-commit and pre-merge checks.>
+```
+
+## Hard Rules
+
+1. **No boilerplate**: Never create an `AGENTS.md` whose primary content is generic code style ("Use 2 spaces", "Use semicolons").
+2. **No secrets**: `AGENTS.md` MUST NOT contain API keys, tokens, passwords, database connection strings, or credentials. Use environment variable placeholders (`API_KEY=<set in .env>`).
+3. **Max 80 lines**: Excluding YAML frontmatter. Delegate details to referenced docs or specifications. The `home` vault is exempt.
+4. **Trust manifest**: Verify dependencies and versions against `package.json`, `pyproject.toml`, or `Cargo.toml`.
+5. **YAML frontmatter**: Every `AGENTS.md` begins with `---` delimited YAML containing `last_verified`, `project`, and `repository_id`.

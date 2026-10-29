@@ -1,10 +1,14 @@
-
 # Graphify
 **/graphify-out/
-
 # macOS
 .DS_Store
-
 # Tool artifacts
 .agents/
 .codex/
+node_modules/
+dist/
+.next/
+*.log
+videos/
+*.mp4
+*.webm

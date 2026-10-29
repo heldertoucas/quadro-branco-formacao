@@ -1,0 +1,17 @@
+---
+---
+
+# Agent Interoperability & MCP Interface
+
+Agents may interact with the Development Universe using either the first-class CLI (`dev`) or the native Model Context Protocol (MCP) server adapter:
+
+1. **Discovery & Context**:
+   - CLI: `python -m dev.cli context <project-id> --intent "<task intent>"`
+   - MCP Tool: `get_context(project_id, task_intent)`
+2. **Session Lifecycle**:
+   - CLI: `python -m dev.cli session start <project-id>` / `python -m dev.cli session close --session <session-id>`
+   - MCP Tools: `start_session(project_id)` / `close_session(summary, session_id, ...)`
+3. **Memory Staging (Governance Boundary)**:
+   - CLI: `python -m dev.cli memory propose "<title>" --content "<content>"`
+   - MCP Tool: `propose_memory(title, content, target_type, project_id, session_id)`
+   - *Note*: Agents stage observations as candidates; promotion to canonical knowledge requires human approval.

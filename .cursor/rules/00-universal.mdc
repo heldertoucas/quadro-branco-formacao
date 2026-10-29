@@ -1,0 +1,13 @@
+---
+---
+
+# Universal Operating Rules
+
+## 1. System Invariants
+- **Language Standard**: All system metadata, schemas, commands, and agent instructions must be authored in English.
+- **Verification Over Memory**: Never trust persisted notes blindly when the authoritative workspace code or configuration can answer the question directly.
+- **No Unconfirmed Assumptions**: Every non-trivial structural, architectural, or design decision must be confirmed interactively before executing.
+- **Separation of Concerns**: Workspaces are for executing work; the Dev Vault (`Dev2/home/`) is for persisting and contextualizing knowledge.
+
+## 2. Options Over Open Questions
+When asking the user to make a decision or clarify requirements, present at least 3 distinct, numbered options plus a final "Open Answer / Other" option.

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://github.com/dyoshikawa/rulesync/releases/latest/download/config-schema.json",
+  "targets": [
+    "antigravity-cli",
+    "claudecode",
+    "codexcli",
+    "opencode",
+    "omp"
+  ],
+  "features": [
+    "rules",
+    "mcp",
+    "commands",
+    "skills",
+    "subagents",
+    "hooks",
+    "permissions"
+  ],
+  "delete": true
+}

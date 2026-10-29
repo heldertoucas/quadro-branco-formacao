@@ -1,34 +1,23 @@
 # Project Instructions: quadro-branco-formacao
 
 ## Product Vision
-Interactive whiteboard for training sessions — featuring
-  real-time feedback with sound effects and visual elements.
+Interactive multimedia training whiteboard, gamification assets, audio/SFX cues, and automated video rendering tools for Futuro Digital classroom sessions.
 
 ## Tech Stack
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript (no framework)
-- **Testing**: Playwright
-- **Audio**: MP3 sound effects (aplausos.mp3, certo.mp3, errado.mp3)
-- **No Build Step**: Static files served directly
+- **Web / Frontend**: Native HTML5, Canvas, Web Audio API, Vanilla JavaScript, CSS3.
+- **Automation & Video Rendering**: Node.js, Playwright (`render-video.js`), PowerShell (`render.ps1`).
+- **Package Manager**: `pnpm`
 
 ## Architecture
-- **Structure**: Single-page application with no build step
-- **Key Files**: `futuro-digital.html` (main app), `index.html` (entry point)
-- **Legacy Versions**: `legacy_v1` through `legacy_v5` directories contain previous iterations
-- **Key Pattern**: Interactive training whiteboard with audio feedback
+- `index.html`, `futuro-digital.html`, `webcam-studio.html`: Interactive trainer webviews and live drawing / quiz surfaces.
+- `render-video.js` & `render-config.json`: Headless Playwright script that animates and records sequences to video.
+- Audio assets (`*.mp3`): Positive/negative gamification sound effects and transitions.
 
-## Build & Run Commands
-- **Dev**: Open `futuro-digital.html` in browser or use local server (`npx serve .`)
-- **E2E Tests**: `npx playwright test` (if Playwright config exists)
+## Verification & Execution Commands
+- **Install**: `pnpm install`
+- **Render Sequence**: `powershell -File ./render.ps1` or `node render-video.js`
+- **Test Webview**: Open target `.html` in browser or serve locally via lightweight HTTP server.
 
-## Code Standards
-- **Style Guide**: Follow guidelines in `conductor/code_styleguides/` if present
-- **No Build Step**: All changes are direct HTML/CSS/JS edits
-- **Legacy Code**: Do not modify `legacy_v*` directories — they are archived versions
-
-## Quality Gates
-- **Manual Testing**: Verify interactive elements and audio playback in browser
-- **Responsive**: Verify layout on different screen sizes
-- **Audio**: Confirm sound effects play correctly on user interactions
-
-
-> Note: Memory Protocol and Global Rules are inherited from the global AGENTS.md.
+## Standards
+- **Zero Heavy Frameworks**: Keep UI zero-build, offline-first, native HTML/JS.
+- **Asset Integrity**: Audio and image assets must remain local; do not introduce external CDN dependencies for offline classroom reliability.

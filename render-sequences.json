@@ -1,0 +1,88 @@
+{
+  "defaultSettings": {
+    "fps": 60,
+    "width": 1920,
+    "height": 1080,
+    "bitrate": "14M",
+    "theme": "scheme3",
+    "waves": {
+      "model": 3,
+      "direction": -1,
+      "speed": 0.4,
+      "amplitude": 1.30,
+      "posX": -11.5,
+      "posY": 0
+    },
+    "particles": {
+      "count": 8,
+      "size": 1.0,
+      "speed": 6.0,
+      "opacity": 0.9
+    }
+  },
+  "sequences": [
+    {
+      "id": "boas-vindas",
+      "fileName": "01-boas-vindas-teams-sharepoint.mp4",
+      "duration": 120,
+      "title": "Boas-vindas",
+      "subtitle": "Teams e Sharepoint",
+      "theme": "scheme3",
+      "image": "https://i.imgur.com/RKBwuaM.png"
+    },
+    {
+      "id": "futuro-digital",
+      "fileName": "02-futuro-digital-intro.mp4",
+      "duration": 120,
+      "title": "Futuro Digital",
+      "subtitle": "Capacitação e Inovação Digital",
+      "theme": "scheme2",
+      "image": "https://i.imgur.com/6FOOuFp.png"
+    },
+    {
+      "id": "microcertificado-1",
+      "fileName": "03-microcertificado-fase1.mp4",
+      "duration": 120,
+      "title": "Microcertificado Futuro Digital",
+      "subtitle": "",
+      "theme": "default",
+      "image": "img/frame-19.png"
+    },
+    {
+      "id": "microcertificado-2",
+      "fileName": "04-microcertificado-fase2.mp4",
+      "duration": 120,
+      "title": "Microcertificado Futuro Digital",
+      "subtitle": "",
+      "theme": "scheme2",
+      "image": "img/frame-357.png"
+    },
+    {
+      "id": "equipa-on",
+      "fileName": "05-equipa-on.mp4",
+      "duration": 120,
+      "title": "Equipa ON",
+      "subtitle": "Transformação e Capacitação",
+      "theme": "scheme3",
+      "image": "https://i.imgur.com/RKBwuaM.png"
+    },
+    {
+      "id": "atrito-digital",
+      "fileName": "06-atrito-digital.mp4",
+      "duration": 120,
+      "title": "Atrito Digital",
+      "subtitle": "Identificação e Otimização de Processos",
+      "theme": "default",
+      "image": "https://i.imgur.com/ZJvakeb.png"
+    },
+    {
+      "id": "zero-papel",
+      "fileName": "07-zero-papel.mp4",
+      "duration": 120,
+      "title": "Zero Papel",
+      "subtitle": "Projeto de Sustentabilidade Ambiental",
+      "theme": "scheme3",
+      "image": "https://i.imgur.com/RKBwuaM.png"
+    }
+  ]
+}

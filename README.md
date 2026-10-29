@@ -72,7 +72,27 @@ O `futuro-digital.html` serve como um slide de apresentação dinâmico e també
 
 ## 📜 Histórico de Versões
 
-### V3 (Atual / Produção)
+### V3.2 (Atual / Produção - Setembro 2026)
+* **Futuro Digital (`futuro-digital.html`) - Sintonizador de Slide & Motor Procedural:**
+  * **Painel Sintonizador Completo:** Gaveta lateral retrátil (tecla `H`) com organização modular dos controlos de todos os elementos:
+    1. **Logótipo:** Controlo de visibilidade, efeito de *Shine* periódico configurável (`10.5s`), escala (`0.65x`), posições X/Y (`4%`, `5%`).
+    2. **Título & Subtítulo:** Edição de texto ao vivo, ciclo de *Fade* suave configurável (`17.0s`), escala tipográfica (`1.15x`), posições X/Y (`4%`, `34.5%`).
+    3. **Imagem da Equipa:** Suporte para imagem personalizada via URL, tamanho (`31vw`), posições X/Y (`11%`, `36%`) e ritmo de flutuação (`6.0s`).
+    4. **Motor de Ondas Procedurais Canvas:**
+       * **Modo 1 (Rodapé):** Inversão simétrica com curvatura a fechar suavemente no rodapé ($y = h$).
+       * **Modo 2 (Fita Base):** Fita fluida orgânica com origem e regresso à base inferior.
+       * **Modo 3 (Curva Base):** Curva geométrica ascendente com cota vertical ajustada ($+14.5\%$).
+       * **Sentido de Movimento:** Suporte para propagação `Esq → Dir` e `Dir → Esq` (invertido).
+       * **Sintonizadores:** Velocidade (`0.4x`), Amplitude (`1.05x`) e Deslocamento X/Y (`-8%`, `+14%`).
+    5. **Partículas Dinâmicas Parallax:**
+       * **Evitação Inteligente de Colisão:** Algoritmo procedural de posicionamento que garante que nenhuma partícula sobrepõe as caixas delimitadoras do logótipo, título ou imagem.
+       * **Sintonizadores:** Quantidade (`8`), Escala de Tamanho (`1.00x`), Ritmo de Flutuação (`6.0s`), Opacidade (`90%`) e botão de randomização compacto.
+    6. **Temas Cromáticos Integrados:** Predefinição no tema **Digital** (`scheme2`), com suporte para temas *Original* e *Energia*.
+* **Quadro Branco (`index.html`):**
+  * Design & UX Premium, toolbar com scroll horizontal, menu Bottom Sheet, temporizadores, sorteios, placar, dados e sons.
+* **Próximos Passos:** Sessão de verificação e sincronização com a estrutura modular `proj-multifile-v2`.
+
+### V3.1 / V3
 * **Design & UX Premium:** Barra de ferramentas com *scroll* horizontal em mobile, menu principal com formato *Bottom Sheet*.
 * **Escalabilidade de Texto Fluida:** Novo algoritmo matemático (CSS `clamp` dinâmico) que ajusta o tamanho da fonte suavemente à medida que se escreve, sem saltos bruscos.
 * **Leitura Natural de URLs:** Deteção inteligente de links e palavras longas, inserindo quebras de linha em símbolos (`/`, `.`, `-`, etc.) sem cortar palavras a meio.
