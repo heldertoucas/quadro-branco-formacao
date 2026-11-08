@@ -3680,8 +3680,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 const timerVisible = timerEl && timerEl.style.display !== 'none';
                 const pollActive = features && features.poll && features.poll.active;
                 const scoreEl = document.getElementById('scoreboard');
-                const scoreActive = scoreEl && scoreEl.style.display === 'flex';
-                const nonTextView = ['dice', 'picker', 'slide', 'qr'].includes(state.view);
+                const scoreActive = (scoreEl && scoreEl.style.display === 'flex') || (state.view === 'score');
+                const nonTextView = ['score', 'dice', 'picker', 'slide', 'qr'].includes(state.view);
                 const suspenseActive = state.suspenseActive;
                 const txt = (this.els && this.els.mainText && this.els.mainText.innerText) ? this.els.mainText.innerText.trim() : '';
                 const hasCustomText = state.view === 'text' && txt.length > 0 && txt !== "Olá, vamos começar?" && txt !== "Olá! Vamos começar?";
@@ -4195,13 +4195,17 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 ui.els.mainText.classList.remove('hidden', 'visible', 'rich-content');
                 ui.els.mainText.style.display = 'none';
                 ui.els.qrContainer.style.display = 'none';
-                document.getElementById('scoreboard').style.display = 'none';
+                document.getElementById('scoreboard').style.display = mode === 'score' ? 'flex' : 'none';
                 const pDisp = document.getElementById('poll-display');
                 if (pDisp && mode !== 'poll') pDisp.style.display = 'none';
                 const pAct = document.getElementById('poll-actions');
                 if (pAct && mode !== 'poll') pAct.style.display = 'none';
 
                 switch (mode) {
+                    case 'score':
+                        document.getElementById('scoreboard').style.display = 'flex';
+                        break;
+
                     case 'text':
                         ui.els.mainText.style.display = 'block';
                         const isHtml = data && (/<[a-z][\s\S]*>/i.test(data) || data.includes('style=') || data.includes('<b>'));
@@ -4634,49 +4638,93 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             score: {
                 async setup() {
                     const sb = document.getElementById('scoreboard');
-                    if (sb.style.display === 'flex') { sb.style.display = 'none'; return; }
+                    if (state.view === 'score' && sb && sb.style.display === 'flex') {
+                        this.close();
+                        return;
+                    }
 
                     const num = await modal.show({
                         title: 'Configurar Placar',
                         html: '<input type="number" class="modal-input" placeholder="Número de Equipas (2-6)" min="2" max="6" value="2">'
                     });
                     if (num) {
-                        app.clear(true);
                         this.build(parseInt(num));
                     }
                 },
+                close() {
+                    const sb = document.getElementById('scoreboard');
+                    if (sb) {
+                        sb.style.display = 'none';
+                        sb.innerHTML = '';
+                    }
+                    if (state.view === 'score') {
+                        features.setView('text', '');
+                    }
+                    ui.updateProjectorClockVisibility();
+                    state.saveSession();
+                    app.broadcastState();
+                },
                 build(n, isSync = false) {
+                    ui.dismissWelcomeIfPresent();
                     state.view = 'score';
-                    ui.els.mainText.classList.remove('visible');
+                    ui.els.mainText.classList.remove('visible', 'rich-content');
                     ui.els.mainText.style.display = 'none';
                     const pDisp = document.getElementById('poll-display');
                     if (pDisp) { pDisp.style.display = 'none'; pDisp.innerHTML = ''; }
                     const pAct = document.getElementById('poll-actions');
                     if (pAct) pAct.style.display = 'none';
-                    if (!isSync) state.scores = {};
-                    let html = '';
-                    for (let i = 0; i < n; i++) {
-                        const char = String.fromCharCode(65 + i);
-                        if (!isSync) state.scores[char] = 0;
-                        const scoreVal = state.scores[char] || 0;
-                        html += `<div class="score-team" id="team-${char}" onmousedown="features.score.update('${char}', event)">
-                                    <div class="score-val" id="score-${char}">${scoreVal}</div>
-                                    <div class="score-label">Equipa ${char}</div>
-                                 </div>`;
+
+                    const params = (typeof window !== 'undefined' && window.location && window.location.search) ? new URLSearchParams(window.location.search) : new URLSearchParams('');
+                    const isProjector = params.get('mode') === 'projector';
+
+                    if (!isSync) {
+                        state.scores = {};
+                        for (let i = 0; i < n; i++) {
+                            const char = String.fromCharCode(65 + i);
+                            state.scores[char] = 0;
+                        }
                     }
-                    html += `<button id="score-win-btn" onclick="features.score.checkWinner()" title="Apurar Vencedor" style="margin-left:15px; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:50%; width:75px; height:75px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-color); transition:all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                                <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2" fill="none">${ICONS.Target}</svg>
-                             </button>`;
+
                     const sb = document.getElementById('scoreboard');
-                    sb.innerHTML = html;
+                    if (!sb) return;
+
+                    const existingTeams = sb.querySelectorAll('.score-team');
+                    if (existingTeams.length === n) {
+                        for (let i = 0; i < n; i++) {
+                            const char = String.fromCharCode(65 + i);
+                            const valEl = document.getElementById(`score-${char}`);
+                            if (valEl) valEl.innerText = state.scores[char] || 0;
+                        }
+                    } else {
+                        let html = '';
+                        for (let i = 0; i < n; i++) {
+                            const char = String.fromCharCode(65 + i);
+                            const scoreVal = state.scores[char] || 0;
+                            html += `<div class="score-team" id="team-${char}" ${!isProjector ? `onmousedown="features.score.update('${char}', event)"` : ''}>
+                                        <div class="score-val" id="score-${char}">${scoreVal}</div>
+                                        <div class="score-label">Equipa ${char}</div>
+                                     </div>`;
+                        }
+                        if (!isProjector) {
+                            html += `<button id="score-win-btn" onclick="features.score.checkWinner()" title="Apurar Vencedor" style="margin-left:15px; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:50%; width:75px; height:75px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-color); transition:all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                                        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2" fill="none">${ICONS.Target}</svg>
+                                     </button>`;
+                        }
+                        sb.innerHTML = html;
+                    }
+
                     sb.style.display = 'flex';
+                    ui.updateProjectorClockVisibility();
                     state.saveSession();
-                    app.broadcastState();
+                    if (!isSync && !isProjector) {
+                        app.broadcastState();
+                    }
                 },
                 update(team, e) {
                     const delta = (e.shiftKey || e.button === 2) ? -1 : 1;
-                    state.scores[team] = Math.max(0, state.scores[team] + delta);
-                    document.getElementById(`score-${team}`).innerText = state.scores[team];
+                    state.scores[team] = Math.max(0, (state.scores[team] || 0) + delta);
+                    const valEl = document.getElementById(`score-${team}`);
+                    if (valEl) valEl.innerText = state.scores[team];
                     AudioService.toggle(delta > 0 ? 'pointUp' : 'pointDown');
                     state.saveSession();
                     app.broadcastState();
@@ -4689,7 +4737,10 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     });
                     document.querySelectorAll('.score-team').forEach(el => el.classList.remove('winner-highlight'));
                     if (max > 0) {
-                        winners.forEach(t => document.getElementById(`team-${t}`).classList.add('winner-highlight'));
+                        winners.forEach(t => {
+                            const el = document.getElementById(`team-${t}`);
+                            if (el) el.classList.add('winner-highlight');
+                        });
                         const winnerTeams = winners.map(t => `Equipa ${t}`).join(', ');
                         AudioService.toggle('trophy');
                         ui.showVictoryScreen(winnerTeams);
@@ -5223,6 +5274,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             },
 
             broadcastState() {
+                const params = (typeof window !== 'undefined' && window.location && window.location.search) ? new URLSearchParams(window.location.search) : new URLSearchParams('');
+                if (params.get('mode') === 'projector') return; // Projector is slave display, never broadcasts master sync
                 if (!state.channel) return;
                 state.channel.postMessage({
                     type: 'sync',
@@ -5250,7 +5303,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             },
 
             handleBroadcast(data) {
-                const params = new URLSearchParams(window.location.search);
+                const params = (typeof window !== 'undefined' && window.location && window.location.search) ? new URLSearchParams(window.location.search) : new URLSearchParams('');
                 const isProjector = params.get('mode') === 'projector';
 
                 if (data.type === 'ping' && isProjector) {
@@ -5276,7 +5329,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     state.textAlignment = s.textAlignment;
                     state.history = s.history;
                     state.historyIndex = s.historyIndex;
-                    state.scores = s.scores;
+                    state.scores = s.scores || {};
                     ui.applyState();
 
                     if (s.view === 'poll' && s.pollActive) {
@@ -5285,7 +5338,12 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         features.poll.winnerLabel = s.pollWinnerLabel || '';
                         features.poll.build(s.pollLabels, true);
                     } else if (s.view === 'score') {
-                        features.score.build(Object.keys(s.scores).length, true);
+                        const count = Object.keys(s.scores || {}).length || 2;
+                        features.score.build(count, true);
+                        Object.entries(s.scores || {}).forEach(([team, val]) => {
+                            const valEl = document.getElementById(`score-${team}`);
+                            if (valEl) valEl.innerText = val;
+                        });
                     } else if (s.view === 'slide') {
                         features.setView('slide', s.slideData);
                     } else {
