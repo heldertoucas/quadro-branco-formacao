@@ -12,3 +12,18 @@ dist/
 videos/
 *.mp4
 *.webm
+# ─────────────────────────────────────────────────────────────────────────────
+# AI Harness Machine-Specific Local Outputs (DEC-0033 / Multi-Station Parity)
+# ─────────────────────────────────────────────────────────────────────────────
+.rulesync.local/
+.mcp.json
+.claude/settings.json
+.antigravity/settings.json
+.codex/
+.omp/
+.pi/
+.opencode/
+opencode.json
+opencode.jsonc
+.agents/hooks.json
+.agents/mcp_config.json
