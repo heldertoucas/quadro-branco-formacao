@@ -2815,7 +2815,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
             <div class="separator"></div>
 
-            <button class="tool-btn" onclick="features.dice.roll()" title="Gerar Dados">
+            <button id="btn-dice" class="tool-btn" onclick="features.dice.toggle()" title="Gerar Dados">
                 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                     <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
                     <path d="M16 8h.01"></path>
@@ -2826,7 +2826,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 </svg>
                 <span>Dados</span>
             </button>
-            <button class="tool-btn" onclick="features.picker.setup()" title="Sortear Nome">
+            <button id="btn-picker" class="tool-btn" onclick="features.picker.toggle()" title="Sortear Nome">
                 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                     <path
                         d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z">
@@ -2875,8 +2875,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
             <div class="separator"></div>
 
-            <button id="btn-create-slide" class="tool-btn" onclick="features.slide.toggleInline()"
-                title="Criar Slide">
+            <button id="btn-create-slide" class="tool-btn" onclick="features.slide.open()"
+                title="Abrir Slide">
                 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                     <circle cx="8.5" cy="8.5" r="1.5"></circle>
@@ -4178,6 +4178,16 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         const features = {
             // New Unified View Manager
             setView(mode, data = null) {
+                // If leaving dice or picker, clear active intervals
+                if (mode !== 'dice' && features.dice && features.dice.interval) {
+                    clearInterval(features.dice.interval);
+                    features.dice.interval = null;
+                }
+                if (mode !== 'picker' && features.picker && features.picker.interval) {
+                    clearInterval(features.picker.interval);
+                    features.picker.interval = null;
+                }
+
                 // Remove sunburst if not trophy
                 if (mode !== 'trophy') {
                     const sb = document.getElementById('sunburst');
@@ -4186,6 +4196,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
                 if (state.view === mode && !data) return;
                 state.view = mode;
+
+                if (features.dice && features.dice.updateButton) features.dice.updateButton();
+                if (features.picker && features.picker.updateButton) features.picker.updateButton();
 
                 if (mode !== 'text' || (data && data !== "Olá, vamos começar?" && data !== "Olá! Vamos começar?")) {
                     ui.dismissWelcomeIfPresent();
@@ -4207,16 +4220,22 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         break;
 
                     case 'text':
-                        ui.els.mainText.style.display = 'block';
-                        const isHtml = data && (/<[a-z][\s\S]*>/i.test(data) || data.includes('style=') || data.includes('<b>'));
-                        if (isHtml) {
-                            ui.els.mainText.classList.add('rich-content');
-                            ui.els.mainText.innerHTML = safeSanitize(data);
+                        if (data) {
+                            ui.els.mainText.style.display = 'block';
+                            const isHtml = (/<[a-z][\s\S]*>/i.test(data) || data.includes('style=') || data.includes('<b>'));
+                            if (isHtml) {
+                                ui.els.mainText.classList.add('rich-content');
+                                ui.els.mainText.innerHTML = safeSanitize(data);
+                            } else {
+                                ui.els.mainText.innerText = data;
+                            }
+                            void ui.els.mainText.offsetWidth;
+                            ui.els.mainText.classList.add('visible');
                         } else {
-                            ui.els.mainText.innerText = data || "";
+                            ui.els.mainText.innerText = '';
+                            ui.els.mainText.classList.remove('visible', 'rich-content');
+                            ui.els.mainText.style.display = 'none';
                         }
-                        void ui.els.mainText.offsetWidth;
-                        ui.els.mainText.classList.add('visible');
                         break;
 
                     case 'qr':
@@ -4250,19 +4269,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         break;
 
                     case 'slide':
-                        ui.els.mainText.style.display = 'flex';
-                        ui.els.mainText.style.flexDirection = 'column';
-                        ui.els.mainText.style.alignItems = 'center';
-                        ui.els.mainText.style.justifyContent = 'center';
-                        const sData = (typeof data === 'object' && data) ? data : { text: data || 'Novo Slide', scheme: 'default' };
-                        ui.els.mainText.innerHTML = `
-                            <div class="slide-card scheme-${sData.scheme || 'default'}">
-                                <div class="slide-badge">FUTURO DIGITAL</div>
-                                <div class="slide-body">${safeSanitize(sData.text)}</div>
-                                <div class="slide-foot">Equipas ON! • Formação Ativa</div>
-                            </div>
-                        `;
-                        ui.els.mainText.classList.add('visible');
+                        if (features.slide && features.slide.create) {
+                            features.slide.create(typeof data === 'object' ? data.text : data);
+                        }
                         break;
                 }
                 app.broadcastState();
@@ -4352,13 +4361,53 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             },
 
             dice: {
+                interval: null,
+                toggle() {
+                    if (state.view === 'dice') {
+                        this.dismiss();
+                    } else {
+                        this.roll();
+                    }
+                },
+                dismiss() {
+                    if (this.interval) {
+                        clearInterval(this.interval);
+                        this.interval = null;
+                    }
+                    if (state.view === 'dice') {
+                        features.setView('text', '');
+                    }
+                    this.updateButton();
+                    if (state.channel) {
+                        state.channel.postMessage({ type: 'dice_dismiss' });
+                    }
+                    ui.updateProjectorClockVisibility();
+                    app.broadcastState();
+                },
+                updateButton() {
+                    const btn = document.getElementById('btn-dice');
+                    if (btn) btn.classList.toggle('active', state.view === 'dice');
+                },
                 roll() {
-                    if (state.view === 'dice') { app.clear(); return; }
+                    if (state.view === 'dice') {
+                        this.dismiss();
+                        return;
+                    }
+                    if (this.interval) {
+                        clearInterval(this.interval);
+                        this.interval = null;
+                    }
                     features.setView('dice');
+                    this.updateButton();
                     const diceChars = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
                     let rolls = 0;
                     if (state.channel) state.channel.postMessage({ type: 'dice_start' });
-                    const interval = setInterval(() => {
+                    this.interval = setInterval(() => {
+                        if (state.view !== 'dice') {
+                            clearInterval(this.interval);
+                            this.interval = null;
+                            return;
+                        }
                         const v1 = Math.floor(Math.random() * 6);
                         const v2 = Math.floor(Math.random() * 6);
                         const d1 = document.getElementById('d1'), d2 = document.getElementById('d2');
@@ -4372,7 +4421,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                             });
                         }
                         if (++rolls >= 20) {
-                            clearInterval(interval);
+                            clearInterval(this.interval);
+                            this.interval = null;
                             const vis = document.querySelector('.dice-visuals');
                             if (vis) vis.classList.remove('dice-shake');
                             const res = document.getElementById('dice-result');
@@ -4396,16 +4446,61 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             },
 
             picker: {
+                interval: null,
+                lastNames: [],
+                toggle() {
+                    if (state.view === 'picker') {
+                        this.dismiss();
+                    } else {
+                        this.setup();
+                    }
+                },
                 async setup() {
+                    if (state.view === 'picker') {
+                        this.dismiss();
+                        return;
+                    }
+                    const defaultText = (this.lastNames && this.lastNames.length > 0) ? this.lastNames.join(', ') : '';
                     const text = await modal.show({
                         title: 'Sorteio Aleatório',
-                        html: '<textarea class="modal-input" placeholder="Nomes separados por vírgula" rows="4"></textarea>'
+                        html: `<textarea class="modal-input" placeholder="Nomes separados por vírgula" rows="4">${defaultText}</textarea>`
                     });
-                    if (text) this.run(text.split(',').map(s => s.trim()).filter(Boolean));
+                    if (text) {
+                        const parsed = text.split(',').map(s => s.trim()).filter(Boolean);
+                        if (parsed.length > 0) {
+                            this.lastNames = parsed;
+                            this.run(parsed);
+                        }
+                    }
+                },
+                dismiss() {
+                    if (this.interval) {
+                        clearInterval(this.interval);
+                        this.interval = null;
+                    }
+                    if (state.view === 'picker') {
+                        features.setView('text', '');
+                    }
+                    this.updateButton();
+                    if (state.channel) {
+                        state.channel.postMessage({ type: 'picker_dismiss' });
+                    }
+                    ui.updateProjectorClockVisibility();
+                    app.broadcastState();
+                },
+                updateButton() {
+                    const btn = document.getElementById('btn-picker');
+                    if (btn) btn.classList.toggle('active', state.view === 'picker');
                 },
                 run(names) {
                     if (names.length < 2) return;
+                    if (this.interval) {
+                        clearInterval(this.interval);
+                        this.interval = null;
+                    }
+                    this.lastNames = names;
                     features.setView('picker');
+                    this.updateButton();
                     const resEl = document.getElementById('picker-result');
                     let spins = 0;
                     if (state.channel) {
@@ -4414,8 +4509,12 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                             names: names
                         });
                     }
-                    const interval = setInterval(() => {
-                        if (state.view !== 'picker' || !resEl) { clearInterval(interval); return; }
+                    this.interval = setInterval(() => {
+                        if (state.view !== 'picker' || !resEl) {
+                            clearInterval(this.interval);
+                            this.interval = null;
+                            return;
+                        }
                         const chosen = names[Math.floor(Math.random() * names.length)];
                         resEl.innerText = chosen;
                         if (state.channel) {
@@ -4425,7 +4524,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                             });
                         }
                         if (++spins >= 30) {
-                            clearInterval(interval);
+                            clearInterval(this.interval);
+                            this.interval = null;
                             resEl.style.animation = "none";
                             resEl.style.transform = "scale(1.2)";
                             AudioService.toggle('fanfare');
@@ -4750,90 +4850,32 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             },
 
             slide: {
-                activeScheme: 'default',
+                activeScheme: 'scheme2',
                 active: false,
-                toggleInline() {
-                    const toolbarColors = document.getElementById('slide-colors-toolbar');
-                    const drawer = document.getElementById('links-drawer');
-
-                    if (drawer.classList.contains('visible')) ui.toggleLinkMenu();
-
-                    this.active = !this.active;
-
-                    const btn = document.getElementById('btn-create-slide');
-                    btn.classList.toggle('active', this.active);
-
-                    if (this.active) {
-                        // Force toolbar visible logic if needed, or just show colors
-                        document.getElementById('control-panel').classList.add('expanded'); // Reusing existing expanded logic
-                        toolbarColors.style.display = 'flex';
-                        ui.els.input.focus();
-                        this.setScheme(this.activeScheme);
-                    } else {
-                        toolbarColors.style.display = 'none';
-                        document.getElementById('control-panel').classList.remove('expanded');
-                        // Reset border
-                        if (ui.els.input) ui.els.input.style.borderColor = '';
-                    }
-                },
-                setScheme(scheme) {
-                    this.activeScheme = scheme;
-                    // Update selection in toolbar
-                    document.querySelectorAll('.inline-scheme-btn').forEach(btn => btn.classList.remove('active'));
-                    const btn = document.getElementById(`toolbar-scheme-${scheme}`);
-                    if (btn) btn.classList.add('active');
-
-                    // Visual feedback on input border
-                    const colors = {
-                        'default': '#FFB743',
-                        'scheme2': '#5271FF',
-                        'scheme3': '#35B729'
-                    };
-                    if (this.active && ui.els.input) {
-                        ui.els.input.style.borderColor = colors[scheme] || 'var(--glass-border)';
-                    }
-                },
-                present(text, scheme = this.activeScheme) {
-                    let cleaned = (text || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-                    if (!cleaned) cleaned = "Novo Slide";
-                    state.lastSlideData = { text: cleaned, scheme: scheme || this.activeScheme };
-                    features.setView('slide', state.lastSlideData);
-                    if (state.channel) {
-                        state.channel.postMessage({
-                            type: 'slide_present',
-                            data: state.lastSlideData
-                        });
-                    }
-                    app.broadcastState();
-                },
-                create() {
-                    // Robust text retrieval
-                    let text = ui.els.input.innerText;
-
-                    // Cleanup any zero-width spaces or potential HTML artifacts
+                open(customText) {
+                    let text = (typeof customText === 'string') ? customText : (ui.els.input ? ui.els.input.innerText : '');
                     text = text.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-
-                    if (!text) text = "Novo Slide";
+                    if (!text) text = "Equipas ON !";
 
                     const data = {
                         text: text,
-                        scheme: this.activeScheme
+                        subtext: "",
+                        scheme: this.activeScheme || 'scheme2'
                     };
                     localStorage.setItem('slideData', JSON.stringify(data));
                     window.location.href = 'futuro-digital.html';
                 },
+                create(customText) {
+                    this.open(customText);
+                },
                 openSlides() {
-                    const data = {
-                        text: "https://docs.google.com/presentation/d/1BR9b4cx1kMfBY3zkMFgV5BjtMpbur9K7CV6J2YUNr70/view",
-                        scheme: 'default'
-                    };
-                    localStorage.setItem('slideData', JSON.stringify(data));
-                    window.location.href = 'futuro-digital.html';
+                    this.open();
                 },
                 openPortal() {
                     const data = {
                         text: "bit.ly/futurodigitalcml",
-                        scheme: 'scheme2' // Green, Blue, Purple
+                        subtext: "",
+                        scheme: 'scheme2'
                     };
                     localStorage.setItem('slideData', JSON.stringify(data));
                     window.location.href = 'futuro-digital.html';
@@ -4841,7 +4883,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 openChallenge() {
                     const data = {
                         text: "bit.ly/desafiocml",
-                        scheme: 'scheme3' // Green, Orange, Red
+                        subtext: "",
+                        scheme: 'scheme3'
                     };
                     localStorage.setItem('slideData', JSON.stringify(data));
                     window.location.href = 'futuro-digital.html';
@@ -5108,13 +5151,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     return;
                 }
 
-                // If Slide Mode is active, Present Slide directly on screen and projector
+                // If Slide Mode is active, Create Slide instead of Projecting
                 if (features.slide && features.slide.active) {
-                    let text = ui.els.input.innerText.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-                    if (!text && ui.els.input.innerHTML) text = ui.els.input.innerHTML;
-                    features.slide.present(text, features.slide.activeScheme);
-                    ui.els.input.innerHTML = "";
-                    ui.els.input.focus();
+                    features.slide.create();
                     return;
                 }
                 const text = ui.els.input.innerText.trim();
@@ -5246,8 +5285,24 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 }
 
                 // 6. Reset Slide if active
-                if (features.slide && features.slide.active) {
+                if (features.slide && features.slide.active && features.slide.toggleInline) {
                     features.slide.toggleInline();
+                }
+
+                // Reset Dice & Picker
+                if (features.dice) {
+                    if (features.dice.interval) {
+                        clearInterval(features.dice.interval);
+                        features.dice.interval = null;
+                    }
+                    if (features.dice.updateButton) features.dice.updateButton();
+                }
+                if (features.picker) {
+                    if (features.picker.interval) {
+                        clearInterval(features.picker.interval);
+                        features.picker.interval = null;
+                    }
+                    if (features.picker.updateButton) features.picker.updateButton();
                 }
 
                 // 7. Clear FX overlay & Sunburst
@@ -5414,6 +5469,12 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                             }
                         }
                     }
+                }
+
+                if ((data.type === 'dice_dismiss' || data.type === 'picker_dismiss') && isProjector) {
+                    ui.dismissWelcomeIfPresent();
+                    features.setView('text', '');
+                    ui.updateProjectorClockVisibility();
                 }
 
                 if (data.type === 'dice_start' && isProjector) {

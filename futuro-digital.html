@@ -2131,14 +2131,15 @@
                 if (dataStr) {
                     const data = JSON.parse(dataStr);
                     if (data.text) renderHeading(data.text);
-                    if (data.subtext) {
+                    if (data.subtext !== undefined) {
                         pSubheading.textContent = data.subtext;
                         inputSlideSubtext.value = data.subtext;
                     }
                     if (data.scheme) initialTheme = data.scheme;
                 } else {
                     inputSlideText.value = 'Equipas ON !';
-                    inputSlideSubtext.value = pSubheading.textContent.trim();
+                    inputSlideSubtext.value = '';
+                    pSubheading.textContent = '';
                 }
 
                 const params = new URLSearchParams(window.location.search);
