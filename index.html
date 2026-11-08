@@ -108,8 +108,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             --font-main: 'Patrick Hand', cursive;
         }
 
-        /* Specific override for Sketch borders */
-        [data-theme="sketch"] * {
+        /* Specific override for Sketch borders - exclude round buttons, controls and badges */
+        [data-theme="sketch"] :not(.tool-btn):not(#logo-btn):not(.fmt-btn):not(.nav-arrow):not(.ink-color):not(.poll-btn):not(#score-win-btn):not(.menu-close-btn):not(.submenu-close):not(#btn-send):not(.nav-queue-badge):not(.inline-scheme-btn) {
             border-radius: 2px !important;
         }
 
@@ -382,15 +382,15 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             top: 100%;
             left: 0;
             margin-top: 10px;
-            width: 260px;
+            width: 270px;
             max-height: 75vh;
             overflow-y: auto;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
-            padding: 10px;
+            padding: 14px 10px;
             display: none;
             flex-direction: column;
             gap: 2px;
@@ -398,6 +398,14 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             animation: fadeInMenu 0.2s ease-out;
             scrollbar-width: thin;
             scrollbar-color: var(--accent-color) transparent;
+            box-sizing: border-box;
+        }
+
+        .menu-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 6px;
         }
 
         .dropdown-menu::-webkit-scrollbar {
@@ -435,9 +443,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         }
 
         .menu-item {
-            padding: 10px 15px;
+            padding: 10px 14px;
             font-size: 0.9rem;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -445,19 +453,25 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             color: var(--text-color);
             opacity: 0.9;
             background: transparent;
-            border: none;
+            border: 1.5px solid transparent;
             width: 100%;
             text-align: left;
             font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            margin: 2px 0;
         }
 
         .menu-item:hover {
             background: var(--glass-hover);
+            border-color: rgba(255, 255, 255, 0.2);
             opacity: 1;
         }
 
         .menu-item.active {
             background: var(--glass-hover);
+            border: 1.5px solid var(--accent-color);
+            box-shadow: 0 0 12px rgba(79, 172, 254, 0.35);
             opacity: 1;
             font-weight: 600;
         }
@@ -935,9 +949,10 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         .tool-btn.active {
             background: var(--accent-color) !important;
             color: white !important;
-            border-color: white !important;
+            border: 1.5px solid white !important;
             opacity: 1 !important;
-            box-shadow: 0 0 15px var(--accent-color);
+            box-shadow: 0 0 16px var(--accent-color);
+            transform: translateY(-1px);
         }
 
         .fmt-btn:hover {
@@ -954,19 +969,22 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             animation: dynamicGlow 2s infinite alternate ease-in-out !important;
         }
 
+        #control-panel:hover #toolbar,
         #control-panel:focus-within #toolbar,
         #control-panel.expanded #toolbar,
         #control-panel.drawer-open #toolbar {
-            max-height: 120px;
+            max-height: 140px;
             opacity: 1;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 12px;
+            padding-top: 8px;
+            padding-bottom: 8px;
             border-bottom: 1px solid var(--glass-border);
+            overflow: visible;
         }
 
         .tool-btn {
             background: transparent;
-            border: 1px solid transparent;
+            border: 1.5px solid transparent;
             color: var(--text-color);
             padding: 8px 12px;
             border-radius: 8px;
@@ -980,11 +998,11 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             gap: 8px;
             opacity: 0.8;
             flex-shrink: 0;
+            box-sizing: border-box;
         }
 
         .tool-btn:hover,
-        .tool-btn:focus,
-        .tool-btn.active {
+        .tool-btn:focus {
             background: var(--glass-hover);
             border-color: var(--glass-border);
             opacity: 1;
@@ -1020,26 +1038,29 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             flex-wrap: wrap;
             gap: 10px;
             position: relative;
+            padding: 0 16px;
+            box-sizing: border-box;
         }
 
         #sound-drawer.open {
-            max-height: 250px;
+            max-height: 260px;
             opacity: 1;
             margin-bottom: 15px;
-            padding-bottom: 15px;
-            padding-right: 30px;
-            /* Space for close btn */
+            padding: 18px 35px 18px 16px;
             border-bottom: 1px solid var(--glass-border);
+            overflow: visible;
         }
 
         #sound-drawer .submenu-close {
-            top: 10px;
+            top: 14px;
+            right: 10px;
             transform: none;
         }
 
         .tool-btn.sound-playing {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: var(--text-color);
+            background: var(--glass-hover);
+            border: 1.5px solid var(--accent-color) !important;
+            box-shadow: 0 0 18px var(--accent-color) !important;
             opacity: 1;
             animation: pulseEffect 0.5s infinite alternate;
         }
@@ -1052,6 +1073,17 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             to {
                 transform: scale(1.05);
             }
+        }
+
+        @keyframes pulseWarn {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.6); }
+            50% { box-shadow: 0 0 0 8px rgba(255, 107, 107, 0); }
+        }
+
+        .warn-pulse {
+            animation: pulseWarn 1s infinite !important;
+            border-color: var(--danger-color) !important;
+            color: var(--danger-color) !important;
         }
 
         /* Input Area */
@@ -1300,17 +1332,22 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             position: fixed;
             top: 20px;
             right: 20px;
-            font-size: 4rem;
-            /* Increased size */
-            font-weight: 300;
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
             background: var(--glass-bg);
-            padding: 15px 35px;
+            padding: 16px 36px;
             border-radius: 50px;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(5px);
+            border: 1.5px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: none;
-            z-index: 100;
+            z-index: 170;
             font-variant-numeric: tabular-nums;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+            cursor: pointer;
         }
 
         /* Scoreboard */
@@ -1361,9 +1398,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
         .score-team.winner-highlight {
             transform: scale(1.15);
-            border: 2px solid var(--gold-color);
-            background: rgba(255, 215, 0, 0.15);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            border: 2px solid #00f5a0;
+            background: rgba(0, 245, 160, 0.18);
+            box-shadow: 0 0 35px rgba(0, 245, 160, 0.6);
         }
 
         /* Dice */
@@ -1702,10 +1739,10 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         }
 
         .poll-item {
-            flex: 1 1 80px;
+            flex: 1 1 90px;
             max-width: 150px;
             height: 100%;
-            min-height: 200px;
+            min-height: 220px;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -1713,12 +1750,19 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             gap: 10px;
         }
 
+        .poll-count {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text-color);
+        }
+
         .poll-bar-track {
             width: 100%;
             height: 100%;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 14px;
             position: relative;
             overflow: hidden;
             display: flex;
@@ -1734,31 +1778,27 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
         }
 
-        .poll-info {
-            text-align: center;
-        }
-
-        .poll-count {
-            font-size: 2.5rem;
-            font-weight: 800;
-            line-height: 1;
+        .poll-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 4px;
         }
 
         .poll-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
+            font-size: 1.6rem;
+            font-weight: 800;
             letter-spacing: 1px;
-            opacity: 0.8;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
+            color: var(--accent-color);
+            text-align: center;
+            line-height: 1;
         }
 
         .poll-btn-group {
             display: flex;
-            gap: 5px;
-            margin-top: 5px;
+            gap: 6px;
         }
 
         .poll-btn {
@@ -1781,9 +1821,48 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             transform: scale(1.1);
         }
 
+        #poll-display {
+            transition: all 0.4s ease;
+        }
+
+        #poll-display.has-winner .poll-item:not(.poll-winner-highlight) {
+            opacity: 0.4;
+            filter: grayscale(40%);
+            transform: scale(0.95);
+            transition: all 0.4s ease;
+        }
+
+        #poll-display.has-winner .poll-item.poll-winner-highlight {
+            transform: scale(1.06);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
+        }
+
         .poll-winner-highlight .poll-bar-fill {
-            background: var(--gold-color);
-            box-shadow: 0 0 30px var(--gold-color);
+            background: linear-gradient(180deg, #00f5a0 0%, #00b4d8 100%) !important;
+            box-shadow: 0 0 35px rgba(0, 245, 160, 0.85) !important;
+            border: 2px solid #ffffff;
+            animation: pulseGlow 1.6s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 25px rgba(0, 245, 160, 0.75); }
+            100% { box-shadow: 0 0 55px rgba(0, 245, 160, 1), 0 0 15px #ffffff; }
+        }
+
+        .poll-winner-highlight .poll-label,
+        .poll-winner-highlight .poll-count {
+            color: #00f5a0 !important;
+            text-shadow: 0 0 15px rgba(0, 245, 160, 0.85);
+            font-weight: 900;
+        }
+
+        .poll-winner-badge {
+            font-size: 2.2rem;
+            line-height: 1;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.9));
+            animation: victoryPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         #poll-actions {
@@ -1809,12 +1888,548 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         /* Projector Mode Overrides */
         body.projector-mode #control-panel,
         body.projector-mode #logo-area,
-        body.projector-mode .nav-arrow {
+        body.projector-mode .nav-arrow,
+        body.projector-mode #poll-actions,
+        body.projector-mode #score-win-btn,
+        body.projector-mode #ink-toolbar,
+        body.projector-mode #links-drawer,
+        body.projector-mode #rich-toolbar,
+        body.projector-mode .poll-btn-group {
             display: none !important;
         }
 
         body.projector-mode #display-area {
             padding-bottom: 0;
+            height: 100vh;
+        }
+
+        body.projector-mode #poll-display {
+            top: 50%;
+            transform: translate(-50%, -50%);
+            height: 70vh;
+            gap: 30px;
+        }
+
+        body.projector-mode .poll-item {
+            max-width: 220px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        body.projector-mode #poll-display.has-winner .poll-item:not(.poll-winner-highlight) {
+            opacity: 0.3;
+            filter: grayscale(60%) blur(0.5px);
+            transform: scale(0.9);
+        }
+
+        body.projector-mode #poll-display.has-winner .poll-item.poll-winner-highlight {
+            transform: scale(1.15);
+            z-index: 10;
+        }
+
+        body.projector-mode .poll-winner-badge {
+            font-size: 4.2rem;
+            margin-bottom: 14px;
+            filter: drop-shadow(0 0 28px rgba(255, 215, 0, 0.95));
+            animation: bounceProjector 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate;
+        }
+
+        @keyframes bounceProjector {
+            from { transform: translateY(0) scale(1); }
+            to { transform: translateY(-16px) scale(1.16); }
+        }
+
+        body.projector-mode .victory-card {
+            padding: 45px 85px;
+            border-radius: 40px;
+            border-width: 3.5px;
+            box-shadow: 0 35px 85px rgba(0, 0, 0, 0.95), 0 0 75px rgba(255, 215, 0, 0.65);
+        }
+
+        body.projector-mode .victory-trophy-icon {
+            width: 165px;
+            height: 165px;
+        }
+
+        body.projector-mode .victory-title {
+            font-size: 4.6rem;
+        }
+
+        body.projector-mode .victory-winner-badge {
+            font-size: 2.6rem;
+            padding: 10px 42px;
+        }
+
+        body.projector-mode .poll-count {
+            font-size: 3.8rem;
+        }
+
+        body.projector-mode .poll-label {
+            font-size: 2.5rem;
+            margin-top: 10px;
+        }
+
+        body.projector-mode #scoreboard {
+            gap: 40px;
+        }
+
+        body.projector-mode .score-team {
+            min-width: 180px;
+            padding: 24px 30px;
+        }
+
+        body.projector-mode .score-val {
+            font-size: 5rem;
+        }
+
+        body.projector-mode .score-label {
+            font-size: 1.4rem;
+        }
+
+        body.projector-mode #timer-display,
+        body.projector-mode #timer-overlay {
+            font-size: clamp(4rem, 8.5vw, 7.5rem) !important;
+            font-weight: 800;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+            letter-spacing: 2px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: max-content;
+            min-width: min(520px, 85vw);
+            max-width: 90vw;
+            padding: 35px 60px;
+            border-radius: 40px;
+            border: 3px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            z-index: 200;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.85), 0 0 45px rgba(79, 172, 254, 0.45);
+            box-sizing: border-box;
+            overflow: hidden;
+            text-align: center;
+            cursor: default;
+        }
+
+        body.projector-mode .dice-wrapper {
+            transform: scale(1.6);
+        }
+
+        body.projector-mode #picker-result {
+            font-size: clamp(4.5rem, 10vw, 8rem);
+        }
+
+        /* Projector Real-Time Clock */
+        #projector-clock {
+            display: none;
+        }
+
+        body.projector-mode #projector-clock {
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 24px;
+            right: 32px;
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-color);
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 8px 24px;
+            z-index: 150;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            letter-spacing: 2px;
+        }
+
+        /* Slide View Styles */
+        .slide-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 32px;
+            padding: 50px 70px;
+            max-width: 900px;
+            width: 85vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--glass-border);
+            animation: fadeInMenu 0.4s ease;
+        }
+
+        .slide-card.scheme-default {
+            border-color: #FFB743;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 183, 67, 0.25);
+        }
+
+        .slide-card.scheme-scheme2 {
+            border-color: #5271FF;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 40px rgba(82, 113, 255, 0.25);
+        }
+
+        .slide-card.scheme-scheme3 {
+            border-color: #35B729;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 40px rgba(53, 183, 41, 0.25);
+        }
+
+        .slide-badge {
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 6px 18px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-color);
+        }
+
+        .slide-body {
+            font-size: clamp(2rem, 5vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.25;
+            color: var(--text-color);
+        }
+
+        .slide-foot {
+            font-size: 1rem;
+            opacity: 0.6;
+            letter-spacing: 1.5px;
+            margin-top: 10px;
+        }
+
+        body.projector-mode .slide-card {
+            width: 88vw;
+            max-width: 1300px;
+            padding: 70px 100px;
+            border-width: 3.5px;
+        }
+
+        body.projector-mode .slide-body {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+        }
+
+        /* Suspense & Mystery Mode */
+        #suspense-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 450;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, rgba(168, 85, 247, 0.25) 0%, rgba(9, 13, 22, 0.95) 75%);
+            animation: fadeInMenu 0.5s ease;
+        }
+
+        #suspense-overlay.active {
+            display: flex;
+        }
+
+        .suspense-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .suspense-icon {
+            font-size: 8rem;
+            filter: drop-shadow(0 0 35px #a855f7);
+            animation: pulseSuspense 1.2s infinite alternate;
+        }
+
+        @keyframes pulseSuspense {
+            from { transform: scale(0.95); filter: drop-shadow(0 0 25px #a855f7); }
+            to { transform: scale(1.15); filter: drop-shadow(0 0 55px #d8b4fe), drop-shadow(0 0 20px #00f5a0); }
+        }
+
+        .suspense-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            color: #d8b4fe;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .suspense-sub {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Revealed Answer Screen */
+        .reveal-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+            animation: victoryEntrance 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        .reveal-tag {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px solid #ffd700;
+            padding: 8px 36px;
+            border-radius: 50px;
+            letter-spacing: 3px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .reveal-text {
+            font-size: clamp(3rem, 7vw, 6rem);
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 40px rgba(0, 245, 160, 0.8), 0 5px 20px rgba(0,0,0,0.8);
+            line-height: 1.2;
+        }
+
+        /* Sound Button Dimmed when projector is off */
+        .sound-drawer-btn.projector-required-dim {
+            opacity: 0.4;
+            filter: grayscale(80%);
+            position: relative;
+        }
+
+        .sound-drawer-btn.projector-required-dim::after {
+            content: "Off";
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.6rem;
+            color: #ff4b4b;
+            font-weight: 800;
+        }
+
+        /* FX Layer & Visual Reactions */
+        #fx-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 500;
+            overflow: hidden;
+        }
+
+        .screen-shake {
+            animation: screenShake 0.25s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes screenShake {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+            40%, 60% { transform: translate3d(5px, 0, 0); }
+        }
+
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 490;
+            opacity: 0;
+            transition: opacity 0.1s ease;
+        }
+
+        .screen-flash.flash-success {
+            box-shadow: inset 0 0 120px rgba(0, 255, 136, 0.45);
+            opacity: 1;
+            animation: flashFade 0.6s ease-out forwards;
+        }
+
+        .screen-flash.flash-error {
+            box-shadow: inset 0 0 120px rgba(255, 75, 75, 0.45);
+            opacity: 1;
+            animation: flashFade 0.6s ease-out forwards;
+        }
+
+        .screen-flash.flash-vignette {
+            box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.8);
+            opacity: 1;
+            animation: pulseVignette 0.8s infinite alternate ease-in-out;
+        }
+
+        @keyframes flashFade {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes pulseVignette {
+            0% { opacity: 0.4; }
+            100% { opacity: 0.9; }
+        }
+
+        .floating-badge {
+            position: absolute;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            pointer-events: none;
+            animation: floatUpAndFade 1.6s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+            z-index: 520;
+        }
+
+        .floating-badge.badge-plus {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 35px rgba(79, 172, 254, 0.8);
+        }
+
+        .floating-badge.badge-minus {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 35px rgba(255, 65, 108, 0.8);
+        }
+
+        @keyframes floatUpAndFade {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 20px) scale(0.5);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -10px) scale(1.15);
+            }
+            40% {
+                transform: translate(-50%, -30px) scale(1);
+            }
+            80% {
+                opacity: 1;
+                transform: translate(-50%, -80px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -120px) scale(0.85);
+            }
+        }
+
+        .victory-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 530;
+            pointer-events: none;
+            opacity: 0;
+            animation: victoryPop 4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .victory-card {
+            background: rgba(15, 23, 42, 0.94);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 2.5px solid #ffd700;
+            border-radius: 32px;
+            padding: 35px 65px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.85), 0 0 50px rgba(255, 215, 0, 0.45);
+        }
+
+        .victory-trophy-icon {
+            width: 130px;
+            height: 130px;
+            filter: drop-shadow(0 0 35px var(--gold-color));
+            animation: trophyShine 1s infinite alternate;
+        }
+
+        .victory-title {
+            font-size: 4.2rem;
+            font-weight: 900;
+            color: var(--gold-color);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 35px rgba(255, 215, 0, 0.85), 0 4px 15px rgba(0,0,0,0.8);
+        }
+
+        .victory-winner-badge {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            background: linear-gradient(135deg, #00f5a0 0%, #00b4d8 100%);
+            padding: 6px 26px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0, 245, 160, 0.5);
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        @keyframes victoryPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            15% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            25% { transform: translate(-50%, -50%) scale(1); }
+            85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+
+        @keyframes trophyShine {
+            from { transform: scale(1) rotate(-4deg); }
+            to { transform: scale(1.12) rotate(4deg); }
+        }
+
+        .applause-emoji {
+            position: absolute;
+            bottom: 0;
+            font-size: 2.8rem;
+            pointer-events: none;
+            animation: floatApplause 2.5s ease-out forwards;
+            z-index: 510;
+        }
+
+        @keyframes floatApplause {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.5) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+                transform: translateY(-80px) scale(1.2) rotate(-10deg);
+            }
+            80% {
+                opacity: 0.9;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-420px) scale(1) rotate(15deg);
+            }
         }
 
         /* Ink Overlay */
@@ -1835,17 +2450,18 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
         #ink-toolbar {
             position: fixed;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 50%;
+            right: 25px;
+            transform: translateY(-50%);
             background: var(--glass-bg);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 10px 20px;
+            border-radius: 24px;
+            padding: 14px 10px;
             display: none;
-            gap: 12px;
+            flex-direction: column;
+            gap: 10px;
             align-items: center;
             z-index: 210;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
@@ -1854,6 +2470,68 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
         #ink-toolbar.visible {
             display: flex;
+        }
+
+        .ink-separator {
+            width: 20px;
+            height: 1px;
+            background: var(--glass-border);
+            margin: 4px 0;
+            opacity: 0.6;
+        }
+
+        .ink-shapes-wrapper {
+            position: relative;
+        }
+
+        .ink-shapes-menu {
+            position: absolute;
+            right: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .ink-shapes-menu.open {
+            display: flex;
+        }
+
+        .ink-shape-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .ink-shape-btn:hover,
+        .ink-shape-btn.active {
+            background: var(--glass-hover);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .ink-close-btn {
+            color: var(--danger-color) !important;
+            border-color: var(--danger-color) !important;
+            font-size: 1.2rem;
+            font-weight: bold;
         }
 
         .ink-tool-btn {
@@ -1902,6 +2580,15 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
     <div class="background"></div>
     <div id="sunburst" class="sunburst"></div>
+    <div id="fx-overlay"></div>
+    <div id="projector-clock"></div>
+    <div id="suspense-overlay">
+        <div class="suspense-card">
+            <div class="suspense-icon">❓</div>
+            <div class="suspense-title">Momento de Decisão!</div>
+            <div class="suspense-sub">Aguardando Resposta...</div>
+        </div>
+    </div>
 
     <!-- HEADER: Logo & Menu -->
     <header id="logo-area" onclick="handleLogoAreaClick(event)">
@@ -1979,6 +2666,13 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 <button class="menu-item" onclick="app.setTheme('8bit')" id="theme-8bit" role="menuitem">
                     <div class="menu-dot"></div> 8-bit
                 </button>
+
+                <div class="menu-divider"></div>
+
+                <div class="menu-category">Sessão da Aula</div>
+                <button class="menu-item" onclick="state.resetSession(); toggleMenu(event);" id="btn-reset-session" role="menuitem" style="color:var(--danger-color);">
+                    <div class="menu-dot" style="background:var(--danger-color);"></div> Reiniciar Sessão
+                </button>
             </div>
         </div>
     </header>
@@ -1999,7 +2693,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
     <!-- OVERLAYS -->
     <div id="scoreboard"></div>
-    <div id="timer-overlay">00:00</div>
+    <div id="timer-overlay" onclick="features.timer.setup()" title="Clique para fechar ou reiniciar">00:00</div>
 
     <!-- MAIN CONTENT -->
     <main id="display-area" aria-live="polite">
@@ -2011,24 +2705,63 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         <div id="poll-display"></div>
         <div id="poll-actions">
             <button class="poll-btn" onclick="features.poll.checkWinner()" title="Apurar Vencedor" style="background:var(--success-color); color:white; width:auto; padding:0 20px;">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" style="margin-right:8px;">${ICONS.Target}</svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" style="margin-right:8px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
                 Apurar
             </button>
             <button class="poll-btn" onclick="features.poll.close()" title="Fechar Votação" style="background:var(--danger-color); color:white;">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none">${ICONS.X}</svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
             </button>
         </div>
         <canvas id="ink-canvas"></canvas>
         <div id="ink-toolbar">
-            <div class="ink-color active" id="ink-col-ff0000" style="background:#ff0000;" onclick="features.ink.setColor('#ff0000')"></div>
-            <div class="ink-color" id="ink-col-00ff00" style="background:#00ff00;" onclick="features.ink.setColor('#00ff00')"></div>
-            <div class="ink-color" id="ink-col-ffff00" style="background:#ffff00;" onclick="features.ink.setColor('#ffff00')"></div>
-            <div class="ink-color" id="ink-col-ffffff" style="background:#ffffff;" onclick="features.ink.setColor('#ffffff')"></div>
-            <div class="separator" style="height:20px;"></div>
-            <button class="ink-tool-btn" id="ink-eraser" onclick="features.ink.setEraser()" title="Borracha">
+            <div class="ink-color active" id="ink-col-ff0000" style="background:#ff0000;" onclick="features.ink.setColor('#ff0000')" title="Vermelho"></div>
+            <div class="ink-color" id="ink-col-00ff00" style="background:#00ff00;" onclick="features.ink.setColor('#00ff00')" title="Verde"></div>
+            <div class="ink-color" id="ink-col-ffff00" style="background:#ffff00;" onclick="features.ink.setColor('#ffff00')" title="Amarelo"></div>
+            <div class="ink-color" id="ink-col-4facfe" style="background:#4facfe;" onclick="features.ink.setColor('#4facfe')" title="Azul"></div>
+            <div class="ink-color" id="ink-col-ffffff" style="background:#ffffff;" onclick="features.ink.setColor('#ffffff')" title="Branco"></div>
+            <div class="ink-separator"></div>
+            <button class="ink-tool-btn active" id="ink-tool-pen" onclick="features.ink.setTool('pen')" title="Caneta Livre">
                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
-                    <path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 12L20 20Z"></path>
-                    <line x1="17" y1="17" x2="7" y2="7"></line>
+                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                </svg>
+            </button>
+            <div class="ink-shapes-wrapper">
+                <button class="ink-tool-btn" id="ink-tool-shapes" onclick="features.ink.toggleShapesMenu()" title="Formas Geométricas">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+                        <rect x="3" y="3" width="8" height="8" rx="1"></rect>
+                        <circle cx="16" cy="16" r="5"></circle>
+                    </svg>
+                </button>
+                <div id="ink-shapes-menu" class="ink-shapes-menu">
+                    <button class="ink-shape-btn" id="shape-rect" onclick="features.ink.setTool('rect')" title="Retângulo">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+                            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                        </svg>
+                    </button>
+                    <button class="ink-shape-btn" id="shape-circle" onclick="features.ink.setTool('circle')" title="Círculo">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+                            <circle cx="12" cy="12" r="9"></circle>
+                        </svg>
+                    </button>
+                    <button class="ink-shape-btn" id="shape-line" onclick="features.ink.setTool('line')" title="Linha Reta">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+                            <line x1="4" y1="20" x2="20" y2="4"></line>
+                        </svg>
+                    </button>
+                    <button class="ink-shape-btn" id="shape-arrow" onclick="features.ink.setTool('arrow')" title="Seta">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+                            <line x1="5" y1="19" x2="19" y2="5"></line>
+                            <polyline points="10 5 19 5 19 14"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button class="ink-tool-btn" id="ink-eraser" onclick="features.ink.setEraser()" title="Borracha">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m4.5 16.5 9-9c1-1 2.5-1 3.5 0l3 3c1 1 1 2.5 0 3.5l-6 6H2"></path>
+                    <path d="m8.5 12.5 6.5 6.5"></path>
+                    <line x1="2" y1="21" x2="22" y2="21"></line>
                 </svg>
             </button>
             <button class="ink-tool-btn" onclick="features.ink.clear()" title="Limpar Tudo">
@@ -2036,8 +2769,8 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
                 </svg>
             </button>
-            <div class="separator" style="height:20px;"></div>
-            <button class="ink-tool-btn" onclick="features.ink.toggle()" title="Sair do Desenho" style="color:var(--danger-color); border-color:var(--danger-color);">×</button>
+            <div class="ink-separator"></div>
+            <button class="ink-tool-btn ink-close-btn" onclick="features.ink.toggle()" title="Sair do Desenho">×</button>
         </div>
     </main>
 
@@ -2142,7 +2875,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
             <div class="separator"></div>
 
-            <button id="btn-create-slide" class="tool-btn hidden" onclick="features.slide.toggleInline()"
+            <button id="btn-create-slide" class="tool-btn" onclick="features.slide.toggleInline()"
                 title="Criar Slide">
                 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -2294,8 +3027,6 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 </svg>
             </button>
             <div id="queue-info-badge">0 na Fila</div>
-
-            <div id="queue-info-badge">0 na Fila</div>
             <div id="balloon-input" class="temp-balloon top">Escreva o texto do slide aqui</div>
         </div>
 
@@ -2365,15 +3096,16 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         };
 
         const SOUNDS = {
-            success: "https://heldertoucas.github.io/quadrobrancoformacao/certo.mp3",
-            error: "https://heldertoucas.github.io/quadrobrancoformacao/errado.mp3",
-            pointUp: "https://heldertoucas.github.io/quadrobrancoformacao/mais_um_ponto.mp3",
-            pointDown: "https://heldertoucas.github.io/quadrobrancoformacao/menos_um_ponto.mp3",
-            drum: "https://heldertoucas.github.io/quadrobrancoformacao/rufar.mp3",
-            clap: "https://heldertoucas.github.io/quadrobrancoformacao/aplausos.mp3",
-            palmas: "https://heldertoucas.github.io/quadrobrancoformacao/palmas.mp3",
-            fanfare: "https://heldertoucas.github.io/quadrobrancoformacao/trompetas.mp3",
-            trophy: "https://heldertoucas.github.io/quadrobrancoformacao/sucesso_guitarra.mp3"
+            success: "certo.mp3",
+            error: "errado.mp3",
+            pointUp: "mais_um_ponto.mp3",
+            pointDown: "menos_um_ponto.mp3",
+            drum: "rufar.mp3",
+            clap: "aplausos.mp3",
+            palmas: "palmas.mp3",
+            fanfare: "trompetas.mp3",
+            trophy: "sucesso_guitarra.mp3",
+            question: "rufar.mp3"
         };
 
         const SOUND_METADATA = [
@@ -2384,6 +3116,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             { id: 'palmas', color: 'var(--clap-color)', icon: 'Clap', label: 'Aplauso' },
             { id: 'pointUp', color: 'var(--success-color)', icon: 'Plus', label: '+1' },
             { id: 'pointDown', color: 'var(--danger-color)', icon: 'Minus', label: '-1' },
+            { id: 'question', color: '#a855f7', icon: 'HelpCircle', label: 'Questão' },
             { id: 'fanfare', color: 'var(--warn-color)', icon: 'Speaker', label: 'Fanfarra' },
             { id: 'trophy', color: 'var(--gold-color)', icon: 'Trophy', label: 'Vitória' }
         ];
@@ -2396,13 +3129,14 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             Clap: '<path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path>',
             Plus: '<path d="M12 5v14"></path><path d="M5 12h14"></path>',
             Minus: '<path d="M5 12h14"></path>',
+            HelpCircle: '<circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line>',
             Speaker: '<path d="M8 21h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z"></path><line x1="16" y1="4" x2="16" y2="20"></line><path d="M4 14h2"></path><path d="M4 10h2"></path><path d="M20 10h2"></path><path d="M20 14h2"></path>',
             Trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>',
             Target: '<circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle>'
         };
 
         /*******************************************************
-         * 2. STATE MANAGEMENT
+         * 2. STATE MANAGEMENT & LOCAL PERSISTENCE
          *******************************************************/
         const state = {
             queue: [], history: [], historyIndex: -1,
@@ -2413,12 +3147,134 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             isExpanded: false,
             scores: {},
             audioCtx: null, activeSounds: {},
+            hasProjector: false,
+            suspenseActive: false,
             isSerif: false,
             isHighlight: false,
             textAlignment: 'center', // 'left', 'center'
             view: 'text', // 'text', 'qr', 'dice', 'picker', 'none'
-            channel: null
-            };
+            channel: null,
+
+            saveSession() {
+                try {
+                    localStorage.setItem('qb_session_scores', JSON.stringify(state.scores || {}));
+                    localStorage.setItem('qb_session_queue', JSON.stringify(state.queue || []));
+                    localStorage.setItem('qb_session_history', JSON.stringify(state.history || []));
+                    localStorage.setItem('qb_session_hindex', state.historyIndex.toString());
+                    if (features && features.poll && features.poll.active) {
+                        localStorage.setItem('qb_session_poll', JSON.stringify({
+                            active: features.poll.active,
+                            labels: features.poll.labels,
+                            votes: features.poll.votes
+                        }));
+                    } else {
+                        localStorage.removeItem('qb_session_poll');
+                    }
+                } catch (e) {
+                    console.warn("Erro ao salvar sessão local:", e);
+                }
+            },
+
+            loadSession() {
+                try {
+                    const sc = localStorage.getItem('qb_session_scores');
+                    if (sc) state.scores = JSON.parse(sc);
+                    const qu = localStorage.getItem('qb_session_queue');
+                    if (qu) state.queue = JSON.parse(qu);
+                    const hi = localStorage.getItem('qb_session_history');
+                    if (hi) state.history = JSON.parse(hi);
+                    const hIdx = localStorage.getItem('qb_session_hindex');
+                    if (hIdx !== null) state.historyIndex = parseInt(hIdx, 10);
+                } catch (e) {
+                    console.warn("Erro ao carregar sessão local:", e);
+                }
+            },
+
+            async resetSession() {
+                const ok = await modal.show({
+                    title: 'Reiniciar Sessão de Formação?',
+                    html: '<p style="font-size:0.95rem; line-height:1.5;">Isto irá repor a zeros o placar de pontos, a votação ativa, a fila de espera e o histórico de conteúdos da turma atual.<br><br><strong>Tem a certeza?</strong></p>',
+                    confirmText: 'Sim, Reiniciar',
+                    showCancel: true
+                });
+                if (ok) {
+                    state.scores = {};
+                    state.queue = [];
+                    state.history = [];
+                    state.historyIndex = -1;
+                    if (features && features.poll) features.poll.close();
+                    const sb = document.getElementById('scoreboard');
+                    if (sb) { sb.style.display = 'none'; sb.innerHTML = ''; }
+                    try {
+                        localStorage.removeItem('qb_session_scores');
+                        localStorage.removeItem('qb_session_queue');
+                        localStorage.removeItem('qb_session_history');
+                        localStorage.removeItem('qb_session_hindex');
+                        localStorage.removeItem('qb_session_poll');
+                    } catch (e) {}
+                    if (ui) {
+                        ui.updateQueueBadge();
+                        ui.navControls();
+                        ui.showToast("Sessão da turma reiniciada.");
+                    }
+                    if (app) {
+                        app.clear();
+                        app.broadcastState();
+                    }
+                }
+            }
+        };
+
+        /*******************************************************
+         * SAFE DOM SANITIZER (XSS Firewall)
+         *******************************************************/
+        function safeSanitize(input) {
+            if (!input || typeof input !== 'string') return '';
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(input, 'text/html');
+                const allowedTags = new Set(['B', 'I', 'U', 'STRONG', 'EM', 'BR', 'SPAN', 'P', 'DIV', 'UL', 'OL', 'LI']);
+                
+                function clean(node) {
+                    const toRemove = [];
+                    for (let i = 0; i < node.childNodes.length; i++) {
+                        const child = node.childNodes[i];
+                        if (child.nodeType === Node.ELEMENT_NODE) {
+                            const tag = child.tagName.toUpperCase();
+                            if (!allowedTags.has(tag)) {
+                                toRemove.push(child);
+                                continue;
+                            }
+                            const attrs = Array.from(child.attributes);
+                            for (let attr of attrs) {
+                                const name = attr.name.toLowerCase();
+                                if (name.startsWith('on') || name === 'src' || name === 'href') {
+                                    child.removeAttribute(attr.name);
+                                } else if (name === 'style') {
+                                    const safeStyle = attr.value.replace(/expression|javascript|url|behavior/gi, '');
+                                    child.setAttribute('style', safeStyle);
+                                } else if (name !== 'class' && name !== 'style') {
+                                    child.removeAttribute(attr.name);
+                                }
+                            }
+                            clean(child);
+                        } else if (child.nodeType !== Node.TEXT_NODE) {
+                            toRemove.push(child);
+                        }
+                    }
+                    for (let bad of toRemove) {
+                        node.removeChild(bad);
+                    }
+                }
+                clean(doc.body);
+                return doc.body.innerHTML;
+            } catch (err) {
+                console.warn("Sanitization fallback:", err);
+                const div = document.createElement('div');
+                div.textContent = input;
+                return div.innerHTML;
+            }
+        }
 
         /*******************************************************
          * 3. SERVICES (Audio, Modal)
@@ -2430,6 +3286,48 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             }
 
             static toggle(key) {
+                // If question mode: only active when projector is connected
+                if (key === 'question') {
+                    if (!state.hasProjector) {
+                        ui.showToast("Modo Questão requer o Ecrã Projetado aberto (?mode=projector)!");
+                        return;
+                    }
+                    state.suspenseActive = !state.suspenseActive;
+                    if (state.suspenseActive) {
+                        ui.highlightSound('question', true);
+                        this.init();
+                        this.playSynth('question');
+                        if (state.channel) {
+                            state.channel.postMessage({ type: 'suspense_start', timestamp: Date.now() });
+                        }
+                        if (ui.els.input) {
+                            ui.els.input.style.borderColor = '#a855f7';
+                            ui.els.input.style.boxShadow = '0 0 25px rgba(168, 85, 247, 0.4)';
+                        }
+                        const sendBtn = document.getElementById('btn-send');
+                        if (sendBtn) {
+                            sendBtn.style.background = 'linear-gradient(135deg, #a855f7, #ffd700)';
+                            sendBtn.title = 'Revelar Resposta no Projetor com Celebração';
+                        }
+                        ui.showToast("Modo Questão ativado no projetor! Digite a resposta e clique Enviar.");
+                    } else {
+                        ui.highlightSound('question', false);
+                        if (state.channel) {
+                            state.channel.postMessage({ type: 'suspense_cancel', timestamp: Date.now() });
+                        }
+                        if (ui.els.input) {
+                            ui.els.input.style.borderColor = '';
+                            ui.els.input.style.boxShadow = '';
+                        }
+                        const sendBtn = document.getElementById('btn-send');
+                        if (sendBtn) {
+                            sendBtn.style.background = '';
+                            sendBtn.title = 'Projetar';
+                        }
+                    }
+                    return;
+                }
+
                 this.init();
                 // Stop if playing
                 if (state.activeSounds[key]) {
@@ -2462,14 +3360,71 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     this.playSynth(key);
                 }
 
-                if (key === 'fanfare' || key === 'trophy') ui.confetti();
-                if (key === 'trophy') document.getElementById('sunburst').classList.add('active');
+                // Visual reaction on active window
+                ui.triggerFX(key);
+
+                // Broadcast SFX trigger to projector
+                if (state.channel) {
+                    state.channel.postMessage({
+                        type: 'sfx_trigger',
+                        key: key,
+                        timestamp: Date.now()
+                    });
+                }
             }
 
             static playSynth(key) {
-                // Fallback synthesis logic can be kept simple here
-                // (Omitted for brevity, but kept structure if needed)
-                console.warn("Audio fallback triggered for", key);
+                try {
+                    this.init();
+                    if (!state.audioCtx) return;
+                    const ctx = state.audioCtx;
+                    if (ctx.state === 'suspended') ctx.resume();
+                    const now = ctx.currentTime;
+                    
+                    const playTone = (freq, type, start, duration, gainVal = 0.15) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = type;
+                        osc.frequency.setValueAtTime(freq, now + start);
+                        gain.gain.setValueAtTime(gainVal, now + start);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, now + start + duration);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + start);
+                        osc.stop(now + start + duration);
+                    };
+
+                    if (key === 'success' || key === 'pointUp') {
+                        playTone(523.25, 'sine', 0, 0.12, 0.2); // C5
+                        playTone(659.25, 'sine', 0.1, 0.15, 0.2); // E5
+                        playTone(783.99, 'sine', 0.2, 0.25, 0.25); // G5
+                    } else if (key === 'error' || key === 'pointDown') {
+                        playTone(220, 'sawtooth', 0, 0.15, 0.15);
+                        playTone(180, 'sawtooth', 0.12, 0.25, 0.18);
+                    } else if (key === 'fanfare' || key === 'trophy') {
+                        playTone(523.25, 'triangle', 0, 0.15, 0.25); // C5
+                        playTone(659.25, 'triangle', 0.15, 0.15, 0.25); // E5
+                        playTone(783.99, 'triangle', 0.3, 0.2, 0.25); // G5
+                        playTone(1046.50, 'triangle', 0.5, 0.45, 0.3); // C6
+                    } else if (key === 'drum') {
+                        for (let i = 0; i < 8; i++) {
+                            playTone(90 + (i % 2) * 15, 'triangle', i * 0.08, 0.07, 0.2);
+                        }
+                    } else if (key === 'clap' || key === 'palmas') {
+                        for (let i = 0; i < 5; i++) {
+                            playTone(350 + Math.random() * 150, 'sine', i * 0.09, 0.06, 0.15);
+                        }
+                    } else if (key === 'question') {
+                        for (let i = 0; i < 12; i++) {
+                            playTone(80 + (i % 2) * 20, 'triangle', i * 0.07, 0.06, 0.22);
+                        }
+                        playTone(164.81, 'sine', 0.2, 0.8, 0.15); // E3 suspense
+                        playTone(196.00, 'sine', 0.4, 0.8, 0.15); // G3
+                        playTone(233.08, 'sine', 0.6, 1.0, 0.2);  // Bb3
+                    }
+                } catch (e) {
+                    console.warn("Audio synthesis error:", e);
+                }
             }
         }
 
@@ -2564,6 +3519,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 this.renderSoundDrawer();
                 this.showStartupMessage();
                 this.applyState();
+                state.loadSession();
                 
                 // Keep rich text buttons synced with selection
                 document.addEventListener('selectionchange', () => {
@@ -2599,7 +3555,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 } else if (params.has('text')) {
                     app.showContent(params.get('text'));
                 } else {
-                    this.updateDisplay("Olá! Vamos começar?");
+                    this.updateDisplay("Olá, vamos começar?");
                 }
 
                 // Initialize BroadcastChannel
@@ -2615,6 +3571,25 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     }, 500);
                 }
 
+                // Real-time clock for projector mode
+                const updateClock = () => {
+                    const clk = document.getElementById('projector-clock');
+                    if (clk) {
+                        const now = new Date();
+                        clk.innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                    }
+                };
+                setInterval(updateClock, 1000);
+                updateClock();
+
+                // Periodic heartbeat between teacher and projector
+                const isProjector = params.get('mode') === 'projector';
+                setInterval(() => {
+                    if (state.channel && !isProjector) {
+                        state.channel.postMessage({ type: 'ping' });
+                    }
+                }, 2500);
+
                 // Idle Detection for Zen Mode
                 let idleTimer;
                 const resetIdle = () => {
@@ -2629,7 +3604,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                             if (state.mode === 'simple') {
                                 document.body.classList.add('idle');
                             }
-                        }, 2000); // 2 seconds
+                        }, 4500); // 4.5 seconds
                     }
                 };
 
@@ -2675,18 +3650,75 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         app.addToQueue();
                     }
                 });
+
+                // Dismiss initial welcome greeting on menu or tool interactions
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('#toolbar, #style-menu, #sound-drawer, #ink-toolbar')) {
+                        this.dismissWelcomeIfPresent();
+                    }
+                });
+            },
+
+            dismissWelcomeIfPresent() {
+                if (this.els && this.els.mainText && this.els.mainText.innerText) {
+                    const txt = this.els.mainText.innerText.trim();
+                    if (txt === "Olá, vamos começar?" || txt === "Olá! Vamos começar?") {
+                        this.els.mainText.innerText = "";
+                        this.els.mainText.classList.remove('visible', 'rich-content');
+                        this.els.mainText.style.display = 'none';
+                        state.saveSession();
+                    }
+                }
+                this.updateProjectorClockVisibility();
+            },
+
+            updateProjectorClockVisibility() {
+                const clock = document.getElementById('projector-clock');
+                if (!clock) return;
+
+                const timerEl = document.getElementById('timer-overlay');
+                const timerVisible = timerEl && timerEl.style.display !== 'none';
+                const pollActive = features && features.poll && features.poll.active;
+                const scoreEl = document.getElementById('scoreboard');
+                const scoreActive = scoreEl && scoreEl.style.display === 'flex';
+                const nonTextView = ['dice', 'picker', 'slide', 'qr'].includes(state.view);
+                const suspenseActive = state.suspenseActive;
+                const txt = (this.els && this.els.mainText && this.els.mainText.innerText) ? this.els.mainText.innerText.trim() : '';
+                const hasCustomText = state.view === 'text' && txt.length > 0 && txt !== "Olá, vamos começar?" && txt !== "Olá! Vamos começar?";
+
+                const isFeatureActive = timerVisible || pollActive || scoreActive || nonTextView || suspenseActive || hasCustomText;
+
+                if (isFeatureActive) {
+                    if (clock.style.setProperty) clock.style.setProperty('display', 'none', 'important');
+                    else clock.style.display = 'none';
+                } else {
+                    if (document.body.classList.contains('projector-mode')) {
+                        if (clock.style.removeProperty) clock.style.removeProperty('display');
+                        else clock.style.display = 'flex';
+                    } else {
+                        clock.style.display = 'none';
+                    }
+                }
             },
 
             renderSoundDrawer() {
                 const drawer = document.getElementById('sound-drawer');
-                const allowedLabels = ['clap', 'palmas', 'pointUp', 'pointDown'];
+                const allowedLabels = ['clap', 'palmas', 'pointUp', 'pointDown', 'question'];
                 drawer.innerHTML = '<button class="submenu-close" onclick="ui.toggleSoundDrawer()" title="Fechar">×</button>' +
                     SOUND_METADATA.map(s => `
-                    <button id="btn-${s.id}" class="tool-btn sound-drawer-btn" onclick="AudioService.toggle('${s.id}')" title="${s.label}">
+                    <button id="btn-${s.id}" class="tool-btn sound-drawer-btn ${s.id === 'question' && !state.hasProjector ? 'projector-required-dim' : ''}" onclick="AudioService.toggle('${s.id}')" title="${s.label}">
                         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="stroke:${s.color}">${ICONS[s.icon]}</svg>
                         ${allowedLabels.includes(s.id) ? `<span>${s.label}</span>` : ''}
                     </button>
                 `).join('');
+            },
+
+            updateProjectorDependentControls() {
+                const btn = document.getElementById('btn-question');
+                if (btn) {
+                    btn.classList.toggle('projector-required-dim', !state.hasProjector);
+                    btn.title = state.hasProjector ? 'Modo Questão (Pronto)' : 'Modo Questão (Requer ecrã projetado ligado)';
+                }
             },
 
             animateTextIn(text, element) {
@@ -2728,7 +3760,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
                 if (isHtml && !isQR) {
                     this.els.mainText.classList.add('rich-content');
-                    this.els.mainText.innerHTML = processedText;
+                    this.els.mainText.innerHTML = safeSanitize(processedText);
                 } else {
                     this.els.mainText.classList.remove('rich-content');
                     if (state.isAnimated && !isQR && processedText) {
@@ -2884,21 +3916,160 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             },
 
             showToast(msg) {
+                const existing = document.getElementById('app-toast');
+                if (existing) existing.remove();
                 const toast = document.createElement('div');
+                toast.id = 'app-toast';
                 toast.innerText = msg;
                 toast.style.cssText = `
-                    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-                    background: rgba(0,0,0,0.8); color: white; padding: 10px 20px;
-                    border-radius: 20px; z-index: 2000; animation: fadeInOut 2s ease forwards;
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.2); backdrop-filter: blur(5px);
+                    position: fixed; top: 75px; left: 50%; transform: translateX(-50%);
+                    background: rgba(15, 23, 42, 0.9); color: #fff; padding: 10px 22px;
+                    border-radius: 20px; z-index: 9999; animation: fadeInOut 2.2s ease forwards;
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.18);
+                    pointer-events: none; user-select: none; font-size: 0.95rem; font-weight: 500;
                 `;
                 document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 2000);
+                setTimeout(() => toast.remove(), 2200);
             },
 
             highlightSound(id, active) {
                 const btn = document.getElementById(`btn-${id}`);
                 if (btn) active ? btn.classList.add('sound-playing') : btn.classList.remove('sound-playing');
+            },
+
+            triggerFX(key) {
+                const overlay = document.getElementById('fx-overlay');
+                if (!overlay) return;
+
+                // Throttling protection against particle flooding
+                if (overlay.children && overlay.children.length > 20) {
+                    while (overlay.children.length > 10) {
+                        overlay.removeChild(overlay.firstChild);
+                    }
+                }
+
+                switch (key) {
+                    case 'pointUp': {
+                        const badge = document.createElement('div');
+                        badge.className = 'floating-badge badge-plus';
+                        badge.innerHTML = `<svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" fill="none" stroke-width="3"><path d="M12 5v14M5 12h14"></path></svg> <span>+1</span>`;
+                        badge.style.left = '50%';
+                        badge.style.top = '50%';
+                        overlay.appendChild(badge);
+                        setTimeout(() => badge.remove(), 1600);
+                        this.flashScreen('flash-success');
+                        break;
+                    }
+                    case 'pointDown': {
+                        const badge = document.createElement('div');
+                        badge.className = 'floating-badge badge-minus';
+                        badge.innerHTML = `<svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" fill="none" stroke-width="3"><path d="M5 12h14"></path></svg> <span>-1</span>`;
+                        badge.style.left = '50%';
+                        badge.style.top = '50%';
+                        overlay.appendChild(badge);
+                        setTimeout(() => badge.remove(), 1600);
+                        this.flashScreen('flash-error');
+                        this.shakeScreen();
+                        break;
+                    }
+                    case 'success': {
+                        this.flashScreen('flash-success');
+                        break;
+                    }
+                    case 'error': {
+                        this.flashScreen('flash-error');
+                        this.shakeScreen();
+                        break;
+                    }
+                    case 'trophy': {
+                        if (overlay && typeof overlay.querySelector === 'function' && !overlay.querySelector('.victory-overlay')) {
+                            this.showVictoryScreen();
+                        }
+                        break;
+                    }
+                    case 'fanfare': {
+                        this.confetti();
+                        this.flashScreen('flash-success');
+                        break;
+                    }
+                    case 'drum': {
+                        this.flashScreen('flash-vignette', 1500);
+                        break;
+                    }
+                    case 'clap':
+                    case 'palmas': {
+                        this.spawnApplause(overlay);
+                        break;
+                    }
+                    case 'question': {
+                        this.flashScreen('flash-vignette', 2000);
+                        break;
+                    }
+                }
+            },
+
+            flashScreen(flashClass, duration = 600) {
+                const flash = document.createElement('div');
+                flash.className = `screen-flash ${flashClass}`;
+                document.body.appendChild(flash);
+                setTimeout(() => flash.remove(), duration);
+            },
+
+            shakeScreen() {
+                const target = document.getElementById('display-area') || document.body;
+                target.classList.remove('screen-shake');
+                void target.offsetWidth;
+                target.classList.add('screen-shake');
+                setTimeout(() => target.classList.remove('screen-shake'), 280);
+            },
+
+            showVictoryScreen(winnerLabel = '') {
+                const overlay = document.getElementById('fx-overlay');
+                if (!overlay) return;
+                // Clean up any existing victory cards to avoid double stacking
+                if (overlay.querySelectorAll) {
+                    overlay.querySelectorAll('.victory-overlay').forEach(el => el.remove());
+                }
+                const victory = document.createElement('div');
+                victory.className = 'victory-overlay';
+                victory.innerHTML = `
+                    <div class="victory-card">
+                        <svg class="victory-trophy-icon" viewBox="0 0 24 24" stroke="#ffffff" fill="#ffd700" stroke-width="1.5">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                            <path d="M4 22h16"></path>
+                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                        </svg>
+                        <div class="victory-title">Vitória!</div>
+                        ${winnerLabel ? `<div class="victory-winner-badge">${winnerLabel}</div>` : ''}
+                    </div>
+                `;
+                overlay.appendChild(victory);
+                const sunburst = document.getElementById('sunburst');
+                if (sunburst) sunburst.classList.add('active');
+                this.confetti();
+                setTimeout(() => {
+                    victory.remove();
+                    if (sunburst) sunburst.classList.remove('active');
+                }, 4000);
+            },
+
+            spawnApplause(overlay) {
+                const count = 12;
+                const icons = ['👏', '🎉', '🙌', '⭐'];
+                for (let i = 0; i < count; i++) {
+                    setTimeout(() => {
+                        const el = document.createElement('div');
+                        el.className = 'applause-emoji';
+                        el.innerText = icons[Math.floor(Math.random() * icons.length)];
+                        el.style.left = `${Math.random() * 88 + 6}%`;
+                        overlay.appendChild(el);
+                        setTimeout(() => el.remove(), 2500);
+                    }, i * 90);
+                }
             },
 
             applyState() {
@@ -2937,15 +4108,13 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 const slideBtn = document.getElementById('btn-create-slide');
                 const linkBtn = document.getElementById('btn-links');
                 if (slideBtn) {
+                    slideBtn.classList.remove('hidden');
+                }
+                if (linkBtn) {
                     if (state.brand === 'futuro') {
-                        slideBtn.classList.remove('hidden');
                         linkBtn.classList.remove('hidden');
                     } else {
-                        slideBtn.classList.add('hidden');
                         linkBtn.classList.add('hidden');
-                        // Reset inline state
-                        document.getElementById('slide-inline-controls').classList.remove('visible');
-                        document.getElementById('btn-send').style.display = 'block';
                     }
                 }
             },
@@ -2974,7 +4143,17 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             },
 
             confetti() {
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#4facfe', '#00f2fe', '#ffffff'] });
+                try {
+                    const isProj = document.body.classList.contains('projector-mode');
+                    const count = isProj ? 220 : 140;
+                    confetti({ particleCount: count, spread: 80, origin: { y: 0.6 }, colors: ['#00f5a0', '#00b4d8', '#ffd700', '#ffffff', '#ff007f'] });
+                    if (isProj) {
+                        setTimeout(() => {
+                            confetti({ particleCount: 120, angle: 60, spread: 55, origin: { x: 0, y: 0.7 }, colors: ['#ffd700', '#00f5a0', '#ffffff'] });
+                            confetti({ particleCount: 120, angle: 120, spread: 55, origin: { x: 1, y: 0.7 }, colors: ['#00b4d8', '#ffd700', '#ffffff'] });
+                        }, 220);
+                    }
+                } catch (e) {}
             },
 
             showStartupMessage() {
@@ -3008,10 +4187,19 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 if (state.view === mode && !data) return;
                 state.view = mode;
 
+                if (mode !== 'text' || (data && data !== "Olá, vamos começar?" && data !== "Olá! Vamos começar?")) {
+                    ui.dismissWelcomeIfPresent();
+                }
+                ui.updateProjectorClockVisibility();
+
                 ui.els.mainText.classList.remove('hidden', 'visible', 'rich-content');
                 ui.els.mainText.style.display = 'none';
                 ui.els.qrContainer.style.display = 'none';
                 document.getElementById('scoreboard').style.display = 'none';
+                const pDisp = document.getElementById('poll-display');
+                if (pDisp && mode !== 'poll') pDisp.style.display = 'none';
+                const pAct = document.getElementById('poll-actions');
+                if (pAct && mode !== 'poll') pAct.style.display = 'none';
 
                 switch (mode) {
                     case 'text':
@@ -3019,7 +4207,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         const isHtml = data && (/<[a-z][\s\S]*>/i.test(data) || data.includes('style=') || data.includes('<b>'));
                         if (isHtml) {
                             ui.els.mainText.classList.add('rich-content');
-                            ui.els.mainText.innerHTML = data;
+                            ui.els.mainText.innerHTML = safeSanitize(data);
                         } else {
                             ui.els.mainText.innerText = data || "";
                         }
@@ -3056,16 +4244,31 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         ui.els.mainText.innerHTML = '<div id="picker-result" style="font-size:4rem; font-weight:800; color:var(--accent-color); animation: pulse 0.5s infinite alternate;">Sorteando...</div>';
                         ui.els.mainText.classList.add('visible');
                         break;
+
+                    case 'slide':
+                        ui.els.mainText.style.display = 'flex';
+                        ui.els.mainText.style.flexDirection = 'column';
+                        ui.els.mainText.style.alignItems = 'center';
+                        ui.els.mainText.style.justifyContent = 'center';
+                        const sData = (typeof data === 'object' && data) ? data : { text: data || 'Novo Slide', scheme: 'default' };
+                        ui.els.mainText.innerHTML = `
+                            <div class="slide-card scheme-${sData.scheme || 'default'}">
+                                <div class="slide-badge">FUTURO DIGITAL</div>
+                                <div class="slide-body">${safeSanitize(sData.text)}</div>
+                                <div class="slide-foot">Equipas ON! • Formação Ativa</div>
+                            </div>
+                        `;
+                        ui.els.mainText.classList.add('visible');
+                        break;
                 }
                 app.broadcastState();
             },
 
             timer: {
+                finishTimeout: null,
                 async setup() {
                     if (state.timerInterval) {
-                        clearInterval(state.timerInterval);
-                        state.timerInterval = null;
-                        document.getElementById('timer-overlay').style.display = 'none';
+                        this.stop(true);
                         return;
                     }
                     const min = await modal.show({
@@ -3074,14 +4277,47 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     });
                     if (min) this.start(parseInt(min));
                 },
+                stop(clearBroadcast = true) {
+                    if (state.timerInterval) {
+                        clearInterval(state.timerInterval);
+                        state.timerInterval = null;
+                    }
+                    if (this.finishTimeout) {
+                        clearTimeout(this.finishTimeout);
+                        this.finishTimeout = null;
+                    }
+                    const el = document.getElementById('timer-overlay');
+                    if (el) {
+                        el.style.display = 'none';
+                        el.innerText = '00:00';
+                        el.style.color = '';
+                    }
+                    if (clearBroadcast && state.channel) {
+                        state.channel.postMessage({
+                            type: 'timer_clear'
+                        });
+                    }
+                    ui.updateProjectorClockVisibility();
+                },
                 start(min) {
+                    this.stop(false);
+                    ui.dismissWelcomeIfPresent();
+                    ui.updateProjectorClockVisibility();
                     let time = min * 60;
                     const el = document.getElementById('timer-overlay');
-                    el.style.display = 'block';
+                    el.style.display = document.body.classList.contains('projector-mode') ? 'flex' : 'block';
                     el.style.color = '';
 
                     const update = () => {
-                        el.innerText = `${Math.floor(time / 60).toString().padStart(2, '0')}:${(time % 60).toString().padStart(2, '0')}`;
+                        const txt = `${Math.floor(time / 60).toString().padStart(2, '0')}:${(time % 60).toString().padStart(2, '0')}`;
+                        el.innerText = txt;
+                        if (state.channel) {
+                            state.channel.postMessage({
+                                type: 'timer_tick',
+                                timeText: txt,
+                                running: true
+                            });
+                        }
                     };
                     update();
 
@@ -3094,7 +4330,18 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                             el.style.color = '#ff4b4b';
                             AudioService.toggle('success');
                             ui.confetti();
-                            setTimeout(() => { el.style.display = 'none'; }, 5000);
+                            if (state.channel) {
+                                state.channel.postMessage({
+                                    type: 'timer_tick',
+                                    timeText: '00:00',
+                                    running: false,
+                                    finished: true
+                                });
+                            }
+                            this.finishTimeout = setTimeout(() => {
+                                el.style.display = 'none';
+                                ui.updateProjectorClockVisibility();
+                            }, 5000);
                         }
                     }, 1000);
                 }
@@ -3106,21 +4353,38 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     features.setView('dice');
                     const diceChars = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
                     let rolls = 0;
+                    if (state.channel) state.channel.postMessage({ type: 'dice_start' });
                     const interval = setInterval(() => {
                         const v1 = Math.floor(Math.random() * 6);
                         const v2 = Math.floor(Math.random() * 6);
                         const d1 = document.getElementById('d1'), d2 = document.getElementById('d2');
                         if (d1) d1.innerText = diceChars[v1];
                         if (d2) d2.innerText = diceChars[v2];
+                        if (state.channel) {
+                            state.channel.postMessage({
+                                type: 'dice_tick',
+                                d1: diceChars[v1],
+                                d2: diceChars[v2]
+                            });
+                        }
                         if (++rolls >= 20) {
                             clearInterval(interval);
                             const vis = document.querySelector('.dice-visuals');
                             if (vis) vis.classList.remove('dice-shake');
                             const res = document.getElementById('dice-result');
+                            const sum = v1 + v2 + 2;
                             if (res) {
-                                res.innerText = (v1 + v2 + 2);
+                                res.innerText = sum;
                                 res.classList.add('show');
                                 AudioService.toggle('success');
+                            }
+                            if (state.channel) {
+                                state.channel.postMessage({
+                                    type: 'dice_finish',
+                                    d1: diceChars[v1],
+                                    d2: diceChars[v2],
+                                    sum: sum
+                                });
                             }
                         }
                     }, 80);
@@ -3140,14 +4404,33 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     features.setView('picker');
                     const resEl = document.getElementById('picker-result');
                     let spins = 0;
+                    if (state.channel) {
+                        state.channel.postMessage({
+                            type: 'picker_start',
+                            names: names
+                        });
+                    }
                     const interval = setInterval(() => {
                         if (state.view !== 'picker' || !resEl) { clearInterval(interval); return; }
-                        resEl.innerText = names[Math.floor(Math.random() * names.length)];
+                        const chosen = names[Math.floor(Math.random() * names.length)];
+                        resEl.innerText = chosen;
+                        if (state.channel) {
+                            state.channel.postMessage({
+                                type: 'picker_tick',
+                                name: chosen
+                            });
+                        }
                         if (++spins >= 30) {
                             clearInterval(interval);
                             resEl.style.animation = "none";
                             resEl.style.transform = "scale(1.2)";
                             AudioService.toggle('fanfare');
+                            if (state.channel) {
+                                state.channel.postMessage({
+                                    type: 'picker_finish',
+                                    winner: chosen
+                                });
+                            }
                         }
                     }, 100);
                 }
@@ -3156,15 +4439,19 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             poll: {
                 votes: [],
                 labels: [],
+                winners: [],
+                winnerLabel: '',
                 active: false,
+                _keyHandler: null,
                 async setup() {
                     if (this.active) { this.close(); return; }
+                    ui.dismissWelcomeIfPresent();
 
                     const input = await modal.show({
                         title: 'Configurar Votação',
                         html: `
                             <p style="font-size:0.9rem; opacity:0.8;">Indique o número de opções (2-6) ou escreva os nomes separados por vírgula.</p>
-                            <input type="text" id="poll-setup-input" class="modal-input" placeholder="Ex: 3 ou Opção A, Opção B, Opção C" value="2">
+                            <input type="text" id="poll-setup-input" class="modal-input" placeholder="Ex: 2 (para A e B) ou Opção 1, Opção 2" value="2">
                         `
                     });
 
@@ -3173,33 +4460,67 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     let options = [];
                     if (!isNaN(input) && input.trim() !== "") {
                         const n = Math.min(Math.max(parseInt(input), 2), 6);
-                        for (let i = 0; i < n; i++) options.push(`Opção ${String.fromCharCode(65 + i)}`);
+                        for (let i = 0; i < n; i++) options.push(String.fromCharCode(65 + i));
                     } else {
-                        options = input.split(',').map(s => s.trim()).filter(Boolean);
+                        options = input.split(',').map(s => s.trim().replace(/^opção\s+/i, '')).filter(Boolean);
                     }
 
                     if (options.length < 2) return;
+                    this.winners = [];
+                    this.winnerLabel = '';
                     this.build(options);
+                },
+                applyWinnerEffects() {
+                    const pDisp = document.getElementById('poll-display');
+                    if (this.winners && this.winners.length > 0) {
+                        if (pDisp) pDisp.classList.add('has-winner');
+                        document.querySelectorAll('.poll-item').forEach(el => el.classList.remove('poll-winner-highlight'));
+                        document.querySelectorAll('.poll-winner-badge').forEach(el => el.style.display = 'none');
+                        this.winners.forEach(i => {
+                            const el = document.getElementById(`poll-item-${i}`);
+                            if (el) el.classList.add('poll-winner-highlight');
+                            const trophy = document.getElementById(`poll-trophy-${i}`);
+                            if (trophy) trophy.style.display = 'block';
+                        });
+                    } else {
+                        if (pDisp) pDisp.classList.remove('has-winner');
+                        document.querySelectorAll('.poll-item').forEach(el => el.classList.remove('poll-winner-highlight'));
+                        document.querySelectorAll('.poll-winner-badge').forEach(el => el.style.display = 'none');
+                    }
                 },
                 build(options, isSync = false) {
                     this.labels = options;
-                    if (!isSync) this.votes = new Array(options.length).fill(0);
+                    if (!isSync) {
+                        this.votes = new Array(options.length).fill(0);
+                        this.winners = [];
+                        this.winnerLabel = '';
+                    }
                     this.active = true;
+                    state.view = 'poll';
+
+                    // Ensure greeting, scoreboard and main text disappear completely
+                    ui.els.mainText.innerText = '';
+                    ui.els.mainText.classList.remove('visible', 'rich-content');
+                    ui.els.mainText.style.display = 'none';
+                    const sb = document.getElementById('scoreboard');
+                    if (sb) { sb.style.display = 'none'; sb.innerHTML = ''; }
+                    if (ui.els.qrContainer) ui.els.qrContainer.style.display = 'none';
 
                     let html = '';
                     options.forEach((label, i) => {
                         html += `
                             <div class="poll-item" id="poll-item-${i}">
-                                <div class="poll-info">
-                                    <div class="poll-count" id="poll-count-${i}">${this.votes[i] || 0}</div>
+                                <div class="poll-winner-badge" id="poll-trophy-${i}" style="display:none;">🏆</div>
+                                <div class="poll-count" id="poll-count-${i}">${this.votes[i] || 0}</div>
+                                <div class="poll-bar-track">
+                                    <div class="poll-bar-fill" id="poll-bar-${i}"></div>
+                                </div>
+                                <div class="poll-footer">
                                     <div class="poll-label" title="${label}">${label}</div>
                                     <div class="poll-btn-group">
                                         <button class="poll-btn" onclick="features.poll.update(${i}, 1)">+</button>
                                         <button class="poll-btn" onclick="features.poll.update(${i}, -1)">-</button>
                                     </div>
-                                </div>
-                                <div class="poll-bar-track">
-                                    <div class="poll-bar-fill" id="poll-bar-${i}"></div>
                                 </div>
                             </div>
                         `;
@@ -3209,7 +4530,6 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     display.innerHTML = html;
                     display.style.display = 'flex';
                     document.getElementById('poll-actions').style.display = 'flex';
-                    if (!isSync) app.clear(); // Clear main text only on fresh build
 
                     // Keyboard shortcuts listener (only if not already attached)
                     if (!this._keyHandler) {
@@ -3223,19 +4543,29 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         document.addEventListener('keydown', this._keyHandler);
                     }
                     this.refreshBars();
+                    this.applyWinnerEffects();
+                    state.saveSession();
+                    if (!isSync) app.broadcastState();
                 },
                 update(index, delta) {
                     if (!this.active) return;
                     this.votes[index] = Math.max(0, this.votes[index] + delta);
-                    document.getElementById(`poll-count-${index}`).innerText = this.votes[index];
+                    const countEl = document.getElementById(`poll-count-${index}`);
+                    if (countEl) countEl.innerText = this.votes[index];
+                    this.winners = [];
+                    this.winnerLabel = '';
+                    this.applyWinnerEffects();
                     this.refreshBars();
+                    state.saveSession();
                     AudioService.toggle(delta > 0 ? 'pointUp' : 'pointDown');
+                    app.broadcastState();
                 },
                 refreshBars() {
                     const maxVotes = Math.max(...this.votes, 1);
                     this.votes.forEach((v, i) => {
                         const percent = (v / maxVotes) * 100;
-                        document.getElementById(`poll-bar-${i}`).style.height = `${percent}%`;
+                        const barEl = document.getElementById(`poll-bar-${i}`);
+                        if (barEl) barEl.style.height = `${percent}%`;
                     });
                 },
                 checkWinner() {
@@ -3244,22 +4574,45 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
                     const winners = [];
                     this.votes.forEach((v, i) => { if (v === max) winners.push(i); });
+                    this.winners = winners;
+                    const winnerLabels = winners.map(i => this.labels[i]).join(', ');
+                    this.winnerLabel = winnerLabels ? `Opção ${winnerLabels}` : '';
 
-                    document.querySelectorAll('.poll-item').forEach(el => el.classList.remove('poll-winner-highlight'));
-                    winners.forEach(i => {
-                        document.getElementById(`poll-item-${i}`).classList.add('poll-winner-highlight');
-                    });
+                    this.applyWinnerEffects();
 
                     AudioService.toggle('trophy');
-                    ui.confetti();
+                    ui.showVictoryScreen(this.winnerLabel);
+
+                    if (state.channel) {
+                        state.channel.postMessage({
+                            type: 'poll_winner',
+                            winners: this.winners,
+                            winnerLabel: this.winnerLabel,
+                            timestamp: Date.now()
+                        });
+                    }
                     app.broadcastState();
                 },
                 close() {
                     this.active = false;
-                    document.getElementById('poll-display').style.display = 'none';
-                    document.getElementById('poll-actions').style.display = 'none';
-                    document.removeEventListener('keydown', this._keyHandler);
-                    app.clear();
+                    this.winners = [];
+                    this.winnerLabel = '';
+                    const pDisp = document.getElementById('poll-display');
+                    if (pDisp) {
+                        pDisp.classList.remove('has-winner');
+                        pDisp.style.display = 'none';
+                        pDisp.innerHTML = '';
+                    }
+                    const pAct = document.getElementById('poll-actions');
+                    if (pAct) pAct.style.display = 'none';
+                    if (this._keyHandler) {
+                        document.removeEventListener('keydown', this._keyHandler);
+                        this._keyHandler = null;
+                    }
+                    if (state.view === 'poll') state.view = 'text';
+                    try { localStorage.removeItem('qb_session_poll'); } catch(e){}
+                    state.saveSession();
+                    app.broadcastState();
                 }
             },
 
@@ -3287,9 +4640,19 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         title: 'Configurar Placar',
                         html: '<input type="number" class="modal-input" placeholder="Número de Equipas (2-6)" min="2" max="6" value="2">'
                     });
-                    if (num) this.build(parseInt(num));
+                    if (num) {
+                        app.clear(true);
+                        this.build(parseInt(num));
+                    }
                 },
                 build(n, isSync = false) {
+                    state.view = 'score';
+                    ui.els.mainText.classList.remove('visible');
+                    ui.els.mainText.style.display = 'none';
+                    const pDisp = document.getElementById('poll-display');
+                    if (pDisp) { pDisp.style.display = 'none'; pDisp.innerHTML = ''; }
+                    const pAct = document.getElementById('poll-actions');
+                    if (pAct) pAct.style.display = 'none';
                     if (!isSync) state.scores = {};
                     let html = '';
                     for (let i = 0; i < n; i++) {
@@ -3307,12 +4670,15 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     const sb = document.getElementById('scoreboard');
                     sb.innerHTML = html;
                     sb.style.display = 'flex';
+                    state.saveSession();
+                    app.broadcastState();
                 },
                 update(team, e) {
                     const delta = (e.shiftKey || e.button === 2) ? -1 : 1;
                     state.scores[team] = Math.max(0, state.scores[team] + delta);
                     document.getElementById(`score-${team}`).innerText = state.scores[team];
                     AudioService.toggle(delta > 0 ? 'pointUp' : 'pointDown');
+                    state.saveSession();
                     app.broadcastState();
                 },
                 checkWinner() {
@@ -3324,7 +4690,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     document.querySelectorAll('.score-team').forEach(el => el.classList.remove('winner-highlight'));
                     if (max > 0) {
                         winners.forEach(t => document.getElementById(`team-${t}`).classList.add('winner-highlight'));
+                        const winnerTeams = winners.map(t => `Equipa ${t}`).join(', ');
                         AudioService.toggle('trophy');
+                        ui.showVictoryScreen(winnerTeams);
                     }
                     app.broadcastState();
                 }
@@ -3374,6 +4742,19 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         ui.els.input.style.borderColor = colors[scheme] || 'var(--glass-border)';
                     }
                 },
+                present(text, scheme = this.activeScheme) {
+                    let cleaned = (text || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+                    if (!cleaned) cleaned = "Novo Slide";
+                    state.lastSlideData = { text: cleaned, scheme: scheme || this.activeScheme };
+                    features.setView('slide', state.lastSlideData);
+                    if (state.channel) {
+                        state.channel.postMessage({
+                            type: 'slide_present',
+                            data: state.lastSlideData
+                        });
+                    }
+                    app.broadcastState();
+                },
                 create() {
                     // Robust text retrieval
                     let text = ui.els.input.innerText;
@@ -3419,10 +4800,14 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             ink: {
                 active: false,
                 color: '#ff0000',
+                tool: 'pen',
                 isDrawing: false,
                 ctx: null,
                 lastX: 0,
                 lastY: 0,
+                startX: 0,
+                startY: 0,
+                snapshot: null,
                 setup() {
                     const canvas = document.getElementById('ink-canvas');
                     if (!this.ctx) {
@@ -3432,20 +4817,33 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
                         canvas.onmousedown = (e) => this.start(e);
                         canvas.onmousemove = (e) => this.draw(e);
-                        canvas.onmouseup = () => this.stop();
+                        canvas.onmouseup = (e) => this.stop(e);
                         canvas.onmouseout = () => this.stop();
 
                         // Touch support
                         canvas.ontouchstart = (e) => { e.preventDefault(); this.start(e.touches[0]); };
                         canvas.ontouchmove = (e) => { e.preventDefault(); this.draw(e.touches[0]); };
-                        canvas.ontouchend = () => this.stop();
+                        canvas.ontouchend = (e) => this.stop(e);
                     }
                     this.toggle();
                 },
                 resize() {
                     const canvas = document.getElementById('ink-canvas');
+                    if (!canvas) return;
+                    let tempCanvas = null;
+                    if (canvas.width > 0 && canvas.height > 0) {
+                        tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = canvas.width;
+                        tempCanvas.height = canvas.height;
+                        const tCtx = tempCanvas.getContext('2d');
+                        tCtx.drawImage(canvas, 0, 0);
+                    }
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
+                    if (tempCanvas && this.ctx) {
+                        this.ctx.drawImage(tempCanvas, 0, 0);
+                        this.setColor(this.color);
+                    }
                 },
                 toggle() {
                     this.active = !this.active;
@@ -3457,37 +4855,143 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
                     if (this.active) {
                         this.setColor(this.color);
+                        this.setTool('pen');
+                    } else {
+                        const shapesMenu = document.getElementById('ink-shapes-menu');
+                        if (shapesMenu) shapesMenu.classList.remove('open');
+                    }
+                },
+                toggleShapesMenu() {
+                    const menu = document.getElementById('ink-shapes-menu');
+                    if (menu) menu.classList.toggle('open');
+                },
+                setTool(tool) {
+                    this.tool = tool;
+                    const shapesMenu = document.getElementById('ink-shapes-menu');
+                    if (shapesMenu) shapesMenu.classList.remove('open');
+
+                    document.querySelectorAll('.ink-tool-btn, .ink-shape-btn').forEach(btn => btn.classList.remove('active'));
+                    const eraserBtn = document.getElementById('ink-eraser');
+                    if (eraserBtn) eraserBtn.classList.remove('active');
+
+                    if (tool === 'pen') {
+                        const penBtn = document.getElementById('ink-tool-pen');
+                        if (penBtn) penBtn.classList.add('active');
+                    } else if (tool !== 'eraser') {
+                        const shapesBtn = document.getElementById('ink-tool-shapes');
+                        if (shapesBtn) shapesBtn.classList.add('active');
+                        const sBtn = document.getElementById(`shape-${tool}`);
+                        if (sBtn) sBtn.classList.add('active');
+                    }
+
+                    if (tool === 'eraser') {
+                        this.ctx.globalCompositeOperation = 'destination-out';
+                        this.ctx.lineWidth = 30;
+                        if (eraserBtn) eraserBtn.classList.add('active');
+                    } else {
+                        this.ctx.globalCompositeOperation = 'source-over';
+                        this.ctx.lineWidth = 4;
+                        this.ctx.strokeStyle = this.color;
+                        this.ctx.lineCap = 'round';
+                        this.ctx.lineJoin = 'round';
                     }
                 },
                 start(e) {
                     this.isDrawing = true;
-                    [this.lastX, this.lastY] = [e.clientX, e.clientY];
+                    this.lastX = e.clientX;
+                    this.lastY = e.clientY;
+                    this.startX = e.clientX;
+                    this.startY = e.clientY;
+
+                    if (this.tool !== 'pen' && this.tool !== 'eraser') {
+                        this.snapshot = this.ctx.getImageData(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+                    }
                 },
                 draw(e) {
                     if (!this.isDrawing) return;
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(this.lastX, this.lastY);
-                    this.ctx.lineTo(e.clientX, e.clientY);
-                    this.ctx.stroke();
+                    const x = e.clientX;
+                    const y = e.clientY;
 
-                    // Broadcast stroke
-                    if (state.channel) {
-                        state.channel.postMessage({
-                            type: 'ink_stroke',
-                            from: { x: this.lastX, y: this.lastY },
-                            to: { x: e.clientX, y: e.clientY },
-                            color: this.ctx.strokeStyle,
-                            width: this.ctx.lineWidth,
-                            op: this.ctx.globalCompositeOperation
-                        });
+                    if (this.tool === 'pen' || this.tool === 'eraser') {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(this.lastX, this.lastY);
+                        this.ctx.lineTo(x, y);
+                        this.ctx.stroke();
+
+                        if (state.channel) {
+                            state.channel.postMessage({
+                                type: 'ink_stroke',
+                                from: { x: this.lastX, y: this.lastY },
+                                to: { x, y },
+                                color: this.ctx.strokeStyle,
+                                width: this.ctx.lineWidth,
+                                op: this.ctx.globalCompositeOperation
+                            });
+                        }
+                        this.lastX = x;
+                        this.lastY = y;
+                    } else if (this.snapshot) {
+                        this.ctx.putImageData(this.snapshot, 0, 0);
+                        this.drawShape(this.tool, this.startX, this.startY, x, y);
                     }
-
-                    [this.lastX, this.lastY] = [e.clientX, e.clientY];
                 },
-                stop() { this.isDrawing = false; },
+                stop(e) {
+                    if (!this.isDrawing) return;
+                    this.isDrawing = false;
+                    if (this.tool !== 'pen' && this.tool !== 'eraser') {
+                        const x = (e && e.clientX) ? e.clientX : this.lastX;
+                        const y = (e && e.clientY) ? e.clientY : this.lastY;
+                        if (this.snapshot) {
+                            this.ctx.putImageData(this.snapshot, 0, 0);
+                            this.drawShape(this.tool, this.startX, this.startY, x, y);
+                            this.snapshot = null;
+                        }
+
+                        if (state.channel) {
+                            state.channel.postMessage({
+                                type: 'ink_shape',
+                                tool: this.tool,
+                                from: { x: this.startX, y: this.startY },
+                                to: { x, y },
+                                color: this.ctx.strokeStyle,
+                                width: this.ctx.lineWidth
+                            });
+                        }
+                    }
+                },
+                drawShape(tool, x1, y1, x2, y2) {
+                    this.ctx.beginPath();
+                    if (tool === 'line') {
+                        this.ctx.moveTo(x1, y1);
+                        this.ctx.lineTo(x2, y2);
+                        this.ctx.stroke();
+                    } else if (tool === 'rect') {
+                        this.ctx.strokeRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
+                    } else if (tool === 'circle') {
+                        const rx = Math.abs(x2 - x1) / 2;
+                        const ry = Math.abs(y2 - y1) / 2;
+                        const cx = Math.min(x1, x2) + rx;
+                        const cy = Math.min(y1, y2) + ry;
+                        this.ctx.ellipse(cx, cy, Math.max(rx, 1), Math.max(ry, 1), 0, 0, Math.PI * 2);
+                        this.ctx.stroke();
+                    } else if (tool === 'arrow') {
+                        const headlen = 16;
+                        const angle = Math.atan2(y2 - y1, x2 - x1);
+                        this.ctx.moveTo(x1, y1);
+                        this.ctx.lineTo(x2, y2);
+                        this.ctx.stroke();
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x2, y2);
+                        this.ctx.lineTo(x2 - headlen * Math.cos(angle - Math.PI / 6), y2 - headlen * Math.sin(angle - Math.PI / 6));
+                        this.ctx.moveTo(x2, y2);
+                        this.ctx.lineTo(x2 - headlen * Math.cos(angle + Math.PI / 6), y2 - headlen * Math.sin(angle + Math.PI / 6));
+                        this.ctx.stroke();
+                    }
+                },
                 setColor(c) {
                     this.color = c;
                     this.ctx.strokeStyle = c;
+                    if (this.tool === 'eraser') this.setTool('pen');
                     this.ctx.lineWidth = 4;
                     this.ctx.globalCompositeOperation = 'source-over';
                     this.ctx.lineCap = 'round';
@@ -3496,13 +5000,9 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     document.querySelectorAll('.ink-color').forEach(el => el.classList.remove('active'));
                     const btn = document.getElementById(`ink-col-${c.replace('#', '')}`);
                     if (btn) btn.classList.add('active');
-                    document.getElementById('ink-eraser').classList.remove('active');
                 },
                 setEraser() {
-                    this.ctx.globalCompositeOperation = 'destination-out';
-                    this.ctx.lineWidth = 30;
-                    document.querySelectorAll('.ink-color').forEach(el => el.classList.remove('active'));
-                    document.getElementById('ink-eraser').classList.add('active');
+                    this.setTool('eraser');
                 },
                 clear() {
                     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -3527,9 +5027,43 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
             },
 
             manualSubmit() {
-                // If Slide Mode is active, Create Slide instead of Projecting
-                if (features.slide.active) {
-                    features.slide.create();
+                // If Suspense/Question Mode is active: reveal answer with celebration!
+                if (state.suspenseActive) {
+                    const text = ui.els.input.innerText.replace(/[\u200B-\u200D\uFEFF]/g, '').trim() || ui.els.input.innerHTML.trim();
+                    if (!text) return;
+                    state.suspenseActive = false;
+                    ui.highlightSound('question', false);
+                    if (state.channel) {
+                        state.channel.postMessage({
+                            type: 'reveal_answer',
+                            text: text,
+                            timestamp: Date.now()
+                        });
+                    }
+                    if (ui.els.input) {
+                        ui.els.input.style.borderColor = '';
+                        ui.els.input.style.boxShadow = '';
+                    }
+                    const sendBtn = document.getElementById('btn-send');
+                    if (sendBtn) {
+                        sendBtn.style.background = '';
+                        sendBtn.title = 'Projetar';
+                    }
+                    this.showContent(text);
+                    AudioService.toggle('success');
+                    ui.confetti();
+                    ui.els.input.innerHTML = "";
+                    ui.els.input.focus();
+                    return;
+                }
+
+                // If Slide Mode is active, Present Slide directly on screen and projector
+                if (features.slide && features.slide.active) {
+                    let text = ui.els.input.innerText.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+                    if (!text && ui.els.input.innerHTML) text = ui.els.input.innerHTML;
+                    features.slide.present(text, features.slide.activeScheme);
+                    ui.els.input.innerHTML = "";
+                    ui.els.input.focus();
                     return;
                 }
                 const text = ui.els.input.innerText.trim();
@@ -3547,6 +5081,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                 }
                 features.setView('text', text);
                 ui.navControls();
+                state.saveSession();
             },
 
             addToQueue() {
@@ -3555,6 +5090,7 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     state.queue.push(val);
                     ui.els.input.innerHTML = "";
                     ui.updateQueueBadge();
+                    state.saveSession();
                     AudioService.toggle('pointUp'); // Feedback sound
                 }
             },
@@ -3576,11 +5112,113 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     }
                 }
                 ui.navControls();
+                state.saveSession();
             },
 
-            clear() {
+            clearPending: false,
+            clearTimer: null,
+            clear(force = false) {
+                const tOverlay = document.getElementById('timer-overlay');
+                const isTimerVisible = (tOverlay && tOverlay.style.display !== 'none') || (state.timerInterval !== null);
+                const hasMainContent = (state.view === 'text' && ui.els.mainText.innerText.trim().length > 0) ||
+                                       (document.getElementById('scoreboard').style.display === 'flex') ||
+                                       (features.poll && features.poll.active) ||
+                                       (state.view !== 'text');
+                const hasContent = hasMainContent || isTimerVisible;
+
+                if (!force && hasContent && !this.clearPending) {
+                    this.clearPending = true;
+                    ui.showToast("Clique de novo em Limpar para confirmar");
+                    const btn = document.querySelector('button[title="Limpar Ecrã"]');
+                    if (btn) btn.classList.add('warn-pulse');
+                    if (this.clearTimer) clearTimeout(this.clearTimer);
+                    this.clearTimer = setTimeout(() => {
+                        this.clearPending = false;
+                        if (btn) btn.classList.remove('warn-pulse');
+                    }, 2500);
+                    return;
+                }
+                this.clearPending = false;
+                if (this.clearTimer) clearTimeout(this.clearTimer);
+                const btn = document.querySelector('button[title="Limpar Ecrã"]');
+                if (btn) btn.classList.remove('warn-pulse');
+
+                // 1. Wipe and Close Poll
+                if (features.poll) {
+                    features.poll.active = false;
+                    const pDisp = document.getElementById('poll-display');
+                    if (pDisp) { pDisp.style.display = 'none'; pDisp.innerHTML = ''; }
+                    const pAct = document.getElementById('poll-actions');
+                    if (pAct) pAct.style.display = 'none';
+                    if (features.poll._keyHandler) {
+                        document.removeEventListener('keydown', features.poll._keyHandler);
+                    }
+                    try { localStorage.removeItem('qb_session_poll'); } catch(e){}
+                }
+
+                // 2. Wipe and Close Scoreboard
+                const sb = document.getElementById('scoreboard');
+                if (sb) {
+                    sb.style.display = 'none';
+                    sb.innerHTML = '';
+                    state.scores = {};
+                    try { localStorage.removeItem('qb_session_scores'); } catch(e){}
+                }
+
+                // 3. Clear text / views
                 features.setView('text', '');
-                ui.els.mainText.classList.remove('visible');
+                ui.els.mainText.innerText = '';
+                ui.els.mainText.classList.remove('visible', 'rich-content');
+                ui.els.mainText.style.display = 'none';
+
+                // 4. Clear Ink / Drawing if active
+                if (features.ink && features.ink.active) {
+                    features.ink.clear();
+                }
+
+                // 5. Reset timer if running, stopped or finished
+                if (features.timer) {
+                    features.timer.stop(true);
+                } else {
+                    if (state.timerInterval) {
+                        clearInterval(state.timerInterval);
+                        state.timerInterval = null;
+                    }
+                    if (tOverlay) {
+                        tOverlay.style.display = 'none';
+                        tOverlay.innerText = '00:00';
+                        tOverlay.style.color = '';
+                    }
+                    if (state.channel) {
+                        state.channel.postMessage({ type: 'timer_clear' });
+                    }
+                }
+
+                // 6. Reset Slide if active
+                if (features.slide && features.slide.active) {
+                    features.slide.toggleInline();
+                }
+
+                // 7. Clear FX overlay & Sunburst
+                const overlay = document.getElementById('fx-overlay');
+                if (overlay) overlay.innerHTML = '';
+                const sunburst = document.getElementById('sunburst');
+                if (sunburst) sunburst.classList.remove('active');
+
+                // 8. Reset Suspense overlay if active
+                const suspOv = document.getElementById('suspense-overlay');
+                if (suspOv) suspOv.classList.remove('active');
+                state.suspenseActive = false;
+
+                // 9. Reset Projector Clock & Timer Overlay
+                if (tOverlay) {
+                    tOverlay.style.display = 'none';
+                    tOverlay.innerText = '00:00';
+                    tOverlay.style.color = '';
+                }
+                ui.updateProjectorClockVisibility();
+
+                state.saveSession();
                 this.broadcastState();
             },
 
@@ -3602,15 +5240,27 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                         timerActive: !!state.timerInterval,
                         pollLabels: features.poll.labels,
                         pollVotes: features.poll.votes,
-                        pollActive: features.poll.active
+                        pollActive: features.poll.active,
+                        pollWinners: features.poll.winners || [],
+                        pollWinnerLabel: features.poll.winnerLabel || '',
+                        slideData: state.lastSlideData || null
                     },
-                    data: state.view === 'text' ? ui.els.mainText.innerHTML : (state.view === 'qr' ? state.history[state.historyIndex] : null)
+                    data: state.view === 'text' ? ui.els.mainText.innerHTML : (state.view === 'qr' ? state.history[state.historyIndex] : (state.view === 'slide' ? state.lastSlideData : null))
                 });
             },
 
             handleBroadcast(data) {
                 const params = new URLSearchParams(window.location.search);
                 const isProjector = params.get('mode') === 'projector';
+
+                if (data.type === 'ping' && isProjector) {
+                    if (state.channel) state.channel.postMessage({ type: 'pong' });
+                }
+
+                if (data.type === 'pong' && !isProjector) {
+                    state.hasProjector = true;
+                    if (ui && ui.updateProjectorDependentControls) ui.updateProjectorDependentControls();
+                }
 
                 if (data.type === 'request_sync' && !isProjector) {
                     this.broadcastState();
@@ -3631,11 +5281,201 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
 
                     if (s.view === 'poll' && s.pollActive) {
                         features.poll.votes = s.pollVotes;
+                        features.poll.winners = s.pollWinners || [];
+                        features.poll.winnerLabel = s.pollWinnerLabel || '';
                         features.poll.build(s.pollLabels, true);
                     } else if (s.view === 'score') {
                         features.score.build(Object.keys(s.scores).length, true);
+                    } else if (s.view === 'slide') {
+                        features.setView('slide', s.slideData);
                     } else {
                         features.setView(s.view, data.data);
+                    }
+
+                    if (s.view !== 'text' || (data.data && data.data !== "Olá, vamos começar?" && data.data !== "Olá! Vamos começar?")) {
+                        ui.dismissWelcomeIfPresent();
+                    }
+
+                    // Ensure timer overlay is dismissed if timer is inactive in sync state
+                    if (!s.timerActive) {
+                        const tOverlay = document.getElementById('timer-overlay');
+                        if (tOverlay) {
+                            tOverlay.style.display = 'none';
+                            tOverlay.innerText = '00:00';
+                            tOverlay.style.color = '';
+                        }
+                        if (features.timer && features.timer.finishTimeout) {
+                            clearTimeout(features.timer.finishTimeout);
+                            features.timer.finishTimeout = null;
+                        }
+                    }
+                    ui.updateProjectorClockVisibility();
+                }
+
+                if (data.type === 'timer_clear' && isProjector) {
+                    if (features.timer && features.timer.finishTimeout) {
+                        clearTimeout(features.timer.finishTimeout);
+                        features.timer.finishTimeout = null;
+                    }
+                    const el = document.getElementById('timer-overlay');
+                    if (el) {
+                        el.style.display = 'none';
+                        el.innerText = '00:00';
+                        el.style.color = '';
+                    }
+                    ui.updateProjectorClockVisibility();
+                }
+
+                if (data.type === 'timer_tick' && isProjector) {
+                    const el = document.getElementById('timer-overlay');
+                    if (el) {
+                        if (data.running) {
+                            el.style.display = 'flex';
+                            el.innerText = data.timeText;
+                            el.style.color = '';
+                            ui.dismissWelcomeIfPresent();
+                            ui.updateProjectorClockVisibility();
+                        } else {
+                            if (data.finished) {
+                                el.innerText = '00:00';
+                                el.style.color = '#ff4b4b';
+                                ui.flashScreen('flash-success');
+                                ui.confetti();
+                                if (features.timer) {
+                                    if (features.timer.finishTimeout) clearTimeout(features.timer.finishTimeout);
+                                    features.timer.finishTimeout = setTimeout(() => {
+                                        el.style.display = 'none';
+                                        ui.updateProjectorClockVisibility();
+                                    }, 4000);
+                                }
+                            } else {
+                                el.style.display = 'none';
+                                el.innerText = '00:00';
+                                el.style.color = '';
+                                ui.updateProjectorClockVisibility();
+                            }
+                        }
+                    }
+                }
+
+                if (data.type === 'dice_start' && isProjector) {
+                    ui.dismissWelcomeIfPresent();
+                    features.setView('dice');
+                    ui.updateProjectorClockVisibility();
+                    const vis = document.querySelector('.dice-visuals');
+                    if (vis) vis.classList.add('dice-shake');
+                    const res = document.getElementById('dice-result');
+                    if (res) { res.innerText = 'A lançar...'; res.classList.remove('show'); }
+                }
+
+                if (data.type === 'dice_tick' && isProjector) {
+                    const d1 = document.getElementById('d1'), d2 = document.getElementById('d2');
+                    if (d1) d1.innerText = data.d1;
+                    if (d2) d2.innerText = data.d2;
+                }
+
+                if (data.type === 'dice_finish' && isProjector) {
+                    const d1 = document.getElementById('d1'), d2 = document.getElementById('d2');
+                    if (d1) d1.innerText = data.d1;
+                    if (d2) d2.innerText = data.d2;
+                    const vis = document.querySelector('.dice-visuals');
+                    if (vis) vis.classList.remove('dice-shake');
+                    const res = document.getElementById('dice-result');
+                    if (res) {
+                        res.innerText = data.sum;
+                        res.classList.add('show');
+                        ui.flashScreen('flash-success');
+                    }
+                    ui.updateProjectorClockVisibility();
+                }
+
+                if (data.type === 'picker_start' && isProjector) {
+                    ui.dismissWelcomeIfPresent();
+                    features.setView('picker');
+                    ui.updateProjectorClockVisibility();
+                    const resEl = document.getElementById('picker-result');
+                    if (resEl) {
+                        resEl.style.animation = 'pulse 0.5s infinite alternate';
+                        resEl.style.transform = 'scale(1)';
+                        resEl.innerText = 'Sorteando...';
+                    }
+                }
+
+                if (data.type === 'picker_tick' && isProjector) {
+                    const resEl = document.getElementById('picker-result');
+                    if (resEl) resEl.innerText = data.name;
+                }
+
+                if (data.type === 'picker_finish' && isProjector) {
+                    const resEl = document.getElementById('picker-result');
+                    if (resEl) {
+                        resEl.innerText = data.winner;
+                        resEl.style.animation = 'none';
+                        resEl.style.transform = 'scale(1.3)';
+                        resEl.style.color = '#ffd700';
+                        resEl.style.textShadow = '0 0 35px rgba(255, 215, 0, 0.8)';
+                        ui.flashScreen('flash-success');
+                        ui.confetti();
+                        const overlay = document.getElementById('fx-overlay');
+                        if (overlay) ui.spawnApplause(overlay);
+                    }
+                    ui.updateProjectorClockVisibility();
+                }
+
+                if (data.type === 'slide_present' && isProjector) {
+                    ui.dismissWelcomeIfPresent();
+                    features.setView('slide', data.data);
+                    ui.updateProjectorClockVisibility();
+                }
+
+                if (data.type === 'suspense_start' && isProjector) {
+                    ui.dismissWelcomeIfPresent();
+                    const ov = document.getElementById('suspense-overlay');
+                    if (ov) ov.classList.add('active');
+                    ui.flashScreen('flash-vignette', 3000);
+                    AudioService.toggle('drum');
+                    ui.updateProjectorClockVisibility();
+                }
+
+                if (data.type === 'suspense_cancel' && isProjector) {
+                    const ov = document.getElementById('suspense-overlay');
+                    if (ov) ov.classList.remove('active');
+                    ui.updateProjectorClockVisibility();
+                }
+
+                if (data.type === 'reveal_answer' && isProjector) {
+                    const ov = document.getElementById('suspense-overlay');
+                    if (ov) ov.classList.remove('active');
+                    ui.dismissWelcomeIfPresent();
+                    ui.flashScreen('flash-success', 1000);
+                    features.setView('text', `
+                        <div class="reveal-wrapper">
+                            <div class="reveal-tag">★ A RESPOSTA CERTA É ★</div>
+                            <div class="reveal-text">${safeSanitize(data.text)}</div>
+                        </div>
+                    `);
+                    AudioService.toggle('success');
+                    ui.confetti();
+                    const overlay = document.getElementById('fx-overlay');
+                    if (overlay) ui.spawnApplause(overlay);
+                    ui.updateProjectorClockVisibility();
+                }
+
+                if (data.type === 'poll_winner' && isProjector) {
+                    features.poll.winners = data.winners || [];
+                    features.poll.winnerLabel = data.winnerLabel || '';
+                    features.poll.applyWinnerEffects();
+                    ui.flashScreen('flash-success', 800);
+                    ui.showVictoryScreen(data.winnerLabel);
+                    const overlay = document.getElementById('fx-overlay');
+                    if (overlay) ui.spawnApplause(overlay);
+                }
+
+                if (data.type === 'sfx_trigger' && isProjector) {
+                    if (data.key === 'trophy' && features.poll && features.poll.active && features.poll.winnerLabel) {
+                        ui.showVictoryScreen(features.poll.winnerLabel);
+                    } else {
+                        ui.triggerFX(data.key);
                     }
                 }
 
@@ -3656,6 +5496,19 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
                     features.ink.ctx.stroke();
                 }
 
+                if (data.type === 'ink_shape' && isProjector) {
+                    if (!features.ink.ctx) {
+                        const canvas = document.getElementById('ink-canvas');
+                        features.ink.ctx = canvas.getContext('2d');
+                        features.ink.resize();
+                    }
+                    features.ink.ctx.strokeStyle = data.color;
+                    features.ink.ctx.lineWidth = data.width;
+                    features.ink.ctx.lineCap = 'round';
+                    features.ink.ctx.lineJoin = 'round';
+                    features.ink.drawShape(data.tool, data.from.x, data.from.y, data.to.x, data.to.y);
+                }
+
                 if (data.type === 'ink_clear' && isProjector) {
                     if (features.ink.ctx) features.ink.ctx.clearRect(0, 0, features.ink.ctx.canvas.width, features.ink.ctx.canvas.height);
                 }
@@ -3663,37 +5516,6 @@ Based on jsqrencode | (C) 2010 tz@execpc.com | GPL v3 License
         };
 
         function handleLogoAreaClick(e) {
-            if (e.target.id === 'logo-area') {
-                const logoArea = document.getElementById('logo-area');
-                logoArea.classList.remove('active');
-                if (window.innerWidth <= 900) {
-                    document.body.style.overflow = '';
-                }
-            }
-        }
-
-        function toggleMenu(e) {
-            if (e) e.stopPropagation();
-            const logoArea = document.getElementById('logo-area');
-            logoArea.classList.toggle('active');
-
-            // On mobile, if menu is active, prevent body scrolling to keep focus on menu
-            if (window.innerWidth <= 900) {
-                if (logoArea.classList.contains('active')) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = ''; // Restore body scroll
-                }
-            }
-        }
-
-        // INIT
-        window.addEventListener('load', () => ui.init());
-
-    </script>
-</body>
-
-</html>andleLogoAreaClick(e) {
             if (e.target.id === 'logo-area') {
                 const logoArea = document.getElementById('logo-area');
                 logoArea.classList.remove('active');
