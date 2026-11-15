@@ -27,3 +27,5 @@ opencode.json
 opencode.jsonc
 .agents/hooks.json
 .agents/mcp_config.json
+
+index-development.html

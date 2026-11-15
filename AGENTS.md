@@ -21,21 +21,32 @@ Route operations through the strict Three-Tier Tool Cascade:
 - **Memory Lifecycle**: Enforce `Observation → Memory Candidate → Human Review → Canonical Promotion`. Never establish or mutate canonical memory silently. Formal human authorization is mandatory; never infer approval from conversational text. Never promote Project-specific knowledge to global scope without explicit justification and governance. Preserve complete provenance history.
 - **State Separation**: Context Capsules, Graphify graphs, derived indexes, and session caches are ephemeral runtime states. Never persist runtime caches as canonical records.
 - **Project Identity & Scope**: Resolve Project and Repository identities dynamically via the DU Registry; never infer identity from hardcoded paths. Context from one Project never leaks to another.
-- **Boundary Protections**: Never index the Obsidian Vault with Graphify. Never use the production Vault as an implicit test fixture. When instantiating local servers, strictly respect the ports declared in constraints (`CON-0020`) and the project registry.
+- **Boundary Protections**: Never index the Obsidian Vault with Graphify. Never use the production Vault as an implicit test fixture. When instantiating local servers or writing ports into any file, strictly use the ports assigned in `KNW-0025` (`03-knowledge/engineering/KNW-0025.md`; ranges in `CON-0020`). If no port is assigned, ask — never invent one.
 
 ## 4. Interaction & Verifiable Completion Standard
 - **Graduated Interaction**: For material architectural choices, provide ≥3 numbered options with `(Recommended)` first + an explicit `Other / Freeform` option. For binary technical choices, provide 2 options + `Other`. For trivial, reversible actions, proceed with a sensible default and state the assumption.
 - **Evidence-Before-Completion**: Never report operations or mark tasks complete (`[x]`) without observable evidence from tool execution or test runs. Distinguish confirmed facts, assumptions, and required decisions.
 
-## Vault Topology (Johnny Decimal, 00-09)
-- `00-inbox/`: Quick capture and unclassified notes.
-- `01-areas/`: Ongoing spheres of responsibility.
-- `02-projects/<PRJ>/`: Active projects (`project.md`, `current-state.md`).
-- `03-knowledge/`: Durable technical knowledge (`patterns/`, `problems/`, `system/`).
-- `04-decisions/`: Canonical Architectural Decision Records (`DEC-*`).
-- `05-workflows/`: Standard operating procedures and pipelines.
-- `06-sessions/`: Ephemeral session logs and handoffs (`SES-*`).
-- `07-entities/`: System entities and actors.
-- `08-system/`: Engine schemas, registry, charter, constraints, candidates (`MEM-*`), and canonical agents configuration (`08-system/agents/.rulesync/` is the single canonical rulesync source).
-- `09-archive/`: Deprecated or completed historical records.
-- `openspec/`: Work-in-progress change proposals and task tracking (distinct from canonical memory).
+# Project Instructions: quadro-branco-formacao
+
+## Product Vision
+Interactive multimedia training whiteboard, gamification assets, audio/SFX cues, and automated video rendering tools for Futuro Digital classroom sessions.
+
+## Tech Stack
+- **Web / Frontend**: Native HTML5, Canvas, Web Audio API, Vanilla JavaScript, CSS3.
+- **Automation & Video Rendering**: Node.js, Playwright (`render-video.js`), PowerShell (`render.ps1`).
+- **Package Manager**: `pnpm`
+
+## Architecture
+- `index.html`, `futuro-digital.html`, `webcam-studio.html`: Interactive trainer webviews and live drawing / quiz surfaces.
+- `render-video.js` & `render-config.json`: Headless Playwright script that animates and records sequences to video.
+- Audio assets (`*.mp3`): Positive/negative gamification sound effects and transitions.
+
+## Verification & Execution Commands
+- **Install**: `pnpm install`
+- **Render Sequence**: `powershell -File ./render.ps1` or `node render-video.js`
+- **Test Webview**: Open target `.html` in browser or serve locally via lightweight HTTP server.
+
+## Standards
+- **Zero Heavy Frameworks**: Keep UI zero-build, offline-first, native HTML/JS.
+- **Asset Integrity**: Audio and image assets must remain local; do not introduce external CDN dependencies for offline classroom reliability.
