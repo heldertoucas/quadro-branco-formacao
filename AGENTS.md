@@ -11,8 +11,8 @@ Resolve all conflicts strictly using the five-tier authority cascade:
 
 ## 2. Tool Precedence Cascade & Fail-Closed Policy
 Route operations through the strict Three-Tier Tool Cascade:
-1. **Tier 1 — Native MCP Tools**: Prioritize `dev-universe` and `obsidian`.
-2. **Tier 2 — Global CLI Dispatcher**: Use `dev.cmd` / `dev.ps1` (Windows) or `dev.sh` (macOS/Linux) if MCP tools are unmounted or in CLI sessions.
+1. **Tier 1 — Native MCP Tools**: Prioritize `dev-universe` (`get_context`, `search_memory`, `query_code_graph(repository_id, query_symbol, max_hops=2, limit=10)`) and `obsidian`.
+2. **Tier 2 — Global CLI Dispatcher**: Use `dev.cmd` / `dev.ps1` (Windows) or `dev.sh` (macOS/Linux) if MCP tools are unmounted or in CLI sessions (e.g., `dev query "<text>" --project <PRJ>`, `dev steps list`).
 3. **Tier 3 — Read-Only Inspection**: Inspect files directly only if engine interfaces are unavailable. Direct filesystem writes to the Vault are strictly forbidden.
 *Fail-Closed Rule*: A missing tool capability authorizes fallback; an authorization denial, security block, or validation failure strictly halts execution. If persistent DU failures occur, halt mutating tools immediately and report a `### 🚨 SYSTEM ROADBLOCK`.
 
@@ -22,8 +22,10 @@ Route operations through the strict Three-Tier Tool Cascade:
 - **State Separation**: Context Capsules, Graphify graphs, derived indexes, and session caches are ephemeral runtime states. Never persist runtime caches as canonical records.
 - **Project Identity & Scope**: Resolve Project and Repository identities dynamically via the DU Registry; never infer identity from hardcoded paths. Context from one Project never leaks to another.
 - **Boundary Protections**: Never index the Obsidian Vault with Graphify. Never use the production Vault as an implicit test fixture. When instantiating local servers or writing ports into any file, strictly use the ports assigned in `KNW-0025` (`03-knowledge/engineering/KNW-0025.md`; ranges in `CON-0020`). If no port is assigned, ask — never invent one.
+- **Secret-Leak Guardrails**: Never run blind `git add .` / `git add -A` when untracked `.env*`, `scratch/`, or credential files exist. Never bypass git hooks with `--no-verify`, `-n`, or `-c core.hooksPath=...`. Never hardcode secrets or live-prefixed mock keys in code.
 
 ## 4. Interaction & Verifiable Completion Standard
+- **Plain, Grounded Communication**: Write for an intelligent reader without assuming prior technical knowledge. Before proposing an action, give enough context to understand the problem or situation and why the action is needed. Briefly explain technical concepts on first use by what they actually do — avoid unexplained jargon, filler, and cute or forced metaphors. Keep code, commands, and structured formats concise.
 - **Graduated Interaction**: For material architectural choices, provide ≥3 numbered options with `(Recommended)` first + an explicit `Other / Freeform` option. For binary technical choices, provide 2 options + `Other`. For trivial, reversible actions, proceed with a sensible default and state the assumption.
 - **Evidence-Before-Completion**: Never report operations or mark tasks complete (`[x]`) without observable evidence from tool execution or test runs. Distinguish confirmed facts, assumptions, and required decisions.
 
